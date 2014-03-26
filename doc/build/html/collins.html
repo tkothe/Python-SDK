@@ -1,0 +1,814 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>collins &mdash; python-shop-sdk 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="python-shop-sdk 0.1 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to python-shop-sdk’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to python-shop-sdk’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">python-shop-sdk 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to python-shop-sdk&#8217;s documentation!</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/collins.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-collins">
+<span id="collins"></span><h1>collins<a class="headerlink" href="#module-collins" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Arne Simon =&gt; email::[arne_simon&#64;gmx.de]</td>
+</tr>
+</tbody>
+</table>
+<p>This module provieds two wrappers around the Collins-Shop-API.</p>
+<ul class="simple">
+<li>A thin python wrapper which takes Python dict&#8217;s and list&#8217;s and returns the
+result as the same.</li>
+<li>EasyCollins, which is a more convient layer of abstraction of the API as an
+object herachie which caches results and query results if there are needed.</li>
+</ul>
+<dl class="data">
+<dt id="collins.COLLINS_VERSION">
+<tt class="descclassname">collins.</tt><tt class="descname">COLLINS_VERSION</tt><em class="property"> = '1.1'</em><a class="headerlink" href="#collins.COLLINS_VERSION" title="Permalink to this definition">¶</a></dt>
+<dd><p>The version of the collins api which is supported.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.Collins">
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">Collins</tt><big>(</big><em>config</em><big>)</big><a class="headerlink" href="#collins.Collins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An interface to the Collins API.</p>
+<p>This is thin warper around the Collins API.
+All functions return the JSON responses as Python List and Dictonarys.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> &#8211; A Config instance or a file name to a JSON config file.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="collins.Collins.autocomplete">
+<tt class="descname">autocomplete</tt><big>(</big><em>searchword</em>, <em>limit=None</em>, <em>types=None</em><big>)</big><a class="headerlink" href="#collins.Collins.autocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>searchword</strong> (<em>str</em>) &#8211; The abbriviation.</li>
+<li><strong>categories</strong> (<em>list</em>) &#8211; against which types should be autocompleted</li>
+<li><strong>limit</strong> (<em>int</em>) &#8211; the amount of items returned per selected type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">In the documentation stands <strong>autocomplete</strong> but the real
+Tag is <strong>autocompletion</strong>!</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.basketadd">
+<tt class="descname">basketadd</tt><big>(</big><em>sessionid</em>, <em>products</em><big>)</big><a class="headerlink" href="#collins.Collins.basketadd" title="Permalink to this definition">¶</a></dt>
+<dd><p>The request &#8220;basket add&#8221; does change the Items available in the basket.
+A set to 0 or less leads to a deletion. Only the variants in the items
+list will be changed. If a variant is changed or added an internal
+availability check is done and error codes are returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sessionid</strong> (<em>str</em>) &#8211; identification of the basket -&gt; user,
+user -&gt; basket</li>
+<li><strong>products</strong> (<em>list</em>) &#8211; is the array for the product variants</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">product variant dict</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">fieldname</th>
+<th class="head">meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td>the product variant id</td>
+</tr>
+<tr class="row-odd"><td>command</td>
+<td>either add for the + operator (even -1 is possible)
+or set for a specific quantity.
+If the end amount is &lt;= 0 the product is
+removed from basket with an result code.</td>
+</tr>
+<tr class="row-even"><td>amount</td>
+<td>the amount to add or set</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.basketget">
+<tt class="descname">basketget</tt><big>(</big><em>sessionid</em><big>)</big><a class="headerlink" href="#collins.Collins.basketget" title="Permalink to this definition">¶</a></dt>
+<dd><p>This returns the current basket for a User / Session ID.
+The basket belongs to a specific app id and session id,
+another app can have the same session id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sessionid</strong> (<em>str</em>) &#8211; identification of the basket -&gt; user,
+user -&gt; basket</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.category">
+<tt class="descname">category</tt><big>(</big><em>ids</em><big>)</big><a class="headerlink" href="#collins.Collins.category" title="Permalink to this definition">¶</a></dt>
+<dd><p>You are able to retrieve single categories.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ids</strong> (<em>list</em>) &#8211; List of category ids.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.categorytree">
+<tt class="descname">categorytree</tt><big>(</big><em>max_depth=None</em><big>)</big><a class="headerlink" href="#collins.Collins.categorytree" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>The request category tree returns a tree of categories of a</dt>
+<dd>specified max depth for your app id.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>max_depth</strong> (<em>int</em>) &#8211; max depth of your category tree counted from root</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.facets">
+<tt class="descname">facets</tt><big>(</big><em>group_ids=None</em>, <em>limit=None</em>, <em>offset=None</em><big>)</big><a class="headerlink" href="#collins.Collins.facets" title="Permalink to this definition">¶</a></dt>
+<dd><p>This returns a list of available facet groups or a facets of a group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>group_ids</strong> (<em>list</em>) &#8211; get only these group ids, if empty get all
+group ids which belong to me</li>
+<li><strong>limit</strong> (<em>int</em>) &#8211; limit the per page items</li>
+<li><strong>offset</strong> (<em>int</em>) &#8211; offset for paging through the items</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.facettypes">
+<tt class="descname">facettypes</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.Collins.facettypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>This query returns a list of facet groups available.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.getorder">
+<tt class="descname">getorder</tt><big>(</big><em>orderid</em><big>)</big><a class="headerlink" href="#collins.Collins.getorder" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Through this query you could get a order which was created</dt>
+<dd>for/through your app. This is limited to a configured
+timeframe and to your app.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>orderid</strong> (<em>int</em>) &#8211; this is the order id to get info about</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.initiateorder">
+<tt class="descname">initiateorder</tt><big>(</big><em>sessionid</em>, <em>sucess_url</em>, <em>cancel_url=None</em>, <em>error_url=None</em><big>)</big><a class="headerlink" href="#collins.Collins.initiateorder" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>At this request you initiate a order to a basket.</dt>
+<dd>This should be done if a user wants to go to the checkout.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sessionid</strong> (<em>str</em>) &#8211; identification of the basket -&gt; user,
+user -&gt; basket (see basket_get, basket_add)</li>
+<li><strong>sucess_url</strong> (<em>str</em>) &#8211; this is a callback url if the order was
+successfully created. (see checkout api)</li>
+<li><strong>cancel_url</strong> (<em>str</em>) &#8211; this is a callback url if the order was
+canceled. (see checkout api)</li>
+<li><strong>error_url</strong> (<em>str</em>) &#8211; this is a callback url if the order throwed
+exceptions (see checkout api)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.livevariant">
+<tt class="descname">livevariant</tt><big>(</big><em>ids</em><big>)</big><a class="headerlink" href="#collins.Collins.livevariant" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>This does return the live information about the product variant.</dt>
+<dd>This is as &#8220;live&#8221; as possible.
+And could differ vs. a &#8220;product search&#8221; or &#8220;product&#8221; query.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ids</strong> (<em>list</em>) &#8211; array of product variant id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.products">
+<tt class="descname">products</tt><big>(</big><em>ids</em><big>)</big><a class="headerlink" href="#collins.Collins.products" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Here you get a detail view of a product or a list of products</dt>
+<dd>returned by its ids.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ids</strong> (<em>list</em>) &#8211; array of product variant id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.productsearch">
+<tt class="descname">productsearch</tt><big>(</big><em>sessionid</em>, <em>filter=None</em>, <em>result=None</em><big>)</big><a class="headerlink" href="#collins.Collins.productsearch" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the main query for retrieving products for your app.
+Lists of products will be returned which are filtered.
+In a search you dont get back inactive set products.
+The response can contain the available facets and their product count
+and categories for the filter set.</p>
+<dl class="docutils">
+<dt>There are two types of facets:</dt>
+<dd><ol class="first last arabic">
+<li><dl class="first docutils">
+<dt>is a pre defined and always available set of facets</dt>
+<dd><ol class="first last loweralpha simple">
+<li>price range (amazon like see )</li>
+<li>sale facet how many products are sale and how many not</li>
+<li>categories</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><p class="first">dynamic facets which occur through the products itself. If a
+product has one the these attributes you are able to query for
+these attributes. These facets are always just ids.
+The name -&gt; id, id -&gt; name resolution works through facets call.
+To get all the facet groups you can filter or are in your result
+set see &#8220;Facet types&#8221;</p>
+</li>
+</ol>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sessionid</strong> (<em>str</em>) &#8211; the session_id of the frontend customer</li>
+<li><strong>filter</strong> (<em>dict</em>) &#8211; object of filter information, these filters do
+change the subset of products</li>
+<li><strong>result</strong> (<em>dict</em>) &#8211; object of result information, these properties
+change the order and the appearance of the subset</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">filter dict</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">fieldname</th>
+<th class="head">meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>categories</td>
+<td>array of category ids to include the products from</td>
+</tr>
+<tr class="row-odd"><td>sale</td>
+<td>true =&gt; only sale products
+false =&gt; no sale products
+null =&gt; both</td>
+</tr>
+<tr class="row-even"><td>prices</td>
+<td>is an object with properties from and to which lead to
+range filter on the price set as eurocent</td>
+</tr>
+<tr class="row-odd"><td>searchword</td>
+<td>the word which filters every product</td>
+</tr>
+<tr class="row-even"><td>facets</td>
+<td>object of attributes every key is an array of facet id
+values to filter by them</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">result dict</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="86%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">fieldname</th>
+<th class="head">meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>sort</td>
+<td>how to sort the products</td>
+</tr>
+<tr class="row-odd"><td>price</td>
+<td>geta back a range of attributes and their product counts
+also some statistical information in eurocent.</td>
+</tr>
+<tr class="row-even"><td>sale</td>
+<td>product count of products which are in sale</td>
+</tr>
+<tr class="row-odd"><td>facets</td>
+<td>object of which facet get back what count of facets</td>
+</tr>
+<tr class="row-even"><td>categories</td>
+<td>set if get or not back the categories in which are products
+and the count of products</td>
+</tr>
+<tr class="row-odd"><td>limit</td>
+<td>how many products to get back</td>
+</tr>
+<tr class="row-even"><td>offset</td>
+<td>the offset where to start to get the products from</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">result.facets dict</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">fieldname</th>
+<th class="head">meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>_all</td>
+<td>is an object with property limit which holds an integer
+to get the amount of attributes, sort by occurrences in
+products if this is set, this is the default for
+ALL attributes.</td>
+</tr>
+<tr class="row-odd"><td>[ 0-9 ]+</td>
+<td>is an object with property limit which holds an integer to
+get the amount of attributes of this attribute group id,
+sort by occurrences in products. this overwrites even the
+_all field.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.send">
+<tt class="descname">send</tt><big>(</big><em>cmd</em><big>)</big><a class="headerlink" href="#collins.Collins.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a Pyhton structure of dict&#8217;s and list&#8217;s as raw JSON to collins and
+returns a Python structure of dict&#8217;s and list&#8217;s from the JSON answer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cmd</strong> &#8211; The list or dict object to send.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.suggest">
+<tt class="descname">suggest</tt><big>(</big><em>searchword</em>, <em>categories=None</em>, <em>limit=None</em><big>)</big><a class="headerlink" href="#collins.Collins.suggest" title="Permalink to this definition">¶</a></dt>
+<dd><p>The suggest endpoint does what it says and suggest more terms.
+It takes a searchterm and suggests terms which occurance is really
+often in combination with these terms before.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>searchword</strong> (<em>str</em>) &#8211; string of a searchterm to suggest more words for</li>
+<li><strong>categories</strong> (<em>list</em>) &#8211; array of category ids</li>
+<li><strong>limit</strong> (<em>int</em>) &#8211; amount of items to suggest</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="collins.CollinsException">
+<em class="property">exception </em><tt class="descclassname">collins.</tt><tt class="descname">CollinsException</tt><a class="headerlink" href="#collins.CollinsException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>An exception in the collins module.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.Config">
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">Config</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#collins.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>The configuration of a collins api connection.</p>
+<p>A config class has to have the following readable attributes:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>entry_point_url:</dt>
+<dd><p class="first last">The url for collins.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>app_id</dt>
+<dd><p class="first last">The application id.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>app_password</dt>
+<dd><p class="first last">The password for the corresponding application id.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>agent</dt>
+<dd><p class="first last">The name of the browser agent to fake.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>authorization</dt>
+<dd><p class="first last">The authorization header</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>image_url</dt>
+<dd><p class="first last">A string as template for the image urls.
+As example <a class="reference external" href="http://cdn.mary-paul.de/product_images">http://cdn.mary-paul.de/product_images</a>/{path}/{id}_{width}_{height}{extension}.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>logging</dt>
+<dd><p class="first last">A dictonary for logging.config.dictConfig.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; The path to a JSON file which holds the configuration.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="collins.Config.imageurl">
+<tt class="descname">imageurl</tt><big>(</big><em>path</em>, <em>productid</em>, <em>width</em>, <em>height</em>, <em>extension</em><big>)</big><a class="headerlink" href="#collins.Config.imageurl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the url for a image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> &#8211; Part of the image path.</li>
+<li><strong>productid</strong> &#8211; </li>
+<li><strong>width</strong> &#8211; Width of the image.</li>
+<li><strong>height</strong> &#8211; Height of the image.</li>
+<li><strong>extension</strong> &#8211; The image extension. For example <em>&#8216;.jpg&#8217;</em></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.Constants">
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">Constants</tt><a class="headerlink" href="#collins.Constants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Some contsants which are blatantly copied from the php-sdk.</p>
+<dl class="attribute">
+<dt id="collins.Constants.API_ENVIRONMENT_LIVE">
+<tt class="descname">API_ENVIRONMENT_LIVE</tt><em class="property"> = 'live'</em><a class="headerlink" href="#collins.Constants.API_ENVIRONMENT_LIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.API_ENVIRONMENT_STAGE">
+<tt class="descname">API_ENVIRONMENT_STAGE</tt><em class="property"> = 'stage'</em><a class="headerlink" href="#collins.Constants.API_ENVIRONMENT_STAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_BRAND">
+<tt class="descname">FACET_BRAND</tt><em class="property"> = 0</em><a class="headerlink" href="#collins.Constants.FACET_BRAND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_CLOTHING_MEN_BELTS_CM">
+<tt class="descname">FACET_CLOTHING_MEN_BELTS_CM</tt><em class="property"> = 190</em><a class="headerlink" href="#collins.Constants.FACET_CLOTHING_MEN_BELTS_CM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_CLOTHING_MEN_DE">
+<tt class="descname">FACET_CLOTHING_MEN_DE</tt><em class="property"> = 187</em><a class="headerlink" href="#collins.Constants.FACET_CLOTHING_MEN_DE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_CLOTHING_MEN_INCH">
+<tt class="descname">FACET_CLOTHING_MEN_INCH</tt><em class="property"> = 189</em><a class="headerlink" href="#collins.Constants.FACET_CLOTHING_MEN_INCH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_CLOTHING_UNISEX_INCH">
+<tt class="descname">FACET_CLOTHING_UNISEX_INCH</tt><em class="property"> = 174</em><a class="headerlink" href="#collins.Constants.FACET_CLOTHING_UNISEX_INCH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_CLOTHING_UNISEX_INT">
+<tt class="descname">FACET_CLOTHING_UNISEX_INT</tt><em class="property"> = 173</em><a class="headerlink" href="#collins.Constants.FACET_CLOTHING_UNISEX_INT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_CLOTHING_UNISEX_ONESIZE">
+<tt class="descname">FACET_CLOTHING_UNISEX_ONESIZE</tt><em class="property"> = 204</em><a class="headerlink" href="#collins.Constants.FACET_CLOTHING_UNISEX_ONESIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_CLOTHING_WOMEN_BELTS_CM">
+<tt class="descname">FACET_CLOTHING_WOMEN_BELTS_CM</tt><em class="property"> = 181</em><a class="headerlink" href="#collins.Constants.FACET_CLOTHING_WOMEN_BELTS_CM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_CLOTHING_WOMEN_DE">
+<tt class="descname">FACET_CLOTHING_WOMEN_DE</tt><em class="property"> = 175</em><a class="headerlink" href="#collins.Constants.FACET_CLOTHING_WOMEN_DE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_CLOTHING_WOMEN_INCH">
+<tt class="descname">FACET_CLOTHING_WOMEN_INCH</tt><em class="property"> = 180</em><a class="headerlink" href="#collins.Constants.FACET_CLOTHING_WOMEN_INCH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_COLOR">
+<tt class="descname">FACET_COLOR</tt><em class="property"> = 1</em><a class="headerlink" href="#collins.Constants.FACET_COLOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_CUPSIZE">
+<tt class="descname">FACET_CUPSIZE</tt><em class="property"> = 4</em><a class="headerlink" href="#collins.Constants.FACET_CUPSIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_DIMENSION3">
+<tt class="descname">FACET_DIMENSION3</tt><em class="property"> = 6</em><a class="headerlink" href="#collins.Constants.FACET_DIMENSION3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_GENDERAGE">
+<tt class="descname">FACET_GENDERAGE</tt><em class="property"> = 3</em><a class="headerlink" href="#collins.Constants.FACET_GENDERAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_LENGTH">
+<tt class="descname">FACET_LENGTH</tt><em class="property"> = 5</em><a class="headerlink" href="#collins.Constants.FACET_LENGTH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_SHOES_UNISEX_ADIDAS_EUR">
+<tt class="descname">FACET_SHOES_UNISEX_ADIDAS_EUR</tt><em class="property"> = 195</em><a class="headerlink" href="#collins.Constants.FACET_SHOES_UNISEX_ADIDAS_EUR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_SHOES_UNISEX_EUR">
+<tt class="descname">FACET_SHOES_UNISEX_EUR</tt><em class="property"> = 194</em><a class="headerlink" href="#collins.Constants.FACET_SHOES_UNISEX_EUR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_SIZE">
+<tt class="descname">FACET_SIZE</tt><em class="property"> = 2</em><a class="headerlink" href="#collins.Constants.FACET_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_SIZE_CODE">
+<tt class="descname">FACET_SIZE_CODE</tt><em class="property"> = 206</em><a class="headerlink" href="#collins.Constants.FACET_SIZE_CODE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.FACET_SIZE_RUN">
+<tt class="descname">FACET_SIZE_RUN</tt><em class="property"> = 172</em><a class="headerlink" href="#collins.Constants.FACET_SIZE_RUN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.SORTS">
+<tt class="descname">SORTS</tt><em class="property"> = set(['relevance', 'updated_date', 'price', 'most_viewed', 'created_date'])</em><a class="headerlink" href="#collins.Constants.SORTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.SORT_CREATED">
+<tt class="descname">SORT_CREATED</tt><em class="property"> = 'created_date'</em><a class="headerlink" href="#collins.Constants.SORT_CREATED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.SORT_MOST_VIEWED">
+<tt class="descname">SORT_MOST_VIEWED</tt><em class="property"> = 'most_viewed'</em><a class="headerlink" href="#collins.Constants.SORT_MOST_VIEWED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.SORT_PRICE">
+<tt class="descname">SORT_PRICE</tt><em class="property"> = 'price'</em><a class="headerlink" href="#collins.Constants.SORT_PRICE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.SORT_RELEVANCE">
+<tt class="descname">SORT_RELEVANCE</tt><em class="property"> = 'relevance'</em><a class="headerlink" href="#collins.Constants.SORT_RELEVANCE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.SORT_UPDATED">
+<tt class="descname">SORT_UPDATED</tt><em class="property"> = 'updated_date'</em><a class="headerlink" href="#collins.Constants.SORT_UPDATED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.TYPES">
+<tt class="descname">TYPES</tt><em class="property"> = set(['products', 'categories'])</em><a class="headerlink" href="#collins.Constants.TYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.TYPE_CATEGORIES">
+<tt class="descname">TYPE_CATEGORIES</tt><em class="property"> = 'categories'</em><a class="headerlink" href="#collins.Constants.TYPE_CATEGORIES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.TYPE_PRODUCTS">
+<tt class="descname">TYPE_PRODUCTS</tt><em class="property"> = 'products'</em><a class="headerlink" href="#collins.Constants.TYPE_PRODUCTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.EasyCollins">
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">EasyCollins</tt><a class="headerlink" href="#collins.EasyCollins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An easy to use wrapper around the collins api which sets
+usabilty for anything else.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="collins.VERSION">
+<tt class="descclassname">collins.</tt><tt class="descname">VERSION</tt><em class="property"> = '0.0'</em><a class="headerlink" href="#collins.VERSION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Version of the python shop SDK.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to python-shop-sdk’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">python-shop-sdk 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Arne Simon =&gt; email::[arne.simon@slice-dice.de].
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
