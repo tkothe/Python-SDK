@@ -1,4 +1,18 @@
 Python-Shop-SDK
 ===============
 
-:Author: Arne Simon => email::[arne.simon@silce-dice.de]
+:Author: Arne Simon [arne.simon@silce-dice.de]
+
+Additional Conntacts
+--------------------
+
+iOS SDK
++++++++
+
+Jesse Hinrichsen [jesse@j-apps.com]
+Marius Schmeding [marius.schmeding@gmail.com]
+
+Android SDK
++++++++++++
+
+Henning Dodenhof [Henning.dodenhof@4inchworks.de]
