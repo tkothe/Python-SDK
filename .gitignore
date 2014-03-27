@@ -1,5 +1,5 @@
 *.sublime*
 *.log*
-doc/source/*
 *.pyc
 dump.json
+slicedice-config.json

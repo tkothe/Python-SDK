@@ -33,7 +33,15 @@ class CollinsException(Exception):
 
 
 class Constants(object):
-    """Some contsants which are blatantly copied from the php-sdk."""
+    """
+    Some contsants which are blatantly copied from the php-sdk.
+
+    .. attention::
+        The following constants are **NOT** in the PHP-SDK:
+            * FACET_CHANNEL
+            * FACET_CARE_SYMBOL
+            * FACET_CLOTHING_HATS_US
+    """
     FACET_BRAND = 0
     FACET_CLOTHING_MEN_BELTS_CM = 190
     FACET_CLOTHING_MEN_DE = 187
@@ -54,6 +62,16 @@ class Constants(object):
     FACET_SIZE = 2
     FACET_SIZE_CODE = 206
     FACET_SIZE_RUN = 172
+    # not in the PHP-SDK o.O
+    FACET_CHANNEL = 211
+    FACET_CARE_SYMBOL = 247
+    FACET_CLOTHING_HATS_US = 231
+
+    FACETS = set([FACET_BRAND , FACET_CLOTHING_MEN_BELTS_CM , FACET_CLOTHING_MEN_DE , FACET_CLOTHING_MEN_INCH ,
+                 FACET_CLOTHING_UNISEX_INCH , FACET_CLOTHING_UNISEX_INT , FACET_CLOTHING_UNISEX_ONESIZE ,
+                 FACET_CLOTHING_WOMEN_BELTS_CM , FACET_CLOTHING_WOMEN_DE , FACET_CLOTHING_WOMEN_INCH , FACET_COLOR ,
+                 FACET_CUPSIZE , FACET_DIMENSION3 , FACET_GENDERAGE , FACET_LENGTH , FACET_SHOES_UNISEX_ADIDAS_EUR ,
+                 FACET_SHOES_UNISEX_EUR , FACET_SIZE , FACET_SIZE_CODE , FACET_SIZE_RUN])
 
     SORT_CREATED = "created_date"
     SORT_MOST_VIEWED = "most_viewed"
@@ -119,7 +137,8 @@ class Config(object):
                                              extension=extension)
 
 
-def __check_sessionid(sessionid):
+
+def check_sessionid(sessionid):
     """
     .. attention::
         We copied it from the php-sdk.
@@ -150,14 +169,15 @@ class Collins(object):
         self.log = logging.getLogger(logname)
         self.log.debug("instantiated")
 
-    def send(self, cmd):
+    def send(self, cmd, obj):
         """
         Sends a Pyhton structure of dict's and list's as raw JSON to collins and
         returns a Python structure of dict's and list's from the JSON answer.
 
-        :param cmd: The list or dict object to send.
+        :param cmd: The name of the command.
+        :param obj: A python dict object which contains the request parameters.
         """
-        params = json.dumps(cmd)
+        params = json.dumps([{cmd: obj}])
         headers = {
             "Content-Type": "text/plain;charset=UTF-8",
             "User-Agent": self.config.agent,
@@ -169,7 +189,7 @@ class Collins(object):
             response = urllib2.urlopen(req)
 
             result = response.read()
-            result = json.loads(result)
+            result = json.loads(result)[0][cmd]
 
             if "error_message" in result:
                 raise CollinsException(result["error_message"])
@@ -189,7 +209,6 @@ class Collins(object):
         :param str searchword: The abbriviation.
         :param list categories: against which types should be autocompleted
         :param int limit: the amount of items returned per selected type
-        :return: A list of product objects.
 
         .. attention::
             In the documentation stands **autocomplete** but the real
@@ -209,9 +228,7 @@ class Collins(object):
 
             complete["types"] = types
 
-        cmd = [{"autocompletion": complete}]
-
-        return self.send(cmd)[0]["autocompletion"]["products"]
+        return self.send("autocompletion", complete)
 
     def basketadd(self, sessionid, products):
         """
@@ -239,11 +256,9 @@ class Collins(object):
         |amount   |the amount to add or set                           |
         +---------+---------------------------------------------------+
         """
-        __check_sessionid(sessionid)
+        check_sessionid(sessionid)
 
-        cmd = [{
-            "basket_add": {
-                "session_id": "",
+        data = {"session_id": sessionid,
                 # "product_variant": [
                 #     {"command": "",
                 #      "id": 1,
@@ -251,9 +266,8 @@ class Collins(object):
                 # ]
                 "product_variant": products
             }
-        }]
 
-        return self.send(cmd)[0]["basket_add"]
+        return self.send("basket_add", data)
 
     def basketget(self, sessionid):
         """
@@ -264,17 +278,33 @@ class Collins(object):
         :param str sessionid: identification of the basket -> user,
                               user -> basket
         """
-        __check_sessionid(sessionid)
+        check_sessionid(sessionid)
 
-        cmd = [{"basket_get": {"session_id": sessionid}}]
-
-        return self.send(cmd)[0]["basket_get"]
+        return self.send("basket_get", {"session_id": sessionid})
 
     def category(self, ids):
         """
         You are able to retrieve single categories.
 
         :param list ids: List of category ids.
+
+        .. rubric:: Example
+
+        .. codeblock:: python
+
+            collins.category([16077])
+
+        .. codeblock:: json
+
+            {
+                "16077": {
+                    "active": true,
+                    "position": 1,
+                    "name": "Damen",
+                    "parent": 0,
+                    "id": 16077
+                }
+            }
         """
 
         idscount = len(ids)
@@ -285,9 +315,7 @@ class Collins(object):
         if idscount > 200:
             raise CollinsException("to many ids, maximum is 200")
 
-        cmd = [{"category": {"ids": ids}}]
-
-        return self.send(cmd)[0]["category"]
+        return self.send("category", {"ids": ids})
 
     def categorytree(self, max_depth=None):
         """
@@ -295,9 +323,43 @@ class Collins(object):
         specified max depth for your app id.
 
         :param int max_depth: max depth of your category tree counted from root
+
+        .. rubric:: Example
+
+        .. codeblock:: python
+
+            collins.categorytree()
+
+        .. codeblock:: json
+
+            [
+                {
+                    "name": "Damen",
+                    "parent": null,
+                    "sub_categories": [
+                        {
+                            "name": "Bekleidung",
+                            "parent": 16077,
+                            "sub_categories": [
+                                {
+                                    "name": "Oberteile",
+                                    "parent": 16078,
+                                    "sub_categories": [
+                                        {
+                                            "name": "Fr\u00fchlingslooks",
+                                            "parent": 16079,
+                                            "sub_categories": [],
+                                            "active": false,
+                                            "position": 1,
+                                            "id": 23882
+                                        },
+
+                ...
+
+            ]
         """
         if max_depth is None:
-            cmd = [{"category_tree": {}}]
+            cmd ={}
         else:
             if max_depth < 1:
                 raise CollinsException("max_depth to small")
@@ -305,9 +367,9 @@ class Collins(object):
             if max_depth > 10:
                 raise CollinsException("max_depth to big")
 
-            cmd = [{"category_tree": {"max_depth": max_depth}}]
+            cmd = {"max_depth": max_depth}
 
-        return self.send(cmd)[0]["category_tree"]
+        return self.send("category_tree", cmd)
 
     def facets(self, group_ids=None, limit=None, offset=None):
         """
@@ -317,8 +379,50 @@ class Collins(object):
                                 group ids which belong to me
         :param int limit: limit the per page items
         :param int offset: offset for paging through the items
+
+        .. rubric:: Example
+
+        .. codeblock:: python
+
+            collins.facets([Constants.FACET_CUPSIZE])
+
+        .. codeblock:: json
+
+            {
+                "facet": [
+                    {
+                        "id": 4,
+                        "group_name": "cupsize",
+                        "name": "D",
+                        "value": "D",
+                        "facet_id": 96
+                    },
+                    {
+                        "id": 4,
+                        "group_name": "cupsize",
+                        "name": "A",
+                        "value": "A",
+                        "facet_id": 93
+                    },
+                    {
+                        "id": 4,
+                        "group_name": "cupsize",
+                        "name": "B",
+                        "value": "B",
+                        "facet_id": 94
+                    },
+                    {
+                        "id": 4,
+                        "group_name": "cupsize",
+                        "name": "C",
+                        "value": "C",
+                        "facet_id": 95
+                    }
+                ],
+                "hits": 4
+            }
         """
-        facets = {"offset": offset}
+        facets = {}
 
         if limit is not None:
             if limit < 1:
@@ -335,16 +439,24 @@ class Collins(object):
 
             facets["offset"] = offset
 
-        cmd = [{"facets": facets}]
-
-        return self.send(cmd)[0]["facets"]
+        return self.send("facets", facets)
 
     def facettypes(self):
-        """This query returns a list of facet groups available."""
+        """
+        This query returns a list of facet groups available.
 
-        cmd = [{"faced_types": {}}]
+        .. rubric:: Example
 
-        return self.send(cmd)[0]["faced_types"]
+        .. codeblock:: python
+
+            collins.facettypes()
+
+        .. codeblock:: json
+
+            [0, 2, 1, 6, 172, 206, 173, 194, 175, 204, 5, 189, 180, 231, 187, 190, 211, 181, 247]
+        """
+
+        return self.send("facet_types", {})
 
     def getorder(self, orderid):
         """Through this query you could get a order which was created
@@ -353,9 +465,7 @@ class Collins(object):
 
         :param int orderid: this is the order id to get info about
         """
-        cmd = [{"get_order": {"order_id": orderid}}]
-
-        return self.send(cmd)[0]["get_order"]
+        return self.send("get_order", {"order_id": orderid})
 
     def initiateorder(self, sessionid, sucess_url,
                       cancel_url=None, error_url=None):
@@ -371,7 +481,7 @@ class Collins(object):
         :param str error_url: this is a callback url if the order throwed
                               exceptions (see checkout api)
         """
-        __check_sessionid(sessionid)
+        check_sessionid(sessionid)
 
         order = {"session_id": sessionid, "sucess_url": sucess_url}
 
@@ -381,9 +491,7 @@ class Collins(object):
         if error_url is not None:
             order["error_url"] = error_url
 
-        cmd = [{"initiate_order": order}]
-
-        return self.send(cmd)[0]["initiate_order"]
+        return self.send("initiate_order", order)
 
     def livevariant(self, ids):
         """This does return the live information about the product variant.
@@ -400,9 +508,7 @@ class Collins(object):
         if idscount > 200:
             raise CollinsException("too many ids")
 
-        cmd = [{"live_variant": {"ids": ids}}]
-
-        return self.send(cmd)[0]["live_variant"]
+        return self.send("live_variant", {"ids": ids})
 
     def products(self, ids):
         """
@@ -410,6 +516,56 @@ class Collins(object):
         by its ids.
 
         :param list ids: array of product variant id
+
+        .. rubric:: Example
+
+        .. codeblock:: python
+
+            collins.products([227838, 287677])
+
+        **Returns:**
+
+        .. codeblock:: json
+
+            {
+                "pageHash": "4ae38022-8ddd-4f15-9654-4ea0156c33f0",
+                "ids": {
+                    "287677": {
+                        "active": true,
+                        "styles": [
+                            {
+                                "active": true,
+                                "id": 287685,
+                                "style_key": "m01_233966406",
+                                "name": "Badeshorts, Buffalo"
+                            },
+                            {
+                                "active": false,
+                                "id": 358863,
+                                "style_key": "m01_233966406",
+                                "name": "Badeshorts, Buffalo"
+                            }
+                        ],
+                        "id": 287677,
+                        "style_key": "m01_233966406",
+                        "name": "Badeshorts, Buffalo"
+                    },
+                    "227838": {
+                        "active": true,
+                        "styles": [
+                            {
+                                "active": true,
+                                "id": 227854,
+                                "style_key": "m01_255897631",
+                                "name": "Badeshort Herren"
+                            }
+                        ],
+                        "id": 227838,
+                        "style_key": "m01_255897631",
+                        "name": "Badeshort Herren"
+                    }
+                }
+            }
         """
         idscount = len(ids)
 
@@ -419,9 +575,7 @@ class Collins(object):
         if idscount > 200:
             raise CollinsException("too many ids")
 
-        cmd = [{"products": {"ids": ids}}]
-
-        return self.send(cmd)[0]["products"]
+        return self.send("products", {"ids": ids})
 
     def productsearch(self, sessionid, filter=None, result=None):
         """
@@ -442,6 +596,9 @@ class Collins(object):
                The name -> id, id -> name resolution works through facets call.
                To get all the facet groups you can filter or are in your result
                set see "Facet types"
+
+        .. note::
+            To get facet types see :py:class:`collins.Constants`
 
         :param str sessionid: the session_id of the frontend customer
         :param dict filter: object of filter information, these filters do
@@ -506,8 +663,33 @@ class Collins(object):
         |         |sort by occurrences in products. this overwrites even the |
         |         |_all field.                                               |
         +---------+----------------------------------------------------------+
+
+
+        .. rubric:: Example
+
+        .. codeblock:: python
+
+            # i belive we search shorts now o.O
+            collins.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
+
+        **Returns:**
+
+        .. codeblock:: json
+
+            {
+                "product_count": 78,
+                "pageHash": "6e63cadb-5505-47b7-b36d-643311292a22",
+                "facets": {},
+                "products": [
+                    {
+                        "id": 227838,
+                        "name": "Badeshort Herren"
+                    },
+
+                    ...
+            }
         """
-        __check_sessionid(sessionid)
+        check_sessionid(sessionid)
 
         search = {"session_id": sessionid}
 
@@ -517,9 +699,7 @@ class Collins(object):
         if result is not None:
             search["result"] = result
 
-        cmd = [{"product_search": search}]
-
-        return self.send(cmd)[0]["product_search"]
+        return self.send("product_search", search)
 
     def suggest(self, searchword, categories=None, limit=None):
         """
@@ -542,10 +722,19 @@ class Collins(object):
 
             suggest["limit"] = limit
 
-        cmd = [{"suggest": suggest}]
+        return self.send("suggest", suggest)
 
-        return self.send(cmd)[0]["suggest"]
+
+class EasyCollins(object):
+    def __init__(self, conf_or_filename):
+        if isinstance(conf_or_filename, Config):
+            self.config = conf_or_filename
+        else:
+            self.config = Config(conf_or_filename)
+
+        self.collins = Collins(self.config)
 
 if __name__ == '__main__':
-    c = Collins("../python-shop-config.json")
-    print c.autocomplete("sho")
+    c = Collins("slicedice-config.json")
+    open('dump.json','w').write(json.dumps(c.facets([Constants.FACET_CUPSIZE]), indent=4))
+    # open('dump.json','w').write(json.dumps(c.send("styles", {"ids":["m01_233966406"]}), indent=4))

@@ -5,7 +5,8 @@
 import unittest
 import collins
 
-TEST_CONFIG = "../python-shop-config.json"
+TEST_CONFIG = "slicedice-config.json"
+TEST_SESSION_ID = "fa8e2e2210n"
 
 
 class ConfigTest(unittest.TestCase):
@@ -23,12 +24,16 @@ class ConfigTest(unittest.TestCase):
 
 class CollinsTest(unittest.TestCase):
 
+    @staticmethod
+    def setUpClass():
+        CollinsTest.collins = collins.Collins(TEST_CONFIG)
+
     def setUp(self):
-        self.collins = collins.Collins(collins.Config(TEST_CONFIG))
+        self.log = self.collins.log.getChild(self.id())
 
     def testAutocomplete(self):
-        result = self.collins.autocomplete('sho')
-
+        result = self.collins.autocomplete('sho', limit=10)
+        self.log.info(result)
         self.assertGreater(len(result), 1)
 
     def testBasketadd(self):
@@ -40,17 +45,18 @@ class CollinsTest(unittest.TestCase):
         pass
 
     def testCategory(self):
-        #self.collins.category(ids)
-        pass
+        self.log.info(self.collins.category([16354]))
 
     def testCategorytree(self):
-        self.collins.categorytree()
+        self.log.info(self.collins.categorytree(max_depth=1))
 
     def testFacets(self):
-        self.collins.facets()
+        self.log.info(self.collins.facets([collins.Constants.FACET_COLOR]))
 
     def testFacettypes(self):
-        self.collins.facettypes()
+        ftypes = self.collins.facettypes()
+        self.log.info(set(ftypes)-collins.Constants.FACETS)
+        self.log.info(self.collins.facettypes())
 
     def testGetorder(self):
         #self.collins.getorder(orderid)
@@ -69,13 +75,12 @@ class CollinsTest(unittest.TestCase):
         pass
 
     def testProductsearch(self):
-        #self.collins.productsearch(sessionid)
-        pass
+        response = self.collins.productsearch(TEST_SESSION_ID, filter={"categories":[16354]}) # i belive we search shorts now o.O
+        self.log.info(response)
 
     def testSuggest(self):
         response = self.collins.suggest("ny")
-        self.collins.log.info(response)
-
+        self.log.info(response)
         self.assertGreater(len(response), 0)
 
 
