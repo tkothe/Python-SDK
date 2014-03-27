@@ -35,36 +35,36 @@ class CollinsException(Exception):
 class Constants(object):
     """Some contsants which are blatantly copied from the php-sdk."""
     FACET_BRAND = 0
+    FACET_CLOTHING_MEN_BELTS_CM = 190
+    FACET_CLOTHING_MEN_DE = 187
+    FACET_CLOTHING_MEN_INCH = 189
+    FACET_CLOTHING_UNISEX_INCH = 174
+    FACET_CLOTHING_UNISEX_INT = 173
+    FACET_CLOTHING_UNISEX_ONESIZE = 204
+    FACET_CLOTHING_WOMEN_BELTS_CM = 181
+    FACET_CLOTHING_WOMEN_DE = 175
+    FACET_CLOTHING_WOMEN_INCH = 180
     FACET_COLOR = 1
-    FACET_SIZE = 2
-    FACET_GENDERAGE = 3
     FACET_CUPSIZE = 4
-    FACET_LENGTH = 5
     FACET_DIMENSION3 = 6
+    FACET_GENDERAGE = 3
+    FACET_LENGTH = 5
+    FACET_SHOES_UNISEX_ADIDAS_EUR = 195
+    FACET_SHOES_UNISEX_EUR = 194
+    FACET_SIZE = 2
     FACET_SIZE_CODE = 206
     FACET_SIZE_RUN = 172
-    FACET_CLOTHING_UNISEX_INT = 173
-    FACET_CLOTHING_UNISEX_INCH = 174
-    FACET_SHOES_UNISEX_EUR = 194
-    FACET_CLOTHING_WOMEN_DE = 175
-    FACET_CLOTHING_UNISEX_ONESIZE = 204
-    FACET_SHOES_UNISEX_ADIDAS_EUR = 195
-    FACET_CLOTHING_WOMEN_BELTS_CM = 181
-    FACET_CLOTHING_WOMEN_INCH = 180
-    FACET_CLOTHING_MEN_BELTS_CM = 190
-    FACET_CLOTHING_MEN_INCH = 189
-    FACET_CLOTHING_MEN_DE = 187
 
-    SORT_RELEVANCE = "relevance"
-    SORT_UPDATED = "updated_date"
     SORT_CREATED = "created_date"
     SORT_MOST_VIEWED = "most_viewed"
     SORT_PRICE = "price"
+    SORT_RELEVANCE = "relevance"
+    SORT_UPDATED = "updated_date"
     SORTS = set([SORT_RELEVANCE, SORT_UPDATED, SORT_CREATED,
                  SORT_MOST_VIEWED, SORT_PRICE])
 
-    TYPE_PRODUCTS = "products"
     TYPE_CATEGORIES = "categories"
+    TYPE_PRODUCTS = "products"
     TYPES = set([TYPE_CATEGORIES, TYPE_PRODUCTS])
 
     API_ENVIRONMENT_STAGE = "stage"
@@ -131,7 +131,8 @@ def __check_sessionid(sessionid):
 
 
 class Collins(object):
-    """An interface to the Collins API.
+    """
+    An interface to the Collins API.
 
     This is thin warper around the Collins API.
     All functions return the JSON responses as Python List and Dictonarys.
@@ -177,8 +178,10 @@ class Collins(object):
 
         except urllib2.HTTPError as err:
             message = "{} {} {}".format(err.code, err.reason, err.read())
+            self.log.exception(message)
             raise CollinsException(message)
         except urllib2.URLError as err:
+            self.log.exception('')
             raise CollinsException(err.reason)
 
     def autocomplete(self, searchword, limit=None, types=None):
@@ -186,6 +189,7 @@ class Collins(object):
         :param str searchword: The abbriviation.
         :param list categories: against which types should be autocompleted
         :param int limit: the amount of items returned per selected type
+        :return: A list of product objects.
 
         .. attention::
             In the documentation stands **autocomplete** but the real
@@ -201,13 +205,13 @@ class Collins(object):
 
         if types is not None:
             if len(set(types) - Constants.TYPES) > 0:
-                raise CollinsException("unknown categories")
+                raise CollinsException("unknown types")
 
             complete["types"] = types
 
         cmd = [{"autocompletion": complete}]
 
-        return self.send(cmd)["autocompletion_response"]
+        return self.send(cmd)[0]["autocompletion"]["products"]
 
     def basketadd(self, sessionid, products):
         """
@@ -249,7 +253,7 @@ class Collins(object):
             }
         }]
 
-        return self.send(cmd)["basket_add_response"]
+        return self.send(cmd)[0]["basket_add"]
 
     def basketget(self, sessionid):
         """
@@ -264,10 +268,11 @@ class Collins(object):
 
         cmd = [{"basket_get": {"session_id": sessionid}}]
 
-        return self.send(cmd)["basket_get_response"]
+        return self.send(cmd)[0]["basket_get"]
 
     def category(self, ids):
-        """You are able to retrieve single categories.
+        """
+        You are able to retrieve single categories.
 
         :param list ids: List of category ids.
         """
@@ -282,11 +287,12 @@ class Collins(object):
 
         cmd = [{"category": {"ids": ids}}]
 
-        return self.send(cmd)["category_response"]
+        return self.send(cmd)[0]["category"]
 
     def categorytree(self, max_depth=None):
-        """The request category tree returns a tree of categories of a
-            specified max depth for your app id.
+        """
+        The request category tree returns a tree of categories of a
+        specified max depth for your app id.
 
         :param int max_depth: max depth of your category tree counted from root
         """
@@ -301,10 +307,11 @@ class Collins(object):
 
             cmd = [{"category_tree": {"max_depth": max_depth}}]
 
-        return self.send(cmd)["category_tree_response"]
+        return self.send(cmd)[0]["category_tree"]
 
     def facets(self, group_ids=None, limit=None, offset=None):
-        """This returns a list of available facet groups or a facets of a group.
+        """
+        This returns a list of available facet groups or a facets of a group.
 
         :param list group_ids: get only these group ids, if empty get all
                                 group ids which belong to me
@@ -330,14 +337,14 @@ class Collins(object):
 
         cmd = [{"facets": facets}]
 
-        return self.send(cmd)["facets_response"]
+        return self.send(cmd)[0]["facets"]
 
     def facettypes(self):
         """This query returns a list of facet groups available."""
 
         cmd = [{"faced_types": {}}]
 
-        return self.send(cmd)["faced_types_response"]
+        return self.send(cmd)[0]["faced_types"]
 
     def getorder(self, orderid):
         """Through this query you could get a order which was created
@@ -348,7 +355,7 @@ class Collins(object):
         """
         cmd = [{"get_order": {"order_id": orderid}}]
 
-        return self.send(cmd)["get_order_response"]
+        return self.send(cmd)[0]["get_order"]
 
     def initiateorder(self, sessionid, sucess_url,
                       cancel_url=None, error_url=None):
@@ -376,7 +383,7 @@ class Collins(object):
 
         cmd = [{"initiate_order": order}]
 
-        return self.send(cmd)["initiate_order_response"]
+        return self.send(cmd)[0]["initiate_order"]
 
     def livevariant(self, ids):
         """This does return the live information about the product variant.
@@ -395,11 +402,12 @@ class Collins(object):
 
         cmd = [{"live_variant": {"ids": ids}}]
 
-        return self.send(cmd)["live_variant_response"]
+        return self.send(cmd)[0]["live_variant"]
 
     def products(self, ids):
-        """Here you get a detail view of a product or a list of products
-            returned by its ids.
+        """
+        Here you get a detail view of a product or a list of products returned
+        by its ids.
 
         :param list ids: array of product variant id
         """
@@ -413,7 +421,7 @@ class Collins(object):
 
         cmd = [{"products": {"ids": ids}}]
 
-        return self.send(cmd)["products_response"]
+        return self.send(cmd)[0]["products"]
 
     def productsearch(self, sessionid, filter=None, result=None):
         """
@@ -511,7 +519,7 @@ class Collins(object):
 
         cmd = [{"product_search": search}]
 
-        return self.send(cmd)["product_search_response"]
+        return self.send(cmd)[0]["product_search"]
 
     def suggest(self, searchword, categories=None, limit=None):
         """
@@ -536,4 +544,8 @@ class Collins(object):
 
         cmd = [{"suggest": suggest}]
 
-        return self.send(cmd)["suggest_response"]
+        return self.send(cmd)[0]["suggest"]
+
+if __name__ == '__main__':
+    c = Collins("../python-shop-config.json")
+    print c.autocomplete("sho")

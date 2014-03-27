@@ -14,7 +14,7 @@
 
 
 \title{python-shop-sdk Documentation}
-\date{March 26, 2014}
+\date{March 27, 2014}
 \release{0.1}
 \author{Arne Simon =\textgreater{} email::{[}arne.simon@slice-dice.de{]}}
 \newcommand{\sphinxlogo}{}
@@ -130,6 +130,18 @@ Contents:
 Arne Simon =\textgreater{} email::{[}arne\_simon@gmx.de{]}
 
 \end{description}\end{quote}
+
+This module provieds two wrappers around the Collins-Shop-API.
+\begin{itemize}
+\item {} 
+A thin python wrapper which takes Python dict's and list's and returns the
+result as the same.
+
+\item {} 
+EasyCollins, which is a more convient layer of abstraction of the API as an
+object herachie which caches results and query results if there are needed.
+
+\end{itemize}
 \index{COLLINS\_VERSION (in module collins)}
 
 \begin{fulllineitems}
@@ -148,12 +160,26 @@ An interface to the Collins API.
 
 This is thin warper around the Collins API.
 All functions return the JSON responses as Python List and Dictonarys.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\textbf{config} -- A Config instance or a file name to a JSON config file.
+
+\end{description}\end{quote}
 \index{autocomplete() (collins.Collins method)}
 
 \begin{fulllineitems}
-\phantomsection\label{collins:collins.Collins.autocomplete}\pysiglinewithargsret{\bfcode{autocomplete}}{\emph{text, limit=10, categories={[}'categories', `products'{]}}}{}~\begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode
-\textbf{text} (\emph{str}) -- The abbriviation.
+\phantomsection\label{collins:collins.Collins.autocomplete}\pysiglinewithargsret{\bfcode{autocomplete}}{\emph{searchword}, \emph{limit=None}, \emph{types=None}}{}~\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{searchword} (\emph{str}) -- The abbriviation.
+
+\item {} 
+\textbf{categories} (\emph{list}) -- against which types should be autocompleted
+
+\item {} 
+\textbf{limit} (\emph{int}) -- the amount of items returned per selected type
+
+\end{itemize}
 
 \end{description}\end{quote}
 
@@ -167,13 +193,69 @@ Tag is \textbf{autocompletion}!
 \index{basketadd() (collins.Collins method)}
 
 \begin{fulllineitems}
-\phantomsection\label{collins:collins.Collins.basketadd}\pysiglinewithargsret{\bfcode{basketadd}}{\emph{products}}{}
+\phantomsection\label{collins:collins.Collins.basketadd}\pysiglinewithargsret{\bfcode{basketadd}}{\emph{sessionid}, \emph{products}}{}
+The request ``basket add'' does change the Items available in the basket.
+A set to 0 or less leads to a deletion. Only the variants in the items
+list will be changed. If a variant is changed or added an internal
+availability check is done and error codes are returned.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{sessionid} (\emph{str}) -- identification of the basket -\textgreater{} user,
+user -\textgreater{} basket
+
+\item {} 
+\textbf{products} (\emph{list}) -- is the array for the product variants
+
+\end{itemize}
+
+\end{description}\end{quote}
+\paragraph{product variant dict}
+
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textsf{\relax 
+fieldname
+} & \textsf{\relax 
+meaning
+}\\
+\hline
+id
+ & 
+the product variant id
+\\
+
+command
+ & 
+either add for the + operator (even -1 is possible)
+or set for a specific quantity.
+If the end amount is \textless{}= 0 the product is
+removed from basket with an result code.
+\\
+
+amount
+ & 
+the amount to add or set
+\\
+\hline\end{tabulary}
+
+
 \end{fulllineitems}
 
 \index{basketget() (collins.Collins method)}
 
 \begin{fulllineitems}
 \phantomsection\label{collins:collins.Collins.basketget}\pysiglinewithargsret{\bfcode{basketget}}{\emph{sessionid}}{}
+This returns the current basket for a User / Session ID.
+The basket belongs to a specific app id and session id,
+another app can have the same session id.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\textbf{sessionid} (\emph{str}) -- identification of the basket -\textgreater{} user,
+user -\textgreater{} basket
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
 \index{category() (collins.Collins method)}
@@ -193,26 +275,32 @@ You are able to retrieve single categories.
 
 \begin{fulllineitems}
 \phantomsection\label{collins:collins.Collins.categorytree}\pysiglinewithargsret{\bfcode{categorytree}}{\emph{max\_depth=None}}{}
-The request category tree returns a tree of categories of a 
+The request category tree returns a tree of categories of a
 specified max depth for your app id.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\textbf{max\_depth} (\emph{int}) -- max depth of your category tree counted from root
+
+\end{description}\end{quote}
 
 \end{fulllineitems}
 
 \index{facets() (collins.Collins method)}
 
 \begin{fulllineitems}
-\phantomsection\label{collins:collins.Collins.facets}\pysiglinewithargsret{\bfcode{facets}}{\emph{group\_ids=None}, \emph{limit=None}, \emph{offset=0}}{}
+\phantomsection\label{collins:collins.Collins.facets}\pysiglinewithargsret{\bfcode{facets}}{\emph{group\_ids=None}, \emph{limit=None}, \emph{offset=None}}{}
 This returns a list of available facet groups or a facets of a group.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\textbf{group\_ids} (\emph{list}) -- 
+\textbf{group\_ids} (\emph{list}) -- get only these group ids, if empty get all
+group ids which belong to me
 
 \item {} 
-\textbf{limit} (\emph{int}) -- 
+\textbf{limit} (\emph{int}) -- limit the per page items
 
 \item {} 
-\textbf{offset} (\emph{int}) -- 
+\textbf{offset} (\emph{int}) -- offset for paging through the items
 
 \end{itemize}
 
@@ -232,14 +320,14 @@ This query returns a list of facet groups available.
 
 \begin{fulllineitems}
 \phantomsection\label{collins:collins.Collins.getorder}\pysiglinewithargsret{\bfcode{getorder}}{\emph{orderid}}{}~\begin{description}
-\item[{Through this query you could get a order which was created }] \leavevmode
-for/through your app. This is limited to a configured 
+\item[{Through this query you could get a order which was created}] \leavevmode
+for/through your app. This is limited to a configured
 timeframe and to your app.
 
 \end{description}
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode
-\textbf{orderid} (\emph{int}) -- 
+\textbf{orderid} (\emph{int}) -- this is the order id to get info about
 
 \end{description}\end{quote}
 
@@ -256,16 +344,20 @@ This should be done if a user wants to go to the checkout.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\textbf{sessionid} (\emph{str}) -- identification of the basket -\textgreater{} user, user -\textgreater{} basket (see basket\_get, basket\_add)
+\textbf{sessionid} (\emph{str}) -- identification of the basket -\textgreater{} user,
+user -\textgreater{} basket (see basket\_get, basket\_add)
 
 \item {} 
-\textbf{sucess\_url} (\emph{str}) -- this is a callback url if the order was successfully created. (see checkout api)
+\textbf{sucess\_url} (\emph{str}) -- this is a callback url if the order was
+successfully created. (see checkout api)
 
 \item {} 
-\textbf{cancel\_url} (\emph{str}) -- this is a callback url if the order was canceled. (see checkout api)
+\textbf{cancel\_url} (\emph{str}) -- this is a callback url if the order was
+canceled. (see checkout api)
 
 \item {} 
-\textbf{error\_url} (\emph{str}) -- this is a callback url if the order throwed exceptions (see checkout api)
+\textbf{error\_url} (\emph{str}) -- this is a callback url if the order throwed
+exceptions (see checkout api)
 
 \end{itemize}
 
@@ -277,7 +369,7 @@ This should be done if a user wants to go to the checkout.
 
 \begin{fulllineitems}
 \phantomsection\label{collins:collins.Collins.livevariant}\pysiglinewithargsret{\bfcode{livevariant}}{\emph{ids}}{}~\begin{description}
-\item[{This does return the live information about the product variant. }] \leavevmode
+\item[{This does return the live information about the product variant.}] \leavevmode
 This is as ``live'' as possible.
 And could differ vs. a ``product search'' or ``product'' query.
 
@@ -293,11 +385,9 @@ And could differ vs. a ``product search'' or ``product'' query.
 \index{products() (collins.Collins method)}
 
 \begin{fulllineitems}
-\phantomsection\label{collins:collins.Collins.products}\pysiglinewithargsret{\bfcode{products}}{}{}~\begin{description}
-\item[{Here you get a detail view of a product or a list of products }] \leavevmode
-returned by its ids.
-
-\end{description}
+\phantomsection\label{collins:collins.Collins.products}\pysiglinewithargsret{\bfcode{products}}{\emph{ids}}{}
+Here you get a detail view of a product or a list of products returned
+by its ids.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode
 \textbf{ids} (\emph{list}) -- array of product variant id
@@ -313,14 +403,14 @@ returned by its ids.
 This is the main query for retrieving products for your app.
 Lists of products will be returned which are filtered.
 In a search you dont get back inactive set products.
-The response can contain the available facets and their product count and 
-categories for the filter set.
+The response can contain the available facets and their product count
+and categories for the filter set.
 \begin{description}
 \item[{There are two types of facets:}] \leavevmode\begin{enumerate}
 \item {} \begin{description}
 \item[{is a pre defined and always available set of facets}] \leavevmode\begin{enumerate}
 \item {} 
-price range (amazon like see : prices field in response schema)
+price range (amazon like see )
 
 \item {} 
 sale facet how many products are sale and how many not
@@ -333,9 +423,12 @@ categories
 \end{description}
 
 \item {} 
-dynamic facets which occur through the products itself. If a product has one the these attributes you are able to
-query for these attributes. These facets are always just ids. The name -\textgreater{} id, id -\textgreater{} name resolution
-works through facets call. To get all the facet groups you can filter or are in your result set see ``Facet types''
+dynamic facets which occur through the products itself. If a
+product has one the these attributes you are able to query for
+these attributes. These facets are always just ids.
+The name -\textgreater{} id, id -\textgreater{} name resolution works through facets call.
+To get all the facet groups you can filter or are in your result
+set see ``Facet types''
 
 \end{enumerate}
 
@@ -346,11 +439,11 @@ works through facets call. To get all the facet groups you can filter or are in 
 \textbf{sessionid} (\emph{str}) -- the session\_id of the frontend customer
 
 \item {} 
-\textbf{filter} (\emph{dict}) -- object of filter information, these filters do 
+\textbf{filter} (\emph{dict}) -- object of filter information, these filters do
 change the subset of products
 
 \item {} 
-\textbf{result} (\emph{dict}) -- object of result information, these properties 
+\textbf{result} (\emph{dict}) -- object of result information, these properties
 change the order and the appearance of the subset
 
 \end{itemize}
@@ -385,9 +478,12 @@ range filter on the price set as eurocent
 \\
 
 searchword
-facets
  & 
 the word which filters every product
+\\
+
+facets
+ & 
 object of attributes every key is an array of facet id
 values to filter by them
 \\
@@ -453,9 +549,10 @@ meaning
 \hline
 \_all
  & 
-is an object with property limit which holds an integer to
-get the amount of attributes, sort by occurrences in products
-if this is set, this is the default for ALL attributes.
+is an object with property limit which holds an integer
+to get the amount of attributes, sort by occurrences in
+products if this is set, this is the default for
+ALL attributes.
 \\
 
 {[} 0-9 {]}+
@@ -474,11 +571,35 @@ sort by occurrences in products. this overwrites even the
 
 \begin{fulllineitems}
 \phantomsection\label{collins:collins.Collins.send}\pysiglinewithargsret{\bfcode{send}}{\emph{cmd}}{}
-Sends a Pyhton structure of dict's and list's as raw JSON to collins and 
+Sends a Pyhton structure of dict's and list's as raw JSON to collins and
 returns a Python structure of dict's and list's from the JSON answer.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode
 \textbf{cmd} -- The list or dict object to send.
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{suggest() (collins.Collins method)}
+
+\begin{fulllineitems}
+\phantomsection\label{collins:collins.Collins.suggest}\pysiglinewithargsret{\bfcode{suggest}}{\emph{searchword}, \emph{categories=None}, \emph{limit=None}}{}
+The suggest endpoint does what it says and suggest more terms.
+It takes a searchterm and suggests terms which occurance is really
+often in combination with these terms before.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{searchword} (\emph{str}) -- string of a searchterm to suggest more words for
+
+\item {} 
+\textbf{categories} (\emph{list}) -- array of category ids
+
+\item {} 
+\textbf{limit} (\emph{int}) -- amount of items to suggest
+
+\end{itemize}
 
 \end{description}\end{quote}
 
@@ -493,7 +614,7 @@ returns a Python structure of dict's and list's from the JSON answer.
 \phantomsection\label{collins:collins.CollinsException}\pysigline{\strong{exception }\code{collins.}\bfcode{CollinsException}}
 Bases: \code{exceptions.Exception}
 
-An exception in collins module.
+An exception in the collins module.
 
 \end{fulllineitems}
 
@@ -502,10 +623,86 @@ An exception in collins module.
 \begin{fulllineitems}
 \phantomsection\label{collins:collins.Config}\pysiglinewithargsret{\strong{class }\code{collins.}\bfcode{Config}}{\emph{filename}}{}
 Bases: \code{object}
+
+The configuration of a collins api connection.
+
+A config class has to have the following readable attributes:
+\begin{itemize}
+\item {} \begin{description}
+\item[{entry\_point\_url:}] \leavevmode
+The url for collins.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{app\_id}] \leavevmode
+The application id.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{app\_password}] \leavevmode
+The password for the corresponding application id.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{agent}] \leavevmode
+The name of the browser agent to fake.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{authorization}] \leavevmode
+The authorization header
+
+\end{description}
+
+\item {} \begin{description}
+\item[{image\_url}] \leavevmode
+A string as template for the image urls.
+As example \href{http://cdn.mary-paul.de/product\_images}{http://cdn.mary-paul.de/product\_images}/\{path\}/\{id\}\_\{width\}\_\{height\}\{extension\}.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{logging}] \leavevmode
+A dictonary for logging.config.dictConfig.
+
+\end{description}
+
+\end{itemize}
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\textbf{filename} (\emph{str}) -- The path to a JSON file which holds the configuration.
+
+\end{description}\end{quote}
 \index{imageurl() (collins.Config method)}
 
 \begin{fulllineitems}
-\phantomsection\label{collins:collins.Config.imageurl}\pysiglinewithargsret{\bfcode{imageurl}}{\emph{path}, \emph{id}, \emph{width}, \emph{height}, \emph{extension}}{}
+\phantomsection\label{collins:collins.Config.imageurl}\pysiglinewithargsret{\bfcode{imageurl}}{\emph{path}, \emph{productid}, \emph{width}, \emph{height}, \emph{extension}}{}
+Returns the url for a image.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{path} -- Part of the image path.
+
+\item {} 
+\textbf{productid} -- 
+
+\item {} 
+\textbf{width} -- Width of the image.
+
+\item {} 
+\textbf{height} -- Height of the image.
+
+\item {} 
+\textbf{extension} -- The image extension. For example \emph{`.jpg'}
+
+\end{itemize}
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
 
@@ -650,6 +847,12 @@ Some contsants which are blatantly copied from the php-sdk.
 \phantomsection\label{collins:collins.Constants.FACET_SIZE_RUN}\pysigline{\bfcode{FACET\_SIZE\_RUN}\strong{ = 172}}
 \end{fulllineitems}
 
+\index{SORTS (collins.Constants attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{collins:collins.Constants.SORTS}\pysigline{\bfcode{SORTS}\strong{ = set({[}'relevance', `updated\_date', `price', `most\_viewed', `created\_date'{]})}}
+\end{fulllineitems}
+
 \index{SORT\_CREATED (collins.Constants attribute)}
 
 \begin{fulllineitems}
@@ -680,6 +883,12 @@ Some contsants which are blatantly copied from the php-sdk.
 \phantomsection\label{collins:collins.Constants.SORT_UPDATED}\pysigline{\bfcode{SORT\_UPDATED}\strong{ = `updated\_date'}}
 \end{fulllineitems}
 
+\index{TYPES (collins.Constants attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{collins:collins.Constants.TYPES}\pysigline{\bfcode{TYPES}\strong{ = set({[}'products', `categories'{]})}}
+\end{fulllineitems}
+
 \index{TYPE\_CATEGORIES (collins.Constants attribute)}
 
 \begin{fulllineitems}
@@ -692,19 +901,6 @@ Some contsants which are blatantly copied from the php-sdk.
 \phantomsection\label{collins:collins.Constants.TYPE_PRODUCTS}\pysigline{\bfcode{TYPE\_PRODUCTS}\strong{ = `products'}}
 \end{fulllineitems}
 
-
-\end{fulllineitems}
-
-\index{EasyCollins (class in collins)}
-
-\begin{fulllineitems}
-\phantomsection\label{collins:collins.EasyCollins}\pysigline{\strong{class }\code{collins.}\bfcode{EasyCollins}}
-Bases: \code{object}
-\begin{description}
-\item[{An easy to use wrapper around the collins api which sets}] \leavevmode
-usabilty for anything else.
-
-\end{description}
 
 \end{fulllineitems}
 

@@ -118,19 +118,23 @@ All functions return the JSON responses as Python List and Dictonarys.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>searchword</strong> (<em>str</em>) &#8211; The abbriviation.</li>
 <li><strong>categories</strong> (<em>list</em>) &#8211; against which types should be autocompleted</li>
 <li><strong>limit</strong> (<em>int</em>) &#8211; the amount of items returned per selected type</li>
 </ul>
 </td>
 </tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of product objects.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <div class="admonition attention">
 <p class="first admonition-title">Attention</p>
-<p class="last">In the documentation stands <strong>autocomplete</strong> but the real
+<p>In the documentation stands <strong>autocomplete</strong> but the real
 Tag is <strong>autocompletion</strong>!</p>
+<p class="last">The same with the response</p>
 </div>
 </dd></dl>
 
@@ -216,10 +220,8 @@ user -&gt; basket</td>
 <dl class="method">
 <dt id="collins.Collins.categorytree">
 <tt class="descname">categorytree</tt><big>(</big><em>max_depth=None</em><big>)</big><a class="headerlink" href="#collins.Collins.categorytree" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>The request category tree returns a tree of categories of a</dt>
-<dd>specified max depth for your app id.</dd>
-</dl>
+<dd><p>The request category tree returns a tree of categories of a
+specified max depth for your app id.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -322,10 +324,8 @@ And could differ vs. a &#8220;product search&#8221; or &#8220;product&#8221; que
 <dl class="method">
 <dt id="collins.Collins.products">
 <tt class="descname">products</tt><big>(</big><em>ids</em><big>)</big><a class="headerlink" href="#collins.Collins.products" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Here you get a detail view of a product or a list of products</dt>
-<dd>returned by its ids.</dd>
-</dl>
+<dd><p>Here you get a detail view of a product or a list of products returned
+by its ids.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -767,14 +767,6 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/product_i
 <tt class="descname">TYPE_PRODUCTS</tt><em class="property"> = 'products'</em><a class="headerlink" href="#collins.Constants.TYPE_PRODUCTS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="class">
-<dt id="collins.EasyCollins">
-<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">EasyCollins</tt><a class="headerlink" href="#collins.EasyCollins" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>An easy to use wrapper around the collins api which sets
-usabilty for anything else.</p>
 </dd></dl>
 
 <dl class="data">

@@ -16,3 +16,8 @@ Android SDK
 +++++++++++
 
 Henning Dodenhof [Henning.dodenhof@4inchworks.de]
+
+Documentation
+-------------
+
+Documentation is found in HTML format in the *doc/build* sub-folder.
