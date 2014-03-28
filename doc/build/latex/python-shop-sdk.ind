@@ -1,0 +1,98 @@
+\begin{theindex}
+\def\bigletter#1{{\Large\sffamily#1}\nopagebreak\vspace{1mm}}
+
+  \bigletter A
+  \item API\_ENVIRONMENT\_LIVE (collins.Constants attribute), \hyperpage{12}
+  \item API\_ENVIRONMENT\_STAGE (collins.Constants attribute), \hyperpage{12}
+  \item autocomplete() (collins.Collins method), \hyperpage{6}
+
+  \indexspace
+  \bigletter B
+  \item basketadd() (collins.Collins method), \hyperpage{6}
+  \item basketget() (collins.Collins method), \hyperpage{6}
+
+  \indexspace
+  \bigletter C
+  \item category() (collins.Collins method), \hyperpage{6}
+  \item categorytree() (collins.Collins method), \hyperpage{7}
+  \item check\_sessionid() (in module collins), \hyperpage{13}
+  \item Collins (class in collins), \hyperpage{6}
+  \item collins (module), \hyperpage{3}
+  \item COLLINS\_VERSION (in module collins), \hyperpage{5}
+  \item CollinsException, \hyperpage{12}
+  \item Config (class in collins), \hyperpage{12}
+  \item Constants (class in collins), \hyperpage{12}
+
+  \indexspace
+  \bigletter E
+  \item EasyCollins (class in collins), \hyperpage{13}
+
+  \indexspace
+  \bigletter F
+  \item FACET\_BRAND (collins.Constants attribute), \hyperpage{12}
+  \item FACET\_CARE\_SYMBOL (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CHANNEL (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CLOTHING\_HATS\_US (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CLOTHING\_MEN\_BELTS\_CM (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CLOTHING\_MEN\_DE (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CLOTHING\_MEN\_INCH (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CLOTHING\_UNISEX\_INCH (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CLOTHING\_UNISEX\_INT (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CLOTHING\_UNISEX\_ONESIZE (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CLOTHING\_WOMEN\_BELTS\_CM (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CLOTHING\_WOMEN\_DE (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CLOTHING\_WOMEN\_INCH (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_COLOR (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_CUPSIZE (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_DIMENSION3 (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_GENDERAGE (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_LENGTH (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_SHOES\_UNISEX\_ADIDAS\_EUR (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_SHOES\_UNISEX\_EUR (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_SIZE (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_SIZE\_CODE (collins.Constants attribute), \hyperpage{13}
+  \item FACET\_SIZE\_RUN (collins.Constants attribute), \hyperpage{13}
+  \item FACETS (collins.Constants attribute), \hyperpage{12}
+  \item facets() (collins.Collins method), \hyperpage{7}
+  \item facettypes() (collins.Collins method), \hyperpage{8}
+
+  \indexspace
+  \bigletter G
+  \item getorder() (collins.Collins method), \hyperpage{8}
+
+  \indexspace
+  \bigletter I
+  \item imageurl() (collins.Config method), \hyperpage{12}
+  \item initiateorder() (collins.Collins method), \hyperpage{8}
+
+  \indexspace
+  \bigletter L
+  \item livevariant() (collins.Collins method), \hyperpage{9}
+
+  \indexspace
+  \bigletter P
+  \item products() (collins.Collins method), \hyperpage{9}
+  \item productsearch() (collins.Collins method), \hyperpage{10}
+
+  \indexspace
+  \bigletter S
+  \item send() (collins.Collins method), \hyperpage{11}
+  \item SORT\_CREATED (collins.Constants attribute), \hyperpage{13}
+  \item SORT\_MOST\_VIEWED (collins.Constants attribute), \hyperpage{13}
+  \item SORT\_PRICE (collins.Constants attribute), \hyperpage{13}
+  \item SORT\_RELEVANCE (collins.Constants attribute), \hyperpage{13}
+  \item SORT\_UPDATED (collins.Constants attribute), \hyperpage{13}
+  \item SORTS (collins.Constants attribute), \hyperpage{13}
+  \item suggest() (collins.Collins method), \hyperpage{11}
+
+  \indexspace
+  \bigletter T
+  \item TYPE\_CATEGORIES (collins.Constants attribute), \hyperpage{13}
+  \item TYPE\_PRODUCTS (collins.Constants attribute), \hyperpage{13}
+  \item TYPES (collins.Constants attribute), \hyperpage{13}
+
+  \indexspace
+  \bigletter V
+  \item VERSION (in module collins), \hyperpage{13}
+
+\end{theindex}

@@ -1,0 +1,16 @@
+\select@language {english}
+\contentsline {chapter}{\numberline {1}collins}{3}{chapter.1}
+\contentsline {section}{\numberline {1.1}Object Structure}{5}{section.1.1}
+\contentsline {paragraph}{product variant dict}{6}{paragraph*.7}
+\contentsline {paragraph}{Example}{6}{paragraph*.10}
+\contentsline {paragraph}{Example}{7}{paragraph*.12}
+\contentsline {paragraph}{Example}{8}{paragraph*.14}
+\contentsline {paragraph}{Example}{8}{paragraph*.16}
+\contentsline {paragraph}{Example}{9}{paragraph*.21}
+\contentsline {paragraph}{filter dict}{10}{paragraph*.23}
+\contentsline {paragraph}{result dict}{11}{paragraph*.24}
+\contentsline {paragraph}{result.facets dict}{11}{paragraph*.25}
+\contentsline {paragraph}{Example}{11}{paragraph*.26}
+\contentsline {chapter}{\numberline {2}Indices and tables}{15}{chapter.2}
+\contentsline {chapter}{Python Module Index}{17}{section*.71}
+\contentsline {chapter}{Index}{19}{section*.72}

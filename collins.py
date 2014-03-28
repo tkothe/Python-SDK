@@ -8,6 +8,11 @@ This module provieds two wrappers around the Collins-Shop-API.
   result as the same.
 * EasyCollins, which is a more convient layer of abstraction of the API as an
   object herachie which caches results and query results if there are needed.
+
+Object Structure
+----------------
+
+.. image:: collins_objects.png
 """
 import json
 import logging
@@ -290,11 +295,11 @@ class Collins(object):
 
         .. rubric:: Example
 
-        .. codeblock:: python
+        .. code-block:: python
 
             collins.category([16077])
 
-        .. codeblock:: json
+        .. code-block:: json
 
             {
                 "16077": {
@@ -326,11 +331,11 @@ class Collins(object):
 
         .. rubric:: Example
 
-        .. codeblock:: python
+        .. code-block:: python
 
             collins.categorytree()
 
-        .. codeblock:: json
+        .. code-block:: json
 
             [
                 {
@@ -352,10 +357,13 @@ class Collins(object):
                                             "active": false,
                                             "position": 1,
                                             "id": 23882
-                                        },
-
-                ...
-
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
             ]
         """
         if max_depth is None:
@@ -382,11 +390,11 @@ class Collins(object):
 
         .. rubric:: Example
 
-        .. codeblock:: python
+        .. code-block:: python
 
             collins.facets([Constants.FACET_CUPSIZE])
 
-        .. codeblock:: json
+        .. code-block:: json
 
             {
                 "facet": [
@@ -447,11 +455,11 @@ class Collins(object):
 
         .. rubric:: Example
 
-        .. codeblock:: python
+        .. code-block:: python
 
             collins.facettypes()
 
-        .. codeblock:: json
+        .. code-block:: json
 
             [0, 2, 1, 6, 172, 206, 173, 194, 175, 204, 5, 189, 180, 231, 187, 190, 211, 181, 247]
         """
@@ -510,7 +518,7 @@ class Collins(object):
 
         return self.send("live_variant", {"ids": ids})
 
-    def products(self, ids):
+    def products(self, ids, fields=None):
         """
         Here you get a detail view of a product or a list of products returned
         by its ids.
@@ -519,13 +527,11 @@ class Collins(object):
 
         .. rubric:: Example
 
-        .. codeblock:: python
+        .. code-block:: python
 
             collins.products([227838, 287677])
 
-        **Returns:**
-
-        .. codeblock:: json
+        .. code-block:: json
 
             {
                 "pageHash": "4ae38022-8ddd-4f15-9654-4ea0156c33f0",
@@ -667,14 +673,14 @@ class Collins(object):
 
         .. rubric:: Example
 
-        .. codeblock:: python
+        .. code-block:: python
 
             # i belive we search shorts now o.O
             collins.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
 
-        **Returns:**
 
-        .. codeblock:: json
+
+        .. code-block:: json
 
             {
                 "product_count": 78,
@@ -684,9 +690,8 @@ class Collins(object):
                     {
                         "id": 227838,
                         "name": "Badeshort Herren"
-                    },
-
-                    ...
+                    }
+                ]
             }
         """
         check_sessionid(sessionid)

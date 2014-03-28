@@ -14,7 +14,7 @@
 
 
 \title{python-shop-sdk Documentation}
-\date{March 27, 2014}
+\date{March 28, 2014}
 \release{0.1}
 \author{Arne Simon =\textgreater{} email::{[}arne.simon@slice-dice.de{]}}
 \newcommand{\sphinxlogo}{}
@@ -142,6 +142,11 @@ EasyCollins, which is a more convient layer of abstraction of the API as an
 object herachie which caches results and query results if there are needed.
 
 \end{itemize}
+
+
+\section{Object Structure}
+\label{collins:object-structure}
+\includegraphics{collins_objects.png}
 \index{COLLINS\_VERSION (in module collins)}
 
 \begin{fulllineitems}
@@ -268,6 +273,23 @@ You are able to retrieve single categories.
 \textbf{ids} (\emph{list}) -- List of category ids.
 
 \end{description}\end{quote}
+\paragraph{Example}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{collins}\PYG{o}{.}\PYG{n}{category}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mi}{16077}\PYG{p}{]}\PYG{p}{)}
+\end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+    \PYG{n+nt}{\PYGZdq{}16077\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+        \PYG{n+nt}{\PYGZdq{}active\PYGZdq{}}\PYG{p}{:} \PYG{k+kc}{true}\PYG{p}{,}
+        \PYG{n+nt}{\PYGZdq{}position\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{1}\PYG{p}{,}
+        \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Damen\PYGZdq{}}\PYG{p}{,}
+        \PYG{n+nt}{\PYGZdq{}parent\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{0}\PYG{p}{,}
+        \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{16077}
+    \PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}
 
 \end{fulllineitems}
 
@@ -282,6 +304,42 @@ specified max depth for your app id.
 \textbf{max\_depth} (\emph{int}) -- max depth of your category tree counted from root
 
 \end{description}\end{quote}
+\paragraph{Example}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{collins}\PYG{o}{.}\PYG{n}{categorytree}\PYG{p}{(}\PYG{p}{)}
+\end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{[}
+    \PYG{p}{\PYGZob{}}
+        \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Damen\PYGZdq{}}\PYG{p}{,}
+        \PYG{n+nt}{\PYGZdq{}parent\PYGZdq{}}\PYG{p}{:} \PYG{k+kc}{null}\PYG{p}{,}
+        \PYG{n+nt}{\PYGZdq{}sub\PYGZus{}categories\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}
+            \PYG{p}{\PYGZob{}}
+                \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Bekleidung\PYGZdq{}}\PYG{p}{,}
+                \PYG{n+nt}{\PYGZdq{}parent\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{16077}\PYG{p}{,}
+                \PYG{n+nt}{\PYGZdq{}sub\PYGZus{}categories\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}
+                    \PYG{p}{\PYGZob{}}
+                        \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Oberteile\PYGZdq{}}\PYG{p}{,}
+                        \PYG{n+nt}{\PYGZdq{}parent\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{16078}\PYG{p}{,}
+                        \PYG{n+nt}{\PYGZdq{}sub\PYGZus{}categories\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}
+                            \PYG{p}{\PYGZob{}}
+                                \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Fr\PYGZbs{}u00fchlingslooks\PYGZdq{}}\PYG{p}{,}
+                                \PYG{n+nt}{\PYGZdq{}parent\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{16079}\PYG{p}{,}
+                                \PYG{n+nt}{\PYGZdq{}sub\PYGZus{}categories\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}\PYG{p}{]}\PYG{p}{,}
+                                \PYG{n+nt}{\PYGZdq{}active\PYGZdq{}}\PYG{p}{:} \PYG{k+kc}{false}\PYG{p}{,}
+                                \PYG{n+nt}{\PYGZdq{}position\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{1}\PYG{p}{,}
+                                \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{23882}
+                            \PYG{p}{\PYGZcb{}}
+                        \PYG{p}{]}
+                    \PYG{p}{\PYGZcb{}}
+                \PYG{p}{]}
+            \PYG{p}{\PYGZcb{}}
+        \PYG{p}{]}
+    \PYG{p}{\PYGZcb{}}
+\PYG{p}{]}
+\end{Verbatim}
 
 \end{fulllineitems}
 
@@ -305,6 +363,47 @@ group ids which belong to me
 \end{itemize}
 
 \end{description}\end{quote}
+\paragraph{Example}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{collins}\PYG{o}{.}\PYG{n}{facets}\PYG{p}{(}\PYG{p}{[}\PYG{n}{Constants}\PYG{o}{.}\PYG{n}{FACET\PYGZus{}CUPSIZE}\PYG{p}{]}\PYG{p}{)}
+\end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+    \PYG{n+nt}{\PYGZdq{}facet\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{4}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}group\PYGZus{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}cupsize\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}D\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}value\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}D\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}facet\PYGZus{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{96}
+        \PYG{p}{\PYGZcb{}}\PYG{p}{,}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{4}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}group\PYGZus{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}cupsize\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}A\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}value\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}A\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}facet\PYGZus{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{93}
+        \PYG{p}{\PYGZcb{}}\PYG{p}{,}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{4}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}group\PYGZus{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}cupsize\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}B\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}value\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}B\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}facet\PYGZus{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{94}
+        \PYG{p}{\PYGZcb{}}\PYG{p}{,}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{4}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}group\PYGZus{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}cupsize\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}C\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}value\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}C\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}facet\PYGZus{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{95}
+        \PYG{p}{\PYGZcb{}}
+    \PYG{p}{]}\PYG{p}{,}
+    \PYG{n+nt}{\PYGZdq{}hits\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{4}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}
 
 \end{fulllineitems}
 
@@ -313,6 +412,15 @@ group ids which belong to me
 \begin{fulllineitems}
 \phantomsection\label{collins:collins.Collins.facettypes}\pysiglinewithargsret{\bfcode{facettypes}}{}{}
 This query returns a list of facet groups available.
+\paragraph{Example}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{collins}\PYG{o}{.}\PYG{n}{facettypes}\PYG{p}{(}\PYG{p}{)}
+\end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{6}\PYG{p}{,} \PYG{l+m+mi}{172}\PYG{p}{,} \PYG{l+m+mi}{206}\PYG{p}{,} \PYG{l+m+mi}{173}\PYG{p}{,} \PYG{l+m+mi}{194}\PYG{p}{,} \PYG{l+m+mi}{175}\PYG{p}{,} \PYG{l+m+mi}{204}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{189}\PYG{p}{,} \PYG{l+m+mi}{180}\PYG{p}{,} \PYG{l+m+mi}{231}\PYG{p}{,} \PYG{l+m+mi}{187}\PYG{p}{,} \PYG{l+m+mi}{190}\PYG{p}{,} \PYG{l+m+mi}{211}\PYG{p}{,} \PYG{l+m+mi}{181}\PYG{p}{,} \PYG{l+m+mi}{247}\PYG{p}{]}
+\end{Verbatim}
 
 \end{fulllineitems}
 
@@ -385,7 +493,7 @@ And could differ vs. a ``product search'' or ``product'' query.
 \index{products() (collins.Collins method)}
 
 \begin{fulllineitems}
-\phantomsection\label{collins:collins.Collins.products}\pysiglinewithargsret{\bfcode{products}}{\emph{ids}}{}
+\phantomsection\label{collins:collins.Collins.products}\pysiglinewithargsret{\bfcode{products}}{\emph{ids}, \emph{fields=None}}{}
 Here you get a detail view of a product or a list of products returned
 by its ids.
 \begin{quote}\begin{description}
@@ -393,6 +501,53 @@ by its ids.
 \textbf{ids} (\emph{list}) -- array of product variant id
 
 \end{description}\end{quote}
+\paragraph{Example}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{collins}\PYG{o}{.}\PYG{n}{products}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mi}{227838}\PYG{p}{,} \PYG{l+m+mi}{287677}\PYG{p}{]}\PYG{p}{)}
+\end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+    \PYG{n+nt}{\PYGZdq{}pageHash\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}4ae38022\PYGZhy{}8ddd\PYGZhy{}4f15\PYGZhy{}9654\PYGZhy{}4ea0156c33f0\PYGZdq{}}\PYG{p}{,}
+    \PYG{n+nt}{\PYGZdq{}ids\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+        \PYG{n+nt}{\PYGZdq{}287677\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+            \PYG{n+nt}{\PYGZdq{}active\PYGZdq{}}\PYG{p}{:} \PYG{k+kc}{true}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}styles\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}
+                \PYG{p}{\PYGZob{}}
+                    \PYG{n+nt}{\PYGZdq{}active\PYGZdq{}}\PYG{p}{:} \PYG{k+kc}{true}\PYG{p}{,}
+                    \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{287685}\PYG{p}{,}
+                    \PYG{n+nt}{\PYGZdq{}style\PYGZus{}key\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}m01\PYGZus{}233966406\PYGZdq{}}\PYG{p}{,}
+                    \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Badeshorts, Buffalo\PYGZdq{}}
+                \PYG{p}{\PYGZcb{}}\PYG{p}{,}
+                \PYG{p}{\PYGZob{}}
+                    \PYG{n+nt}{\PYGZdq{}active\PYGZdq{}}\PYG{p}{:} \PYG{k+kc}{false}\PYG{p}{,}
+                    \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{358863}\PYG{p}{,}
+                    \PYG{n+nt}{\PYGZdq{}style\PYGZus{}key\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}m01\PYGZus{}233966406\PYGZdq{}}\PYG{p}{,}
+                    \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Badeshorts, Buffalo\PYGZdq{}}
+                \PYG{p}{\PYGZcb{}}
+            \PYG{p}{]}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{287677}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}style\PYGZus{}key\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}m01\PYGZus{}233966406\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Badeshorts, Buffalo\PYGZdq{}}
+        \PYG{p}{\PYGZcb{}}\PYG{p}{,}
+        \PYG{n+nt}{\PYGZdq{}227838\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+            \PYG{n+nt}{\PYGZdq{}active\PYGZdq{}}\PYG{p}{:} \PYG{k+kc}{true}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}styles\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}
+                \PYG{p}{\PYGZob{}}
+                    \PYG{n+nt}{\PYGZdq{}active\PYGZdq{}}\PYG{p}{:} \PYG{k+kc}{true}\PYG{p}{,}
+                    \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{227854}\PYG{p}{,}
+                    \PYG{n+nt}{\PYGZdq{}style\PYGZus{}key\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}m01\PYGZus{}255897631\PYGZdq{}}\PYG{p}{,}
+                    \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Badeshort Herren\PYGZdq{}}
+                \PYG{p}{\PYGZcb{}}
+            \PYG{p}{]}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{227838}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}style\PYGZus{}key\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}m01\PYGZus{}255897631\PYGZdq{}}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Badeshort Herren\PYGZdq{}}
+        \PYG{p}{\PYGZcb{}}
+    \PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}
 
 \end{fulllineitems}
 
@@ -433,6 +588,10 @@ set see ``Facet types''
 \end{enumerate}
 
 \end{description}
+
+\begin{notice}{note}{Note:}
+To get facet types see {\hyperref[collins:collins.Constants]{\code{collins.Constants}}}
+\end{notice}
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
@@ -564,18 +723,44 @@ sort by occurrences in products. this overwrites even the
 \\
 \hline\end{tabulary}
 
+\paragraph{Example}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c}{\PYGZsh{} i belive we search shorts now o.O}
+\PYG{n}{collins}\PYG{o}{.}\PYG{n}{productsearch}\PYG{p}{(}\PYG{n}{TEST\PYGZus{}SESSION\PYGZus{}ID}\PYG{p}{,} \PYG{n+nb}{filter}\PYG{o}{=}\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{categories}\PYG{l+s}{\PYGZdq{}}\PYG{p}{:}\PYG{p}{[}\PYG{l+m+mi}{16354}\PYG{p}{]}\PYG{p}{\PYGZcb{}}\PYG{p}{)}
+\end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+    \PYG{n+nt}{\PYGZdq{}product\PYGZus{}count\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{78}\PYG{p}{,}
+    \PYG{n+nt}{\PYGZdq{}pageHash\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}6e63cadb\PYGZhy{}5505\PYGZhy{}47b7\PYGZhy{}b36d\PYGZhy{}643311292a22\PYGZdq{}}\PYG{p}{,}
+    \PYG{n+nt}{\PYGZdq{}facets\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}\PYG{p}{\PYGZcb{}}\PYG{p}{,}
+    \PYG{n+nt}{\PYGZdq{}products\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n+nt}{\PYGZdq{}id\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{227838}\PYG{p}{,}
+            \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Badeshort Herren\PYGZdq{}}
+        \PYG{p}{\PYGZcb{}}
+    \PYG{p}{]}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}
 
 \end{fulllineitems}
 
 \index{send() (collins.Collins method)}
 
 \begin{fulllineitems}
-\phantomsection\label{collins:collins.Collins.send}\pysiglinewithargsret{\bfcode{send}}{\emph{cmd}}{}
+\phantomsection\label{collins:collins.Collins.send}\pysiglinewithargsret{\bfcode{send}}{\emph{cmd}, \emph{obj}}{}
 Sends a Pyhton structure of dict's and list's as raw JSON to collins and
 returns a Python structure of dict's and list's from the JSON answer.
 \begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode
-\textbf{cmd} -- The list or dict object to send.
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{cmd} -- The name of the command.
+
+\item {} 
+\textbf{obj} -- A python dict object which contains the request parameters.
+
+\end{itemize}
 
 \end{description}\end{quote}
 
@@ -715,6 +900,22 @@ Returns the url for a image.
 Bases: \code{object}
 
 Some contsants which are blatantly copied from the php-sdk.
+
+\begin{notice}{attention}{Attention:}\begin{description}
+\item[{The following constants are \textbf{NOT} in the PHP-SDK:}] \leavevmode\begin{itemize}
+\item {} 
+FACET\_CHANNEL
+
+\item {} 
+FACET\_CARE\_SYMBOL
+
+\item {} 
+FACET\_CLOTHING\_HATS\_US
+
+\end{itemize}
+
+\end{description}
+\end{notice}
 \index{API\_ENVIRONMENT\_LIVE (collins.Constants attribute)}
 
 \begin{fulllineitems}
@@ -727,10 +928,34 @@ Some contsants which are blatantly copied from the php-sdk.
 \phantomsection\label{collins:collins.Constants.API_ENVIRONMENT_STAGE}\pysigline{\bfcode{API\_ENVIRONMENT\_STAGE}\strong{ = `stage'}}
 \end{fulllineitems}
 
+\index{FACETS (collins.Constants attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{collins:collins.Constants.FACETS}\pysigline{\bfcode{FACETS}\strong{ = set({[}0, 1, 194, 3, 4, 5, 6, 172, 2, 204, 173, 174, 175, 206, 195, 180, 181, 187, 189, 190{]})}}
+\end{fulllineitems}
+
 \index{FACET\_BRAND (collins.Constants attribute)}
 
 \begin{fulllineitems}
 \phantomsection\label{collins:collins.Constants.FACET_BRAND}\pysigline{\bfcode{FACET\_BRAND}\strong{ = 0}}
+\end{fulllineitems}
+
+\index{FACET\_CARE\_SYMBOL (collins.Constants attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{collins:collins.Constants.FACET_CARE_SYMBOL}\pysigline{\bfcode{FACET\_CARE\_SYMBOL}\strong{ = 247}}
+\end{fulllineitems}
+
+\index{FACET\_CHANNEL (collins.Constants attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{collins:collins.Constants.FACET_CHANNEL}\pysigline{\bfcode{FACET\_CHANNEL}\strong{ = 211}}
+\end{fulllineitems}
+
+\index{FACET\_CLOTHING\_HATS\_US (collins.Constants attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{collins:collins.Constants.FACET_CLOTHING_HATS_US}\pysigline{\bfcode{FACET\_CLOTHING\_HATS\_US}\strong{ = 231}}
 \end{fulllineitems}
 
 \index{FACET\_CLOTHING\_MEN\_BELTS\_CM (collins.Constants attribute)}
@@ -904,11 +1129,31 @@ Some contsants which are blatantly copied from the php-sdk.
 
 \end{fulllineitems}
 
+\index{EasyCollins (class in collins)}
+
+\begin{fulllineitems}
+\phantomsection\label{collins:collins.EasyCollins}\pysiglinewithargsret{\strong{class }\code{collins.}\bfcode{EasyCollins}}{\emph{conf\_or\_filename}}{}
+Bases: \code{object}
+
+\end{fulllineitems}
+
 \index{VERSION (in module collins)}
 
 \begin{fulllineitems}
 \phantomsection\label{collins:collins.VERSION}\pysigline{\code{collins.}\bfcode{VERSION}\strong{ = `0.0'}}
 Version of the python shop SDK.
+
+\end{fulllineitems}
+
+\index{check\_sessionid() (in module collins)}
+
+\begin{fulllineitems}
+\phantomsection\label{collins:collins.check_sessionid}\pysiglinewithargsret{\code{collins.}\bfcode{check\_sessionid}}{\emph{sessionid}}{}~
+\begin{notice}{attention}{Attention:}
+We copied it from the php-sdk.
+collins seems to want have the session-id a minimum length of five
+characters. This is not tested or validated.
+\end{notice}
 
 \end{fulllineitems}
 
