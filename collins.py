@@ -111,8 +111,8 @@ Thin Client Example
 
 .. code-block:: python
 
-    >>> from pythonshop.collins import Collins, Constants
-    >>> c =  Collins("myconfig.json")
+    >>> from pythonshop.collins import Collins, Constants, JSONConfig
+    >>> c =  Collins(JSONConfig("myconfig.json"))
     >>> c.facets([Constants.FACET_CUPSIZE])
 
 .. code-block:: json
@@ -156,8 +156,8 @@ Thin Client Example
 import json
 import logging
 import logging.config
-import logging.handlers
 import urllib2
+import os
 
 
 COLLINS_VERSION = "1.1"
@@ -215,7 +215,8 @@ class Constants(object):
                  FACET_CLOTHING_UNISEX_INCH, FACET_CLOTHING_UNISEX_INT, FACET_CLOTHING_UNISEX_ONESIZE,
                  FACET_CLOTHING_WOMEN_BELTS_CM, FACET_CLOTHING_WOMEN_DE, FACET_CLOTHING_WOMEN_INCH, FACET_COLOR,
                  FACET_CUPSIZE, FACET_DIMENSION3, FACET_GENDERAGE, FACET_LENGTH, FACET_SHOES_UNISEX_ADIDAS_EUR,
-                 FACET_SHOES_UNISEX_EUR, FACET_SIZE, FACET_SIZE_CODE, FACET_SIZE_RUN])
+                 FACET_SHOES_UNISEX_EUR, FACET_SIZE, FACET_SIZE_CODE, FACET_SIZE_RUN,
+                 FACET_CHANNEL, FACET_CARE_SYMBOL, FACET_CLOTHING_HATS_US])
 
     SORT_CREATED = "created_date"
     SORT_MOST_VIEWED = "most_viewed"
@@ -265,19 +266,23 @@ class Config(object):
     - image_url
         A string as template for the image urls.
         As example http://cdn.mary-paul.de/product_images/{path}/{id}_{width}_{height}{extension}.
-    - logging
+    - logconf
         A dictonary for logging.config.dictConfig.
 
     :param str filename: The path to a JSON file which holds the configuration.
     """
-    def __init__(self, filename):
-        with open(filename) as cfgfile:
-            self.data = json.load(cfgfile)
+    def __init__(self, entry_point_url=None, app_id=None, app_password=None,
+                 agent=None, authorization=None, image_url=None, logconf=None):
 
-        logging.config.dictConfig(self.data["logging"])
+        self.entry_point_url = entry_point_url
+        self.app_id = app_id
+        self.app_password = app_password
+        self.agent = agent
+        self.authorization = authorization
+        self.image_url = image_url
 
-    def __getattr__(self, name):
-        return self.data[name]
+        if logconf:
+            logging.config.dictConfig(logconf)
 
     def imageurl(self, path, productid, width, height, extension):
         """
@@ -289,10 +294,102 @@ class Config(object):
         :param height: Height of the image.
         :param extension: The image extension. For example *'.jpg'*
         """
-        return self.data["image_url"].format(path=path, id=productid,
+        return self.image_url.format(path=path, id=productid,
                                              width=width, height=height,
                                              extension=extension)
 
+
+class JSONConfig(Config):
+    """
+    Uses a JSON file for configuration.
+
+    .. rubric:: Example File
+
+    .. code-block:: json
+
+        {
+            "entry_point_url" : "http://ant-core-staging-s-api1.wavecloud.de/api",
+            "app_id": "",
+            "app_password": "",
+            "agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36",
+            "authorization": "",
+            "image_url": "http://cdn.mary-paul.de/product_images/{path}/{id}_{width}_{height}{extension}",
+            "logconf": {
+                    "version": 1,
+                    "disable_existing_loggers": false,
+                    "formatters": {
+                        "simple": {
+                            "format": "%(asctime)s | %(levelname)-7s | %(name)-20s | %(message)s"
+                        }
+                    },
+                    "handlers": {
+                        "rotating": {
+                            "level":"DEBUG",
+                            "class":"logging.handlers.TimedRotatingFileHandler",
+                            "formatter": "simple",
+                            "when": "midnight",
+                            "filename": "collins.log"
+                        }
+                    },
+
+                    "loggers": {
+                        "python-shop.collins": {
+                            "level": "DEBUG",
+                            "handlers": ["rotating"]
+                        }
+                    },
+                    "root": {
+                        "handlers": [],
+                        "level": "DEBUG",
+                        "propagate": true
+                    }
+                }
+        }
+    """
+    def __init__(self, filename):
+        with open(filename) as cfgfile:
+            self.data = json.load(cfgfile)
+
+        logging.config.dictConfig(self.data["logconf"])
+
+    def __getattr__(self, name):
+        return self.data[name]
+
+
+class JSONEnvironmentFallbackConfig(Config):
+    """
+    This is the real hot shit.
+    If a config value is not found in the JSON config, the given environment
+    variable is used instead.
+
+    .. rubric:: Example
+
+    .. code-block:: python
+
+        # if the field *authorization* is not present in the config file,
+        # then the environment variable *COLLINS_AUTH* will be used for the
+        # config variable authorization.
+        conf = JSONEnvironmentFallbackConfig('myconf.json',
+                                             authorization='COLLINS_AUTH')
+    """
+    def __init__(self, jsonfile, entry_point_url=None, app_id=None,
+                 app_password=None, agent=None, authorization=None,
+                 image_url=None, logconf=None):
+        with open(jsonfile) as cfgfile:
+            self.data = json.load(cfgfile)
+
+        loc = locals()
+        for key in ["entry_point_url", "app_id", "app_password", "agent",
+                    "authorization", "image_url", "logconf"]:
+            if key not in self.data:
+                if loc[key] is not None:
+                    self.data[key] = os.environ[loc[key]]
+                else:
+                    msg = 'config value "{}" not present'.format(key)
+                    raise CollinsException(msg)
+
+    def __getattr__(self, name):
+        return self.data[name]
 
 
 def check_sessionid(sessionid):
@@ -317,10 +414,7 @@ class Collins(object):
     """
 
     def __init__(self, config):
-        if isinstance(config, Config):
-            self.config = config
-        else:
-            self.config = Config(config)
+        self.config = config
 
         logname = "python-shop.collins.{}".format(self.config.app_id)
         self.log = logging.getLogger(logname)
@@ -864,8 +958,6 @@ class Collins(object):
             # i belive we search shorts now o.O
             collins.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
 
-
-
         .. code-block:: json
 
             {
@@ -931,26 +1023,72 @@ class Category(EasyNode):
     def __init__(self, obj):
         super(Category, self).__init__(obj)
 
+        self.sub_categories = []
+
+
+class Image(EasyNode):
+    def __init__(self, obj):
+        super(Image, self).__init__(obj)
+
+    def __str__(self):
+        pass
+
 
 class EasyCollins(object):
-    def __init__(self, conf_or_filename):
-        if isinstance(conf_or_filename, Config):
-            self.config = conf_or_filename
-        else:
-            self.config = Config(conf_or_filename)
+    """
+    :param config: A :py:class:`collins.Config` instance.
+    """
+
+    def __init__(self, config):
+        iself.config = config
 
         self.collins = Collins(self.config)
         self.__categorytree = None
-        self.__category_groups = None
+        self.__category_ids = {}
+
+        tree = self.collins.categorytree()
+
+        def build(n):
+            c = Category(n)
+            self.__category_ids[c.id] = c
+            c.sub_categories = [build(x) for x in n["sub_categories"]]
+            return c
+
+        self.__facet_groups = None
+        self.__facet_map = {}
+
+        facets = c.facettypes()
+
+        self.__facet_map = {}
+        self.__facet_groups = {}
+
+        for f in facets:
+            response = c.facets([f])["facet"]
+            self.__facet_map[response[0]["group_name"]] = f
+            self.__facet_map[f] = response[0]["group_name"]
+
+            self.__facet_groups[f] = [EasyNode(r) for r in response]
 
     def categories(self):
-        if self.__categorytree is None:
-            self.collins.categorytree()
-
         return self.__categorytree
+
+    def categoryById(self, cid):
+        return self.__category_ids[cid]
+
+    def facets(self, facet_group):
+        """
+        Returns all facets of a group.
+
+        :param facet_group: The id or name of the facet group.
+        """
+
+        if isinstance(facet_group, (str, unicode)):
+            facet_group = self.__facet_map[facet_group]
+
+        return self.__facet_groups[facet_group]
+
 
 
 if __name__ == '__main__':
-    c = Collins("slicedice-config.json")
-    open('dump.json','w').write(json.dumps(c.products([227838, 287677], fields=[]), indent=4))
-    # open('dump.json','w').write(json.dumps(c.send("styles", {"ids":["m01_233966406"]}), indent=4))
+    c = EasyCollins(JSONConfig("slicedice-config.json"))
+    #open('dump.json','w').write(json.dumps(c.products([227838, 287677], fields=[]), indent=4))

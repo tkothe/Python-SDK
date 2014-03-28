@@ -197,43 +197,44 @@ variant:image:w -&gt; image;
 </div>
 <div class="section" id="thin-client-example">
 <h2>Thin Client Example<a class="headerlink" href="#thin-client-example" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pythonshop.collins</span> <span class="kn">import</span> <span class="n">Collins</span><span class="p">,</span> <span class="n">Constants</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span>  <span class="n">Collins</span><span class="p">(</span><span class="s">&quot;myconfig.json&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pythonshop.collins</span> <span class="kn">import</span> <span class="n">Collins</span><span class="p">,</span> <span class="n">Constants</span><span class="p">,</span> <span class="n">JSONConfig</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span>  <span class="n">Collins</span><span class="p">(</span><span class="n">JSONConfig</span><span class="p">(</span><span class="s">&quot;myconfig.json&quot;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">facets</span><span class="p">([</span><span class="n">Constants</span><span class="o">.</span><span class="n">FACET_CUPSIZE</span><span class="p">])</span>
-
-<span class="go">{</span>
-<span class="go">    &quot;facet&quot;: [</span>
-<span class="go">        {</span>
-<span class="go">            &quot;id&quot;: 4,</span>
-<span class="go">            &quot;group_name&quot;: &quot;cupsize&quot;,</span>
-<span class="go">            &quot;name&quot;: &quot;D&quot;,</span>
-<span class="go">            &quot;value&quot;: &quot;D&quot;,</span>
-<span class="go">            &quot;facet_id&quot;: 96</span>
-<span class="go">        },</span>
-<span class="go">        {</span>
-<span class="go">            &quot;id&quot;: 4,</span>
-<span class="go">            &quot;group_name&quot;: &quot;cupsize&quot;,</span>
-<span class="go">            &quot;name&quot;: &quot;A&quot;,</span>
-<span class="go">            &quot;value&quot;: &quot;A&quot;,</span>
-<span class="go">            &quot;facet_id&quot;: 93</span>
-<span class="go">        },</span>
-<span class="go">        {</span>
-<span class="go">            &quot;id&quot;: 4,</span>
-<span class="go">            &quot;group_name&quot;: &quot;cupsize&quot;,</span>
-<span class="go">            &quot;name&quot;: &quot;B&quot;,</span>
-<span class="go">            &quot;value&quot;: &quot;B&quot;,</span>
-<span class="go">            &quot;facet_id&quot;: 94</span>
-<span class="go">        },</span>
-<span class="go">        {</span>
-<span class="go">            &quot;id&quot;: 4,</span>
-<span class="go">            &quot;group_name&quot;: &quot;cupsize&quot;,</span>
-<span class="go">            &quot;name&quot;: &quot;C&quot;,</span>
-<span class="go">            &quot;value&quot;: &quot;C&quot;,</span>
-<span class="go">            &quot;facet_id&quot;: 95</span>
-<span class="go">        }</span>
-<span class="go">    ],</span>
-<span class="go">    &quot;hits&quot;: 4</span>
-<span class="go">}</span>
+</pre></div>
+</div>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+    <span class="nt">&quot;facet&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="nt">&quot;group_name&quot;</span><span class="p">:</span> <span class="s2">&quot;cupsize&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;facet_id&quot;</span><span class="p">:</span> <span class="mi">96</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="nt">&quot;group_name&quot;</span><span class="p">:</span> <span class="s2">&quot;cupsize&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;facet_id&quot;</span><span class="p">:</span> <span class="mi">93</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="nt">&quot;group_name&quot;</span><span class="p">:</span> <span class="s2">&quot;cupsize&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;facet_id&quot;</span><span class="p">:</span> <span class="mi">94</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="nt">&quot;group_name&quot;</span><span class="p">:</span> <span class="s2">&quot;cupsize&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;facet_id&quot;</span><span class="p">:</span> <span class="mi">95</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;hits&quot;</span><span class="p">:</span> <span class="mi">4</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <dl class="data">
@@ -875,7 +876,7 @@ often in combination with these terms before.</p>
 
 <dl class="class">
 <dt id="collins.Config">
-<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">Config</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#collins.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">Config</tt><big>(</big><em>entry_point_url=None</em>, <em>app_id=None</em>, <em>app_password=None</em>, <em>agent=None</em>, <em>authorization=None</em>, <em>image_url=None</em>, <em>logconf=None</em><big>)</big><a class="headerlink" href="#collins.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>The configuration of a collins api connection.</p>
 <p>A config class has to have the following readable attributes:</p>
@@ -918,7 +919,7 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/product_i
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>logging</dt>
+<dt>logconf</dt>
 <dd><p class="first last">A dictonary for logging.config.dictConfig.</p>
 </dd>
 </dl>
@@ -984,7 +985,7 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/product_i
 
 <dl class="attribute">
 <dt id="collins.Constants.FACETS">
-<tt class="descname">FACETS</tt><em class="property"> = set([0, 1, 194, 3, 4, 5, 6, 172, 2, 204, 173, 174, 175, 206, 195, 180, 181, 187, 189, 190])</em><a class="headerlink" href="#collins.Constants.FACETS" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">FACETS</tt><em class="property"> = set([0, 1, 2, 3, 4, 5, 6, 172, 173, 174, 175, 180, 181, 187, 189, 190, 194, 195, 204, 206, 211, 231, 247])</em><a class="headerlink" href="#collins.Constants.FACETS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -1196,12 +1197,39 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/product_i
 
 <dl class="class">
 <dt id="collins.EasyCollins">
-<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">EasyCollins</tt><big>(</big><em>conf_or_filename</em><big>)</big><a class="headerlink" href="#collins.EasyCollins" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">EasyCollins</tt><big>(</big><em>config</em><big>)</big><a class="headerlink" href="#collins.EasyCollins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> &#8211; A <a class="reference internal" href="#collins.Config" title="collins.Config"><tt class="xref py py-class docutils literal"><span class="pre">collins.Config</span></tt></a> instance.</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="collins.EasyCollins.categories">
 <tt class="descname">categories</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.EasyCollins.categories" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="collins.EasyCollins.categoryById">
+<tt class="descname">categoryById</tt><big>(</big><em>cid</em><big>)</big><a class="headerlink" href="#collins.EasyCollins.categoryById" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="collins.EasyCollins.facets">
+<tt class="descname">facets</tt><big>(</big><em>facet_group</em><big>)</big><a class="headerlink" href="#collins.EasyCollins.facets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all facets of a group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>facet_group</strong> &#8211; The id or name of the facet group.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -1209,6 +1237,77 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/product_i
 <dt id="collins.EasyNode">
 <em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">EasyNode</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#collins.EasyNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.Image">
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">Image</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#collins.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#collins.EasyNode" title="collins.EasyNode"><tt class="xref py py-class docutils literal"><span class="pre">collins.EasyNode</span></tt></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.JSONConfig">
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">JSONConfig</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#collins.JSONConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#collins.Config" title="collins.Config"><tt class="xref py py-class docutils literal"><span class="pre">collins.Config</span></tt></a></p>
+<p>Uses a JSON file for configuration.</p>
+<p class="rubric">Example File</p>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+    <span class="nt">&quot;entry_point_url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://ant-core-staging-s-api1.wavecloud.de/api&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;app_id&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;app_password&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://cdn.mary-paul.de/product_images/{path}/{id}_{width}_{height}{extension}&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;logconf&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;disable_existing_loggers&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nt">&quot;formatters&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;simple&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;%(asctime)s | %(levelname)-7s | %(name)-20s | %(message)s&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;handlers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;rotating&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;level&quot;</span><span class="p">:</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="s2">&quot;logging.handlers.TimedRotatingFileHandler&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;formatter&quot;</span><span class="p">:</span> <span class="s2">&quot;simple&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;when&quot;</span><span class="p">:</span> <span class="s2">&quot;midnight&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;collins.log&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+
+            <span class="nt">&quot;loggers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;python-shop.collins&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;handlers&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;rotating&quot;</span><span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;root&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;handlers&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="nt">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;propagate&quot;</span><span class="p">:</span> <span class="kc">true</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.JSONEnvironmentFallbackConfig">
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">JSONEnvironmentFallbackConfig</tt><big>(</big><em>jsonfile</em>, <em>entry_point_url=None</em>, <em>app_id=None</em>, <em>app_password=None</em>, <em>agent=None</em>, <em>authorization=None</em>, <em>image_url=None</em>, <em>logconf=None</em><big>)</big><a class="headerlink" href="#collins.JSONEnvironmentFallbackConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#collins.Config" title="collins.Config"><tt class="xref py py-class docutils literal"><span class="pre">collins.Config</span></tt></a></p>
+<p>This is the real hot shit.
+If a config value is not found in the JSON config, the given environment
+variable is used instead.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># if the field *authorization* is not present in the config file,</span>
+<span class="c"># then the environment variable *COLLINS_AUTH* will be used for the</span>
+<span class="c"># config variable authorization.</span>
+<span class="n">conf</span> <span class="o">=</span> <span class="n">JSONEnvironmentFallbackConfig</span><span class="p">(</span><span class="s">&#39;myconf.json&#39;</span><span class="p">,</span>
+                                     <span class="n">authorization</span><span class="o">=</span><span class="s">&#39;COLLINS_AUTH&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="data">
