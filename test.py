@@ -75,13 +75,20 @@ class CollinsTest(unittest.TestCase):
         pass
 
     def testProductsearch(self):
-        response = self.collins.productsearch(TEST_SESSION_ID, filter={"categories":[16354]}) # i belive we search shorts now o.O
+        # i belive we search shorts now o.O
+        response = self.collins.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
         self.log.info(response)
 
     def testSuggest(self):
         response = self.collins.suggest("ny")
         self.log.info(response)
         self.assertGreater(len(response), 0)
+
+
+class TestEasyCollins(unittest.TestCase):
+
+    def testCategories(self):
+        pass
 
 
 if __name__ == '__main__':

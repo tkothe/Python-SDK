@@ -48,6 +48,7 @@
   <ul>
 <li><a class="reference internal" href="#">collins</a><ul>
 <li><a class="reference internal" href="#object-structure">Object Structure</a></li>
+<li><a class="reference internal" href="#thin-client-example">Thin Client Example</a></li>
 </ul>
 </li>
 </ul>
@@ -100,11 +101,151 @@ object herachie which caches results and query results if there are needed.</li>
 </ul>
 <div class="section" id="object-structure">
 <h2>Object Structure<a class="headerlink" href="#object-structure" title="Permalink to this headline">¶</a></h2>
-<img alt="_images/collins_objects.png" src="_images/collins_objects.png" />
+<p class="graphviz">
+<img src="_images/graphviz-2c489fb7e4f1bd115aa2d469a4f9a8671d817b6b.png" alt="digraph objects {
+node[shape=none];
+
+basket[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;basket&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;variant&quot;&gt;product_variant&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;products&quot;&gt;products&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;total_variants&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;amount_variants&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;total_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;total_net&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;total_vat&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+basket_variant[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;basket_variant&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;unit_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;total_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;total_net&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;total_vat&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;amount&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;product&quot;&gt;product_id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;id&quot;&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;tax&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+category[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;category&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;active&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;parent&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;position&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;sub&quot;&gt;sub_categories&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+product[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;product&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;id&quot;&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;description_long&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;description_short&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;variant&quot;&gt;default_variant&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;min_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;max_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;sale&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;default_image&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;attributes_merged&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;categories.appID&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+variant[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;variant&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;id&quot;&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;ean&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;old_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;retail_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;default&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;attributes&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;image&quot;&gt;images&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+image[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;image&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;hash&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;ext&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;mime&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;size&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;image&lt;/td&gt;&lt;td&gt;&quot;width&quot;: 672, &quot;height&quot;: 960&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+facet[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;facet&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;facet_id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;group_name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;value&lt;/td&gt;&lt;td&gt;if not group: brand&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;options&lt;/td&gt;&lt;td&gt; if group: brand&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+
+basket:variant:w -&gt; basket_variant;
+basket:products:w -&gt; product;
+basket_variant:id:w -&gt; variant:id:w;
+basket_variant:product:w -&gt; product:id:w;
+category:sub:w -&gt; category;
+product:variant:w -&gt; variant;
+variant:image:w -&gt; image;
+}" />
+</p>
+</div>
+<div class="section" id="thin-client-example">
+<h2>Thin Client Example<a class="headerlink" href="#thin-client-example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pythonshop.collins</span> <span class="kn">import</span> <span class="n">Collins</span><span class="p">,</span> <span class="n">Constants</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span>  <span class="n">Collins</span><span class="p">(</span><span class="s">&quot;myconfig.json&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">facets</span><span class="p">([</span><span class="n">Constants</span><span class="o">.</span><span class="n">FACET_CUPSIZE</span><span class="p">])</span>
+
+<span class="go">{</span>
+<span class="go">    &quot;facet&quot;: [</span>
+<span class="go">        {</span>
+<span class="go">            &quot;id&quot;: 4,</span>
+<span class="go">            &quot;group_name&quot;: &quot;cupsize&quot;,</span>
+<span class="go">            &quot;name&quot;: &quot;D&quot;,</span>
+<span class="go">            &quot;value&quot;: &quot;D&quot;,</span>
+<span class="go">            &quot;facet_id&quot;: 96</span>
+<span class="go">        },</span>
+<span class="go">        {</span>
+<span class="go">            &quot;id&quot;: 4,</span>
+<span class="go">            &quot;group_name&quot;: &quot;cupsize&quot;,</span>
+<span class="go">            &quot;name&quot;: &quot;A&quot;,</span>
+<span class="go">            &quot;value&quot;: &quot;A&quot;,</span>
+<span class="go">            &quot;facet_id&quot;: 93</span>
+<span class="go">        },</span>
+<span class="go">        {</span>
+<span class="go">            &quot;id&quot;: 4,</span>
+<span class="go">            &quot;group_name&quot;: &quot;cupsize&quot;,</span>
+<span class="go">            &quot;name&quot;: &quot;B&quot;,</span>
+<span class="go">            &quot;value&quot;: &quot;B&quot;,</span>
+<span class="go">            &quot;facet_id&quot;: 94</span>
+<span class="go">        },</span>
+<span class="go">        {</span>
+<span class="go">            &quot;id&quot;: 4,</span>
+<span class="go">            &quot;group_name&quot;: &quot;cupsize&quot;,</span>
+<span class="go">            &quot;name&quot;: &quot;C&quot;,</span>
+<span class="go">            &quot;value&quot;: &quot;C&quot;,</span>
+<span class="go">            &quot;facet_id&quot;: 95</span>
+<span class="go">        }</span>
+<span class="go">    ],</span>
+<span class="go">    &quot;hits&quot;: 4</span>
+<span class="go">}</span>
+</pre></div>
+</div>
 <dl class="data">
 <dt id="collins.COLLINS_VERSION">
 <tt class="descclassname">collins.</tt><tt class="descname">COLLINS_VERSION</tt><em class="property"> = '1.1'</em><a class="headerlink" href="#collins.COLLINS_VERSION" title="Permalink to this definition">¶</a></dt>
 <dd><p>The version of the collins api which is supported.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.Category">
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">Category</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#collins.Category" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#collins.EasyNode" title="collins.EasyNode"><tt class="xref py py-class docutils literal"><span class="pre">collins.EasyNode</span></tt></a></p>
 </dd></dl>
 
 <dl class="class">
@@ -260,14 +401,23 @@ specified max depth for your app id.</p>
     <span class="p">{</span>
         <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Damen&quot;</span><span class="p">,</span>
         <span class="nt">&quot;parent&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nt">&quot;active&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="nt">&quot;position&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">16077</span><span class="p">,</span>
         <span class="nt">&quot;sub_categories&quot;</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
                 <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Bekleidung&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;parent&quot;</span><span class="p">:</span> <span class="mi">16077</span><span class="p">,</span>
+                <span class="nt">&quot;active&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="nt">&quot;position&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">16078</span><span class="p">,</span>
                 <span class="nt">&quot;sub_categories&quot;</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">{</span>
                         <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Oberteile&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;parent&quot;</span><span class="p">:</span> <span class="mi">16078</span><span class="p">,</span>
+                        <span class="nt">&quot;active&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;position&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">16079</span><span class="p">,</span>
                         <span class="nt">&quot;sub_categories&quot;</span><span class="p">:</span> <span class="p">[</span>
                             <span class="p">{</span>
                                 <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Fr\u00fchlingslooks&quot;</span><span class="p">,</span>
@@ -425,19 +575,44 @@ And could differ vs. a &#8220;product search&#8221; or &#8220;product&#8221; que
 
 <dl class="method">
 <dt id="collins.Collins.products">
-<tt class="descname">products</tt><big>(</big><em>ids</em><big>)</big><a class="headerlink" href="#collins.Collins.products" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">products</tt><big>(</big><em>ids</em>, <em>fields=None</em><big>)</big><a class="headerlink" href="#collins.Collins.products" title="Permalink to this definition">¶</a></dt>
 <dd><p>Here you get a detail view of a product or a list of products returned
 by its ids.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ids</strong> (<em>list</em>) &#8211; array of product variant id</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ids</strong> (<em>list</em>) &#8211; array of product variant id</li>
+<li><strong>fields</strong> (<em>list</em>) &#8211; list of field names</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Possible Field Options</p>
+<table class="hlist"><tr><td><ul class="simple">
+<li>variants</li>
+<li>description_long</li>
+<li>description_short</li>
+<li>min_price</li>
+<li>max_price</li>
+</ul>
+</td><td><ul class="simple">
+<li>sale</li>
+<li>default_variant</li>
+<li>default_image</li>
+<li>id</li>
+</ul>
+</td><td><ul class="simple">
+<li>name</li>
+<li>active</li>
+<li>attributes_merged</li>
+<li>categorie</li>
+</ul>
+</td></tr></table>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">collins</span><span class="o">.</span><span class="n">products</span><span class="p">([</span><span class="mi">227838</span><span class="p">,</span> <span class="mi">287677</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">collins</span><span class="o">.</span><span class="n">products</span><span class="p">([</span><span class="mi">227838</span><span class="p">,</span> <span class="mi">287677</span><span class="p">],</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;variants&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 <div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
@@ -928,6 +1103,51 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/product_i
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="collins.Constants.PRODUCT_FIELD_DEFAULT_IMAGE">
+<tt class="descname">PRODUCT_FIELD_DEFAULT_IMAGE</tt><em class="property"> = 'default_image'</em><a class="headerlink" href="#collins.Constants.PRODUCT_FIELD_DEFAULT_IMAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.PRODUCT_FIELD_DEFAULT_VARIANT">
+<tt class="descname">PRODUCT_FIELD_DEFAULT_VARIANT</tt><em class="property"> = 'default_variant'</em><a class="headerlink" href="#collins.Constants.PRODUCT_FIELD_DEFAULT_VARIANT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.PRODUCT_FIELD_DESCRIPTION_LONG">
+<tt class="descname">PRODUCT_FIELD_DESCRIPTION_LONG</tt><em class="property"> = 'description_long'</em><a class="headerlink" href="#collins.Constants.PRODUCT_FIELD_DESCRIPTION_LONG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.PRODUCT_FIELD_DESCRIPTION_SHORT">
+<tt class="descname">PRODUCT_FIELD_DESCRIPTION_SHORT</tt><em class="property"> = 'description_short'</em><a class="headerlink" href="#collins.Constants.PRODUCT_FIELD_DESCRIPTION_SHORT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.PRODUCT_FIELD_MAX_PRICE">
+<tt class="descname">PRODUCT_FIELD_MAX_PRICE</tt><em class="property"> = 'max_price'</em><a class="headerlink" href="#collins.Constants.PRODUCT_FIELD_MAX_PRICE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.PRODUCT_FIELD_MIN_PRICE">
+<tt class="descname">PRODUCT_FIELD_MIN_PRICE</tt><em class="property"> = 'min_price'</em><a class="headerlink" href="#collins.Constants.PRODUCT_FIELD_MIN_PRICE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.PRODUCT_FIELD_OPTIONS">
+<tt class="descname">PRODUCT_FIELD_OPTIONS</tt><em class="property"> = set(['description_short', 'sale', 'default_variant', 'min_price', 'default_image', 'variants', 'description_long', 'max_price'])</em><a class="headerlink" href="#collins.Constants.PRODUCT_FIELD_OPTIONS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.PRODUCT_FIELD_SALE">
+<tt class="descname">PRODUCT_FIELD_SALE</tt><em class="property"> = 'sale'</em><a class="headerlink" href="#collins.Constants.PRODUCT_FIELD_SALE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.Constants.PRODUCT_FIELD_VARIANTS">
+<tt class="descname">PRODUCT_FIELD_VARIANTS</tt><em class="property"> = 'variants'</em><a class="headerlink" href="#collins.Constants.PRODUCT_FIELD_VARIANTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="collins.Constants.SORTS">
 <tt class="descname">SORTS</tt><em class="property"> = set(['relevance', 'updated_date', 'price', 'most_viewed', 'created_date'])</em><a class="headerlink" href="#collins.Constants.SORTS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -977,6 +1197,17 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/product_i
 <dl class="class">
 <dt id="collins.EasyCollins">
 <em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">EasyCollins</tt><big>(</big><em>conf_or_filename</em><big>)</big><a class="headerlink" href="#collins.EasyCollins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="collins.EasyCollins.categories">
+<tt class="descname">categories</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.EasyCollins.categories" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.EasyNode">
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">EasyNode</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#collins.EasyNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 </dd></dl>
 

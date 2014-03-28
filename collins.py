@@ -12,7 +12,146 @@ This module provieds two wrappers around the Collins-Shop-API.
 Object Structure
 ----------------
 
-.. image:: collins_objects.png
+.. digraph:: objects
+
+    node[shape=none];
+
+    basket[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">basket</td></tr>
+        <tr><td port="variant">product_variant</td><td></td></tr>
+        <tr><td port="products">products</td><td></td></tr>
+        <tr><td>total_variants</td><td></td></tr>
+        <tr><td>amount_variants</td><td></td></tr>
+        <tr><td>total_price</td><td></td></tr>
+        <tr><td>total_net</td><td></td></tr>
+        <tr><td>total_vat</td><td></td></tr>
+    </table>>];
+
+    basket_variant[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">basket_variant</td></tr>
+        <tr><td>unit_price</td><td></td></tr>
+        <tr><td>total_price</td><td></td></tr>
+        <tr><td>total_net</td><td></td></tr>
+        <tr><td>total_vat</td><td></td></tr>
+        <tr><td>amount</td><td></td></tr>
+        <tr><td port="product">product_id</td><td></td></tr>
+        <tr><td port="id">id</td><td></td></tr>
+        <tr><td>tax</td><td></td></tr>
+    </table>>];
+
+    category[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">category</td></tr>
+        <tr><td>id</td><td></td></tr>
+        <tr><td>name</td><td></td></tr>
+        <tr><td>active</td><td></td></tr>
+        <tr><td>parent</td><td></td></tr>
+        <tr><td>position</td><td></td></tr>
+        <tr><td port="sub">sub_categories</td><td></td></tr>
+    </table>>];
+
+    product[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">product</td></tr>
+        <tr><td port="id">id</td><td></td></tr>
+        <tr><td>name</td><td></td></tr>
+        <tr><td>description_long</td><td></td></tr>
+        <tr><td>description_short</td><td></td></tr>
+        <tr><td port="variant">default_variant</td><td></td></tr>
+        <tr><td>min_price</td><td></td></tr>
+        <tr><td>max_price</td><td></td></tr>
+        <tr><td>sale</td><td></td></tr>
+        <tr><td>default_image</td><td></td></tr>
+        <tr><td>attributes_merged</td><td></td></tr>
+        <tr><td>categories.appID</td><td></td></tr>
+    </table>>];
+
+    variant[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">variant</td></tr>
+        <tr><td port="id">id</td><td></td></tr>
+        <tr><td>ean</td><td></td></tr>
+        <tr><td>price</td><td></td></tr>
+        <tr><td>old_price</td><td></td></tr>
+        <tr><td>retail_price</td><td></td></tr>
+        <tr><td>default</td><td></td></tr>
+        <tr><td>attributes</td><td></td></tr>
+        <tr><td port="image">images</td><td></td></tr>
+    </table>>];
+
+    image[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">image</td></tr>
+        <tr><td>hash</td><td></td></tr>
+        <tr><td>ext</td><td></td></tr>
+        <tr><td>mime</td><td></td></tr>
+        <tr><td>size</td><td></td></tr>
+        <tr><td>image</td><td>"width": 672, "height": 960</td></tr>
+    </table>>];
+
+    facet[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">facet</td></tr>
+        <tr><td>id</td><td></td></tr>
+        <tr><td>facet_id</td><td></td></tr>
+        <tr><td>group_name</td><td></td></tr>
+        <tr><td>name</td><td></td></tr>
+        <tr><td>value</td><td>if not group: brand</td></tr>
+        <tr><td>options</td><td> if group: brand</td></tr>
+    </table>>];
+
+
+    basket:variant:w -> basket_variant;
+    basket:products:w -> product;
+    basket_variant:id:w -> variant:id:w;
+    basket_variant:product:w -> product:id:w;
+    category:sub:w -> category;
+    product:variant:w -> variant;
+    variant:image:w -> image;
+
+
+
+Thin Client Example
+--------------------
+
+.. code-block:: python
+
+    >>> from pythonshop.collins import Collins, Constants
+    >>> c =  Collins("myconfig.json")
+    >>> c.facets([Constants.FACET_CUPSIZE])
+
+.. code-block:: json
+
+    {
+        "facet": [
+            {
+                "id": 4,
+                "group_name": "cupsize",
+                "name": "D",
+                "value": "D",
+                "facet_id": 96
+            },
+            {
+                "id": 4,
+                "group_name": "cupsize",
+                "name": "A",
+                "value": "A",
+                "facet_id": 93
+            },
+            {
+                "id": 4,
+                "group_name": "cupsize",
+                "name": "B",
+                "value": "B",
+                "facet_id": 94
+            },
+            {
+                "id": 4,
+                "group_name": "cupsize",
+                "name": "C",
+                "value": "C",
+                "facet_id": 95
+            }
+        ],
+        "hits": 4
+    }
+
+
 """
 import json
 import logging
@@ -72,11 +211,11 @@ class Constants(object):
     FACET_CARE_SYMBOL = 247
     FACET_CLOTHING_HATS_US = 231
 
-    FACETS = set([FACET_BRAND , FACET_CLOTHING_MEN_BELTS_CM , FACET_CLOTHING_MEN_DE , FACET_CLOTHING_MEN_INCH ,
-                 FACET_CLOTHING_UNISEX_INCH , FACET_CLOTHING_UNISEX_INT , FACET_CLOTHING_UNISEX_ONESIZE ,
-                 FACET_CLOTHING_WOMEN_BELTS_CM , FACET_CLOTHING_WOMEN_DE , FACET_CLOTHING_WOMEN_INCH , FACET_COLOR ,
-                 FACET_CUPSIZE , FACET_DIMENSION3 , FACET_GENDERAGE , FACET_LENGTH , FACET_SHOES_UNISEX_ADIDAS_EUR ,
-                 FACET_SHOES_UNISEX_EUR , FACET_SIZE , FACET_SIZE_CODE , FACET_SIZE_RUN])
+    FACETS = set([FACET_BRAND, FACET_CLOTHING_MEN_BELTS_CM, FACET_CLOTHING_MEN_DE, FACET_CLOTHING_MEN_INCH,
+                 FACET_CLOTHING_UNISEX_INCH, FACET_CLOTHING_UNISEX_INT, FACET_CLOTHING_UNISEX_ONESIZE,
+                 FACET_CLOTHING_WOMEN_BELTS_CM, FACET_CLOTHING_WOMEN_DE, FACET_CLOTHING_WOMEN_INCH, FACET_COLOR,
+                 FACET_CUPSIZE, FACET_DIMENSION3, FACET_GENDERAGE, FACET_LENGTH, FACET_SHOES_UNISEX_ADIDAS_EUR,
+                 FACET_SHOES_UNISEX_EUR, FACET_SIZE, FACET_SIZE_CODE, FACET_SIZE_RUN])
 
     SORT_CREATED = "created_date"
     SORT_MOST_VIEWED = "most_viewed"
@@ -89,6 +228,19 @@ class Constants(object):
     TYPE_CATEGORIES = "categories"
     TYPE_PRODUCTS = "products"
     TYPES = set([TYPE_CATEGORIES, TYPE_PRODUCTS])
+
+    PRODUCT_FIELD_VARIANTS = "variants"
+    PRODUCT_FIELD_DESCRIPTION_LONG = "description_long"
+    PRODUCT_FIELD_DESCRIPTION_SHORT = "description_short"
+    PRODUCT_FIELD_MIN_PRICE = "min_price"
+    PRODUCT_FIELD_MAX_PRICE = "max_price"
+    PRODUCT_FIELD_SALE = "sale"
+    PRODUCT_FIELD_DEFAULT_VARIANT = "default_variant"
+    PRODUCT_FIELD_DEFAULT_IMAGE = "default_image"
+    PRODUCT_FIELD_OPTIONS = set([PRODUCT_FIELD_VARIANTS, PRODUCT_FIELD_DESCRIPTION_LONG,
+                                PRODUCT_FIELD_DESCRIPTION_SHORT, PRODUCT_FIELD_MIN_PRICE,
+                                PRODUCT_FIELD_MAX_PRICE, PRODUCT_FIELD_SALE,
+                                PRODUCT_FIELD_DEFAULT_VARIANT, PRODUCT_FIELD_DEFAULT_IMAGE,])
 
     API_ENVIRONMENT_STAGE = "stage"
     API_ENVIRONMENT_LIVE = "live"
@@ -341,14 +493,23 @@ class Collins(object):
                 {
                     "name": "Damen",
                     "parent": null,
+                    "active": false,
+                    "position": 1,
+                    "id": 16077,
                     "sub_categories": [
                         {
                             "name": "Bekleidung",
                             "parent": 16077,
+                            "active": false,
+                            "position": 1,
+                            "id": 16078,
                             "sub_categories": [
                                 {
                                     "name": "Oberteile",
                                     "parent": 16078,
+                                    "active": false,
+                                    "position": 1,
+                                    "id": 16079,
                                     "sub_categories": [
                                         {
                                             "name": "Fr\u00fchlingslooks",
@@ -369,7 +530,7 @@ class Collins(object):
         if max_depth is None:
             cmd ={}
         else:
-            if max_depth < 1:
+            if max_depth < -1:
                 raise CollinsException("max_depth to small")
 
             if max_depth > 10:
@@ -524,12 +685,32 @@ class Collins(object):
         by its ids.
 
         :param list ids: array of product variant id
+        :param list fields: list of field names
+
+        .. rubric:: Possible Field Options
+
+        .. hlist::
+            :columns: 3
+
+            * variants
+            * description_long
+            * description_short
+            * min_price
+            * max_price
+            * sale
+            * default_variant
+            * default_image
+            * id
+            * name
+            * active
+            * attributes_merged
+            * categorie
 
         .. rubric:: Example
 
         .. code-block:: python
 
-            collins.products([227838, 287677])
+            collins.products([227838, 287677], fields=["variants"])
 
         .. code-block:: json
 
@@ -581,7 +762,12 @@ class Collins(object):
         if idscount > 200:
             raise CollinsException("too many ids")
 
-        return self.send("products", {"ids": ids})
+        products = {"ids": ids}
+
+        if fields is not None:
+            products["fields"] = fields
+
+        return self.send("products", products)
 
     def productsearch(self, sessionid, filter=None, result=None):
         """
@@ -730,6 +916,22 @@ class Collins(object):
         return self.send("suggest", suggest)
 
 
+class EasyNode(object):
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __getattr__(self, name):
+        return self.obj[name]
+
+    def __getitem__(self, idx):
+        return self.obj[idx]
+
+
+class Category(EasyNode):
+    def __init__(self, obj):
+        super(Category, self).__init__(obj)
+
+
 class EasyCollins(object):
     def __init__(self, conf_or_filename):
         if isinstance(conf_or_filename, Config):
@@ -738,8 +940,17 @@ class EasyCollins(object):
             self.config = Config(conf_or_filename)
 
         self.collins = Collins(self.config)
+        self.__categorytree = None
+        self.__category_groups = None
+
+    def categories(self):
+        if self.__categorytree is None:
+            self.collins.categorytree()
+
+        return self.__categorytree
+
 
 if __name__ == '__main__':
     c = Collins("slicedice-config.json")
-    open('dump.json','w').write(json.dumps(c.facets([Constants.FACET_CUPSIZE]), indent=4))
+    open('dump.json','w').write(json.dumps(c.products([227838, 287677], fields=[]), indent=4))
     # open('dump.json','w').write(json.dumps(c.send("styles", {"ids":["m01_233966406"]}), indent=4))
