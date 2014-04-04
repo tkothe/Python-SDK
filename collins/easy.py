@@ -15,6 +15,7 @@ Example
 
     config = JSONConfig('slicedice-config.json')
     easy = EasyCollins(config)
+
     product = easy.productById(227838)
 
     for c in easy.categories():
@@ -137,9 +138,90 @@ class Product(EasyNode):
         return self.__variants
 
 
+class SearchFilter(object):
+    def __init__(self, search):
+        self.search = search
+        self.categories = set()
+        self.facets = {}
+        self.prices_from = None
+        self.prices_to = None
+        self.searchword = None
+        self.sale = None
+
+    def build(self):
+        f = {"sale": self.sale}
+
+        if len(self.categories) > 0:
+            f["categories"] = [c.id for c in self.categories]
+
+        if self.searchword is not None:
+            f["searchword"] = self.searchword
+
+        if len(self.facets) > 0:
+            pass
+
+        if self.prices_from is not None and self.prices_to is not None:
+            f["prices"] = {
+                "from": self.prices_from,
+                "to": self.prices_to
+            }
+
+        return f
+
+
 class SearchResult(object):
-    def __init__(self, easy):
+    def __init__(self, search):
+        self.search = search
+        self.sale = False
+        self.price = False
+        self.facets = False
+        self.limit = None
+        self.offset = None
+        self.categories = None
+
+    def build(self):
+        s = {"sale": self.sale, "price": self.price, "facets": self.facets}
+
+        if self.limit is not None:
+            s["limit"] = self.limit
+
+        if self.offset is not None:
+            s["offset"] = self.offset
+
+        if self.categories is not None:
+            s["categories"] = self.categories
+
+
+class Result(object):
+    def __init__(self, search, response):
+        self.search = search
+        self.count = response["product_count"]
+        self.categories = {}
+
+        if "categories" in response["facets"]:
+            for el in response["factes"]["categories"]:
+                cat = self.search.easy.categoryById(el["term"])
+                self.categories[cat] = el["count"]
+
+        self.products = [Product(self.search.easy, p)
+                            for p in response["products"]]
+
+class Search(object):
+    def __init__(self, easy, sessionid):
         self.easy = easy
+        self.sessionid = sessionid
+        self.filter = SearchFilter(self)
+        self.result = SearchResult(self)
+
+    def perform(self):
+        filter = self.filter.build()
+        result = self.result.build()
+
+        response = self.easy.collins.productsearch(self.sessionid,
+                                                   filter=filter,
+                                                   result=result)
+
+        return Result(self, response)
 
 
 class Basket(object):
@@ -176,7 +258,6 @@ class EasyCollins(object):
     """
     :param config: A :py:class:`collins.Config` instance.
     """
-
     def __init__(self, config):
         self.config = config
 
@@ -188,20 +269,6 @@ class EasyCollins(object):
         self.__facet_groups = {}
 
         self.__baskets = {}
-
-        try:
-            import pylibmc
-            self.__cash = pylibmc.Client(["127.0.0.1"], binary=True,
-                            behaviors={"tcp_nodelay": True, "ketama": True})
-
-            # we do this as a check to see if the server is realy there
-            self.__cash["dummy"]
-            del self.__cash["dummy"]
-        except:
-            # dirty little fallback }:->
-            self.collins.log.exception('')
-            self.collins.log.warn('using caching fallback')
-            self.__cash = {}
 
     def __build_categories(self):
         self.collins.log.info('cache category tree')
@@ -230,17 +297,6 @@ class EasyCollins(object):
                                                 for r in response)))
 
             self.__facet_groups[f] = group
-
-    def __create_product(self, obj):
-        p = Product(self, obj)
-
-        for variant in p.variants:
-            cachkey = "ean_{}".format(variant.ean)
-            self.__cash[cachkey] = p
-
-        self.__cash[str(p.id)] = p
-
-        return p
 
     def basketBySession(self, sessionid):
         """
@@ -304,15 +360,12 @@ class EasyCollins(object):
         :returns: A :py:class:`collins.easy.Product` instance.
         """
         spid = str(pid)
-        if spid in self.__cash:
-            return self.__cash[spid]
-        else:
-            response = self.collins.products(ids=[pid],
-                                             fields=[Constants.PRODUCT_FIELD_VARIANTS])
+        response = self.collins.products(ids=[pid],
+                                         fields=[Constants.PRODUCT_FIELD_VARIANTS])
 
-            p = self.__create_product(response["ids"][spid])
+        p = Product(self, response["ids"][spid])
 
-            return p
+        return p
 
     def productByEAN(self, ean):
         """
@@ -321,23 +374,21 @@ class EasyCollins(object):
         :param int ean: Product ean.
         :returns: A :py:class:`collins.easy.Product` instance.
         """
-        cachkey = "ean_{}".format(ean)
+        response = self.collins.producteans(eans=[ean],
+                                     fields=[Constants.PRODUCT_FIELD_VARIANTS])
 
-        if cachkey in self.__cash:
-            return self.__cash[cachkey]
-        else:
-            response = self.collins.producteans(eans=[ean],
-                                         fields=[Constants.PRODUCT_FIELD_VARIANTS])
+        p = Product(self, response[0])
 
-            p = self.__create_product(self, response["eans"][0])
-
-            return p
+        return p
 
     def search(self, sessionid):
         """
-        .. todo:: Not implementes yet :(
+        Creates a new :py:class:`collins.easy.Search` instance.
+
+        :param sessionid: The user session id.
+        :returns: A :py:class:`collins.easy.Search` instance.
         """
-        pass
+        return Search(self, sessionid)
 
     def autocomplete(self, searchword, types=None, limit=None):
         """
@@ -364,13 +415,8 @@ class EasyCollins(object):
         products = []
         if types is None or Constants.TYPE_PRODUCTS in types:
             for p in result["products"]:
-                spid = str(p["id"])
-
-                if spid in self.__cash:
-                    products.append(self.__cash[spid])
-                else:
-                    pobj = self.__create_product(p)
-                    products.append(pobj)
+                pobj = Product(self, p)
+                products.append(pobj)
 
         categories = []
         if types is None or Constants.TYPE_CATEGORIES in types:

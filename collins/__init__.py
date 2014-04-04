@@ -231,13 +231,12 @@ class Config(object):
     :param str filename: The path to a JSON file which holds the configuration.
     """
     def __init__(self, entry_point_url=None, app_id=None, app_password=None,
-                 agent=None, authorization=None, image_url=None, logconf=None):
+                 agent=None, image_url=None, logconf=None):
 
         self.entry_point_url = entry_point_url
         self.app_id = app_id
         self.app_password = app_password
         self.agent = agent
-        self.authorization = authorization
         self.image_url = image_url
 
         if logconf:
@@ -902,6 +901,9 @@ class Collins(object):
     def producteans(self, eans, fields=None):
         """
         Returns products by eans.
+
+        :param list eans: An array of eans.
+        :returns: Array of products.
         """
         products = {}
 
@@ -919,7 +921,7 @@ class Collins(object):
         if fields is not None:
             products["fields"] = fields
 
-        return self.send("products_eans", products)
+        return self.send("products_eans", products)["eans"]
 
     def productsearch(self, sessionid, filter=None, result=None):
         """
@@ -1025,6 +1027,47 @@ class Collins(object):
                     {
                         "id": 227838,
                         "name": "Badeshort Herren"
+                    }
+                ]
+            }
+
+        .. code-block:: python
+
+            >>> filter={"sale":True}
+            >>> result={"sale":True, "limit":2}
+            >>> collins.productsearch("sessionid", filter=filter, result=result)
+
+        .. code-block:: json
+
+            {
+                "product_count": 5866,
+                "pageHash": "c54cc835-2b2f-448b-84a8-ef1e23fa7280",
+                "facets": {
+                    "sale": {
+                        "_type": "terms",
+                        "total": 29797,
+                        "terms": [
+                            {
+                                "count": 23931,
+                                "term": "0"
+                            },
+                            {
+                                "count": 5866,
+                                "term": "1"
+                            }
+                        ],
+                        "other": 0,
+                        "missing": 0
+                    }
+                },
+                "products": [
+                    {
+                        "id": 297395,
+                        "name": "Fischer Skihose, \u00bbLimit\u00ab"
+                    },
+                    {
+                        "id": 300068,
+                        "name": "Armbanduhr, Esprit, \u00bbglamonza silver ES105432004\u00ab"
                     }
                 ]
             }
