@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>collins.easy &mdash; python-shop-sdk 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="python-shop-sdk 0.1 documentation" href="index.html" />
+    <link rel="prev" title="collins" href="collins.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="index.html">
+          <span>python-shop-sdk 0.1 documentation</span></a></h1>
+        <h2 class="heading"><span>collins.easy</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="collins.html">collins</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="module-collins.easy">
+<span id="collins-easy"></span><h1>collins.easy<a class="headerlink" href="#module-collins.easy" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Arne Simon =&gt; [<a class="reference external" href="mailto:arne_simon&#37;&#52;&#48;gmx&#46;de">arne_simon<span>&#64;</span>gmx<span>&#46;</span>de</a>]</td>
+</tr>
+</tbody>
+</table>
+<p>EasyCollins is the attempt to make collins a little bit more userfriendly
+and hides much of the direct calls to the Collins API.</p>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">collins</span> <span class="kn">import</span> <span class="n">JSONConfig</span>
+<span class="kn">from</span> <span class="nn">collins.easy</span> <span class="kn">import</span> <span class="n">EasyCollins</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">JSONConfig</span><span class="p">(</span><span class="s">&#39;slicedice-config.json&#39;</span><span class="p">)</span>
+<span class="n">easy</span> <span class="o">=</span> <span class="n">EasyCollins</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">product</span> <span class="o">=</span> <span class="n">easy</span><span class="o">.</span><span class="n">productById</span><span class="p">(</span><span class="mi">227838</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">easy</span><span class="o">.</span><span class="n">categories</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s">&#39;---&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;---&#39;</span>
+    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">sub</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="collins.easy.Basket">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">Basket</tt><big>(</big><em>easy</em>, <em>sessionid</em><big>)</big><a class="headerlink" href="#collins.easy.Basket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>easy</strong> &#8211; The EasyCollins instance.</li>
+<li><strong>sessionid</strong> &#8211; The session id the basket is associated with.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="collins.easy.Basket.order">
+<tt class="descname">order</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.Basket.order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins to order this basket.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.Category">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">Category</tt><big>(</big><em>easy</em>, <em>obj</em><big>)</big><a class="headerlink" href="#collins.easy.Category" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#collins.easy.EasyNode" title="collins.easy.EasyNode"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.EasyNode</span></tt></a></p>
+<dl class="method">
+<dt id="collins.easy.Category.treeiter">
+<tt class="descname">treeiter</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.Category.treeiter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.EasyCollins">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">EasyCollins</tt><big>(</big><em>config</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> &#8211; A <a class="reference internal" href="collins.html#collins.Config" title="collins.Config"><tt class="xref py py-class docutils literal"><span class="pre">collins.Config</span></tt></a> instance.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="collins.easy.EasyCollins.autocomplete">
+<tt class="descname">autocomplete</tt><big>(</big><em>searchword</em>, <em>types=None</em>, <em>limit=None</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.autocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Autocompletes the searchword and looks in the products and/or
+categories for autocompletion possebilities.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>searchword</strong> (<em>str</em>) &#8211; The abbriviation.</li>
+<li><strong>types</strong> (<em>list</em>) &#8211; against which types should be autocompleted.
+The oprions are <a class="reference internal" href="collins.html#collins.Constants.TYPES" title="collins.Constants.TYPES"><tt class="xref py py-class docutils literal"><span class="pre">collins.Constants.TYPES</span></tt></a></li>
+<li><strong>limit</strong> (<em>int</em>) &#8211; the amount of items returned per selected type</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple of two list. First one are the products and the second
+are the categories.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">products</span><span class="p">,</span> <span class="n">categories</span> <span class="o">=</span> <span class="n">easy</span><span class="o">.</span><span class="n">autocomplete</span><span class="p">(</span><span class="s">&quot;sho&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.easy.EasyCollins.basketBySession">
+<tt class="descname">basketBySession</tt><big>(</big><em>sessionid</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.basketBySession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a basket for the session id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sessionid</strong> &#8211; The session id the basket is associated with.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="#collins.easy.Basket" title="collins.easy.Basket"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Basket</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.easy.EasyCollins.categories">
+<tt class="descname">categories</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.categories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the category tree.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#collins.easy.Category" title="collins.easy.Category"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Category</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.easy.EasyCollins.categoryById">
+<tt class="descname">categoryById</tt><big>(</big><em>cid</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.categoryById" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the category with the given id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cid</strong> &#8211; The id of the category to get.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#collins.easy.Category" title="collins.easy.Category"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Category</span></tt></a> instance.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.easy.EasyCollins.facetgroupById">
+<tt class="descname">facetgroupById</tt><big>(</big><em>facet_group</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.facetgroupById" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all facets of a group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>facet_group</strong> &#8211; The id or name of the facet group.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#collins.easy.FacetGroup" title="collins.easy.FacetGroup"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.FacetGroup</span></tt></a> instance.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.easy.EasyCollins.productByEAN">
+<tt class="descname">productByEAN</tt><big>(</big><em>ean</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.productByEAN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a product by its ean code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ean</strong> (<em>int</em>) &#8211; Product ean.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#collins.easy.Product" title="collins.easy.Product"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Product</span></tt></a> instance.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.easy.EasyCollins.productById">
+<tt class="descname">productById</tt><big>(</big><em>pid</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.productById" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a product by its id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pid</strong> (<em>int</em>) &#8211; Product id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#collins.easy.Product" title="collins.easy.Product"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Product</span></tt></a> instance.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.easy.EasyCollins.search">
+<tt class="descname">search</tt><big>(</big><em>sessionid</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="collins.easy.EasyCollins.suggest">
+<tt class="descname">suggest</tt><big>(</big><em>searchword</em>, <em>categories=None</em>, <em>limit=None</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.suggest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suggest additional words to the provided searchword.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>searchword</strong> (<em>str</em>) &#8211; A search string to suggest items for.</li>
+<li><strong>categories</strong> (<em>list</em>) &#8211; A list of <a class="reference internal" href="#collins.easy.Category" title="collins.easy.Category"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Category</span></tt></a>.</li>
+<li><strong>limit</strong> (<em>int</em>) &#8211; The maximum amount of results.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of strings.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.EasyNode">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">EasyNode</tt><big>(</big><em>easy</em>, <em>obj</em><big>)</big><a class="headerlink" href="#collins.easy.EasyNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.FacetGroup">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">FacetGroup</tt><big>(</big><em>easy</em>, <em>fid</em>, <em>name</em>, <em>facets</em><big>)</big><a class="headerlink" href="#collins.easy.FacetGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.Image">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">Image</tt><big>(</big><em>easy</em>, <em>obj</em><big>)</big><a class="headerlink" href="#collins.easy.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#collins.easy.EasyNode" title="collins.easy.EasyNode"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.EasyNode</span></tt></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.Product">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">Product</tt><big>(</big><em>easy</em>, <em>obj</em><big>)</big><a class="headerlink" href="#collins.easy.Product" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#collins.easy.EasyNode" title="collins.easy.EasyNode"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.EasyNode</span></tt></a></p>
+<dl class="attribute">
+<dt id="collins.easy.Product.variants">
+<tt class="descname">variants</tt><a class="headerlink" href="#collins.easy.Product.variants" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.SearchResult">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">SearchResult</tt><big>(</big><em>easy</em><big>)</big><a class="headerlink" href="#collins.easy.SearchResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.Variant">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">Variant</tt><big>(</big><em>easy</em>, <em>obj</em><big>)</big><a class="headerlink" href="#collins.easy.Variant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#collins.easy.EasyNode" title="collins.easy.EasyNode"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.EasyNode</span></tt></a></p>
+<dl class="attribute">
+<dt id="collins.easy.Variant.attributes">
+<tt class="descname">attributes</tt><a class="headerlink" href="#collins.easy.Variant.attributes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.easy.Variant.images">
+<tt class="descname">images</tt><a class="headerlink" href="#collins.easy.Variant.images" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.VariantAttributes">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">VariantAttributes</tt><big>(</big><em>easy</em>, <em>obj</em><big>)</big><a class="headerlink" href="#collins.easy.VariantAttributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="collins.easy.VariantAttributes.keys">
+<tt class="descname">keys</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.VariantAttributes.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="collins.html">collins</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2014, Arne Simon =&gt; email::[arne.simon@slice-dice.de].
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

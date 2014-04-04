@@ -74,6 +74,12 @@ Object Structure
         <tr><td>default</td><td></td></tr>
         <tr><td>attributes</td><td></td></tr>
         <tr><td port="image">images</td><td></td></tr>
+        <tr><td>updated_date</td></tr>
+        <tr><td>first_active_date</td></tr>
+        <tr><td>first_sale_date</td></tr>
+        <tr><td>created_date</td></tr>
+        <tr><td>additional_info</td></tr>
+        <tr><td>quantity</td></tr>
     </table>>];
 
     image[label=<<table cellspacing="0" border="0" cellborder="1">
@@ -105,54 +111,9 @@ Object Structure
     variant:image:w -> image;
 
 
-
-Thin Client Example
---------------------
-
-.. code-block:: python
-
-    >>> from pythonshop.collins import Collins, Constants, JSONConfig
-    >>> c =  Collins(JSONConfig("myconfig.json"))
-    >>> c.facets([Constants.FACET_CUPSIZE])
-
-.. code-block:: json
-
-    {
-        "facet": [
-            {
-                "id": 4,
-                "group_name": "cupsize",
-                "name": "D",
-                "value": "D",
-                "facet_id": 96
-            },
-            {
-                "id": 4,
-                "group_name": "cupsize",
-                "name": "A",
-                "value": "A",
-                "facet_id": 93
-            },
-            {
-                "id": 4,
-                "group_name": "cupsize",
-                "name": "B",
-                "value": "B",
-                "facet_id": 94
-            },
-            {
-                "id": 4,
-                "group_name": "cupsize",
-                "name": "C",
-                "value": "C",
-                "facet_id": 95
-            }
-        ],
-        "hits": 4
-    }
-
-
 """
+import time
+import base64
 import json
 import logging
 import logging.config
@@ -206,7 +167,7 @@ class Constants(object):
     FACET_SIZE = 2
     FACET_SIZE_CODE = 206
     FACET_SIZE_RUN = 172
-    # not in the PHP-SDK o.O
+    # not in the PHP-SDK o.O ?
     FACET_CHANNEL = 211
     FACET_CARE_SYMBOL = 247
     FACET_CLOTHING_HATS_US = 231
@@ -238,10 +199,10 @@ class Constants(object):
     PRODUCT_FIELD_SALE = "sale"
     PRODUCT_FIELD_DEFAULT_VARIANT = "default_variant"
     PRODUCT_FIELD_DEFAULT_IMAGE = "default_image"
-    PRODUCT_FIELD_OPTIONS = set([PRODUCT_FIELD_VARIANTS, PRODUCT_FIELD_DESCRIPTION_LONG,
-                                PRODUCT_FIELD_DESCRIPTION_SHORT, PRODUCT_FIELD_MIN_PRICE,
-                                PRODUCT_FIELD_MAX_PRICE, PRODUCT_FIELD_SALE,
-                                PRODUCT_FIELD_DEFAULT_VARIANT, PRODUCT_FIELD_DEFAULT_IMAGE,])
+    PRODUCT_FIELDS = set([PRODUCT_FIELD_VARIANTS, PRODUCT_FIELD_DESCRIPTION_LONG,
+                        PRODUCT_FIELD_DESCRIPTION_SHORT, PRODUCT_FIELD_MIN_PRICE,
+                        PRODUCT_FIELD_MAX_PRICE, PRODUCT_FIELD_SALE,
+                        PRODUCT_FIELD_DEFAULT_VARIANT, PRODUCT_FIELD_DEFAULT_IMAGE,])
 
     API_ENVIRONMENT_STAGE = "stage"
     API_ENVIRONMENT_LIVE = "live"
@@ -261,11 +222,9 @@ class Config(object):
         The password for the corresponding application id.
     - agent
         The name of the browser agent to fake.
-    - authorization
-        The authorization header
     - image_url
         A string as template for the image urls.
-        As example http://cdn.mary-paul.de/product_images/{path}/{id}_{width}_{height}{extension}.
+        As example http://cdn.mary-paul.de/file/{}.
     - logconf
         A dictonary for logging.config.dictConfig.
 
@@ -284,19 +243,28 @@ class Config(object):
         if logconf:
             logging.config.dictConfig(logconf)
 
-    def imageurl(self, path, productid, width, height, extension):
+    def imageurl(self, hash, size=None):
         """
         Returns the url for a image.
 
-        :param path: Part of the image path.
-        :param productid:
-        :param width: Width of the image.
-        :param height: Height of the image.
-        :param extension: The image extension. For example *'.jpg'*
+        :param hash: hash of the image.
+        :param size: tupple of (width, height)
         """
-        return self.image_url.format(path=path, id=productid,
-                                             width=width, height=height,
-                                             extension=extension)
+        if size is not None:
+            name = '{}_{}_{}'.format(hash,size[0], size[1])
+        else:
+            name = hash
+
+        return self.image_url.format(name)
+
+    @property
+    def authorization(self):
+        """
+        Content for the authorization header.
+        """
+        data = "{}:{}".format(self.app_id, self.app_password)
+        encoded = base64.b64encode(data)
+        return "Basic " + encoded.decode("ascii")
 
 
 class JSONConfig(Config):
@@ -312,8 +280,7 @@ class JSONConfig(Config):
             "app_id": "",
             "app_password": "",
             "agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36",
-            "authorization": "",
-            "image_url": "http://cdn.mary-paul.de/product_images/{path}/{id}_{width}_{height}{extension}",
+            "image_url": "http://cdn.mary-paul.de/files/{}",
             "logconf": {
                     "version": 1,
                     "disable_existing_loggers": false,
@@ -369,24 +336,26 @@ class JSONEnvironmentFallbackConfig(Config):
         # if the field *authorization* is not present in the config file,
         # then the environment variable *COLLINS_AUTH* will be used for the
         # config variable authorization.
-        conf = JSONEnvironmentFallbackConfig('myconf.json',
-                                             authorization='COLLINS_AUTH')
+        conf = JSONEnvironmentFallbackConfig('myconf.json', authorization='COLLINS_AUTH')
     """
     def __init__(self, jsonfile, entry_point_url=None, app_id=None,
-                 app_password=None, agent=None, authorization=None,
+                 app_password=None, agent=None,
                  image_url=None, logconf=None):
         with open(jsonfile) as cfgfile:
             self.data = json.load(cfgfile)
 
         loc = locals()
         for key in ["entry_point_url", "app_id", "app_password", "agent",
-                    "authorization", "image_url", "logconf"]:
+                    "image_url", "logconf"]:
             if key not in self.data:
                 if loc[key] is not None:
                     self.data[key] = os.environ[loc[key]]
                 else:
                     msg = 'config value "{}" not present'.format(key)
                     raise CollinsException(msg)
+
+        if self.data["logconf"]:
+            logging.config.dictConfig(self.data["logconf"])
 
     def __getattr__(self, name):
         return self.data[name]
@@ -411,6 +380,50 @@ class Collins(object):
     All functions return the JSON responses as Python List and Dictonarys.
 
     :param config: A Config instance or a file name to a JSON config file.
+
+    .. rubric:: Example
+
+    .. code-block:: python
+
+        >>> from pythonshop.collins import Collins, Constants, JSONConfig
+        >>> c =  Collins(JSONConfig("myconfig.json"))
+        >>> c.facets([Constants.FACET_CUPSIZE])
+
+    .. code-block:: json
+
+        {
+            "facet": [
+                {
+                    "id": 4,
+                    "group_name": "cupsize",
+                    "name": "D",
+                    "value": "D",
+                    "facet_id": 96
+                },
+                {
+                    "id": 4,
+                    "group_name": "cupsize",
+                    "name": "A",
+                    "value": "A",
+                    "facet_id": 93
+                },
+                {
+                    "id": 4,
+                    "group_name": "cupsize",
+                    "name": "B",
+                    "value": "B",
+                    "facet_id": 94
+                },
+                {
+                    "id": 4,
+                    "group_name": "cupsize",
+                    "name": "C",
+                    "value": "C",
+                    "facet_id": 95
+                }
+            ],
+            "hits": 4
+        }
     """
 
     def __init__(self, config):
@@ -427,6 +440,7 @@ class Collins(object):
 
         :param cmd: The name of the command.
         :param obj: A python dict object which contains the request parameters.
+        :returns: A JSON structure as python dicts and lists.
         """
         params = json.dumps([{cmd: obj}])
         headers = {
@@ -440,7 +454,7 @@ class Collins(object):
             response = urllib2.urlopen(req)
 
             result = response.read()
-            result = json.loads(result)[0][cmd]
+            result = json.loads(result, encoding="utf-8")[0][cmd]
 
             if "error_message" in result:
                 raise CollinsException(result["error_message"])
@@ -458,12 +472,34 @@ class Collins(object):
     def autocomplete(self, searchword, limit=None, types=None):
         """
         :param str searchword: The abbriviation.
-        :param list categories: against which types should be autocompleted
+        :param list types: against which types should be autocompleted.
+                            The oprions are :py:class:`collins.Constants.TYPES`
         :param int limit: the amount of items returned per selected type
+        :returns: A dict with "products" and/or "categories".
 
-        .. attention::
-            In the documentation stands **autocomplete** but the real
-            Tag is **autocompletion**!
+        .. rubric:: Example
+
+        .. code-block:: python
+
+            >>> collins.autocomplete("sho", types=[Constants.TYPE_PRODUCTS])
+
+        .. code-block:: json
+
+            {
+                "products": [
+                    {
+                        "min_price": 5995,
+                        "name": "Shopper mit Innenfutter in Leo-Print",
+                        "sale": false,
+                        "id": 303058,
+                        "brand_id": 163,
+
+                        "even more": "product stuff but its only",
+                        "a short example": "}:->"
+                    }
+                ]
+            }
+
         """
         complete = {"searchword": searchword}
 
@@ -481,44 +517,26 @@ class Collins(object):
 
         return self.send("autocompletion", complete)
 
-    def basketadd(self, sessionid, products):
+    def basketadd(self, sessionid, variants):
         """
-        The request "basket add" does change the Items available in the basket.
-        A set to 0 or less leads to a deletion. Only the variants in the items
-        list will be changed. If a variant is changed or added an internal
-        availability check is done and error codes are returned.
-
         :param str sessionid: identification of the basket -> user,
                               user -> basket
-        :param list products: is the array for the product variants
+        :param list variants: is the array of variant ids
+        :returns: The basket JSON.
 
-        .. rubric:: product variant dict
+        .. rubric:: Example
 
-        +---------+---------------------------------------------------+
-        |fieldname|                    meaning                        |
-        +=========+===================================================+
-        |id       |the product variant id                             |
-        +---------+---------------------------------------------------+
-        |command  |either add for the + operator (even -1 is possible)|
-        |         |or set for a specific quantity.                    |
-        |         |If the end amount is <= 0 the product is           |
-        |         |removed from basket with an result code.           |
-        +---------+---------------------------------------------------+
-        |amount   |the amount to add or set                           |
-        +---------+---------------------------------------------------+
         """
         check_sessionid(sessionid)
 
-        data = {"session_id": sessionid,
-                # "product_variant": [
-                #     {"command": "",
-                #      "id": 1,
-                #      "amount": 1},
-                # ]
-                "product_variant": products
+        data = {
+                "session_id": sessionid,
+                "order_lines": [{'id':str(vid),
+                                 'variant_id':vid}
+                                    for vid in variants]
             }
 
-        return self.send("basket_add", data)
+        return self.send("basket", data)
 
     def basketget(self, sessionid):
         """
@@ -531,7 +549,22 @@ class Collins(object):
         """
         check_sessionid(sessionid)
 
-        return self.send("basket_get", {"session_id": sessionid})
+        return self.send("basket", {"session_id": sessionid})
+
+    def basketremove(self, sessionid, variants):
+        """
+        Removes elements from the basket associated with the session id.
+        """
+        check_sessionid(sessionid)
+
+        # WHAT THE FUCK DUDE!
+        # items are deleted not by there variants id, but by there id given by
+        # us, so we have to remeber this. Seriously, why not simply variant-id
+        # and amount. wtf, WTF!
+
+        return self.send("basket", {"session_id": sessionid,
+                                    "order_lines": [{"delete": str(vid)
+                                                        for vid in variants}]})
 
     def category(self, ids):
         """
@@ -543,7 +576,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            collins.category([16077])
+            >>> collins.category([16077])
 
         .. code-block:: json
 
@@ -557,7 +590,6 @@ class Collins(object):
                 }
             }
         """
-
         idscount = len(ids)
 
         if idscount < 1:
@@ -579,7 +611,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            collins.categorytree()
+            >>> collins.categorytree()
 
         .. code-block:: json
 
@@ -622,7 +654,7 @@ class Collins(object):
             ]
         """
         if max_depth is None:
-            cmd ={}
+            cmd = {}
         else:
             if max_depth < -1:
                 raise CollinsException("max_depth to small")
@@ -647,7 +679,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            collins.facets([Constants.FACET_CUPSIZE])
+            >>> collins.facets([Constants.FACET_CUPSIZE])
 
         .. code-block:: json
 
@@ -712,7 +744,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            collins.facettypes()
+            >>> collins.facettypes()
 
         .. code-block:: json
 
@@ -727,6 +759,7 @@ class Collins(object):
             timeframe and to your app.
 
         :param int orderid: this is the order id to get info about
+        :returns: Order JSON
         """
         return self.send("get_order", {"order_id": orderid})
 
@@ -743,6 +776,7 @@ class Collins(object):
                                canceled. (see checkout api)
         :param str error_url: this is a callback url if the order throwed
                               exceptions (see checkout api)
+        :returns:
         """
         check_sessionid(sessionid)
 
@@ -778,7 +812,7 @@ class Collins(object):
         Here you get a detail view of a product or a list of products returned
         by its ids.
 
-        :param list ids: array of product variant id
+        :param list ids: array of product id
         :param list fields: list of field names
 
         .. rubric:: Possible Field Options
@@ -804,7 +838,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            collins.products([227838, 287677], fields=["variants"])
+            >>> collins.products(ids=[227838, 287677], fields=["variants"])
 
         .. code-block:: json
 
@@ -848,20 +882,44 @@ class Collins(object):
                 }
             }
         """
-        idscount = len(ids)
+        products = {}
 
-        if idscount < 1:
+        count = len(ids)
+
+        if count < 1:
             raise CollinsException("too few ids")
 
-        if idscount > 200:
+        if count > 200:
             raise CollinsException("too many ids")
 
-        products = {"ids": ids}
+        products["ids"] = ids
 
         if fields is not None:
             products["fields"] = fields
 
         return self.send("products", products)
+
+    def producteans(self, eans, fields=None):
+        """
+        Returns products by eans.
+        """
+        products = {}
+
+        count = len(eans)
+
+        if count < 1:
+            raise CollinsException("too few eans")
+
+        if count > 200:
+            raise CollinsException("too many eans")
+
+        # collins wants eans as strings
+        products["eans"] = [ str(e) for e in eans ]
+
+        if fields is not None:
+            products["fields"] = fields
+
+        return self.send("products_eans", products)
 
     def productsearch(self, sessionid, filter=None, result=None):
         """
@@ -955,8 +1013,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            # i belive we search shorts now o.O
-            collins.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
+            >>> collins.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
 
         .. code-block:: json
 
@@ -993,6 +1050,7 @@ class Collins(object):
         :param str searchword: string of a searchterm to suggest more words for
         :param list categories: array of category ids
         :param int limit: amount of items to suggest
+        :returns: A list of strings.
         """
         suggest = {"searchword": searchword}
 
@@ -1006,89 +1064,3 @@ class Collins(object):
             suggest["limit"] = limit
 
         return self.send("suggest", suggest)
-
-
-class EasyNode(object):
-    def __init__(self, obj):
-        self.obj = obj
-
-    def __getattr__(self, name):
-        return self.obj[name]
-
-    def __getitem__(self, idx):
-        return self.obj[idx]
-
-
-class Category(EasyNode):
-    def __init__(self, obj):
-        super(Category, self).__init__(obj)
-
-        self.sub_categories = []
-
-
-class Image(EasyNode):
-    def __init__(self, obj):
-        super(Image, self).__init__(obj)
-
-    def __str__(self):
-        pass
-
-
-class EasyCollins(object):
-    """
-    :param config: A :py:class:`collins.Config` instance.
-    """
-
-    def __init__(self, config):
-        iself.config = config
-
-        self.collins = Collins(self.config)
-        self.__categorytree = None
-        self.__category_ids = {}
-
-        tree = self.collins.categorytree()
-
-        def build(n):
-            c = Category(n)
-            self.__category_ids[c.id] = c
-            c.sub_categories = [build(x) for x in n["sub_categories"]]
-            return c
-
-        self.__facet_groups = None
-        self.__facet_map = {}
-
-        facets = c.facettypes()
-
-        self.__facet_map = {}
-        self.__facet_groups = {}
-
-        for f in facets:
-            response = c.facets([f])["facet"]
-            self.__facet_map[response[0]["group_name"]] = f
-            self.__facet_map[f] = response[0]["group_name"]
-
-            self.__facet_groups[f] = [EasyNode(r) for r in response]
-
-    def categories(self):
-        return self.__categorytree
-
-    def categoryById(self, cid):
-        return self.__category_ids[cid]
-
-    def facets(self, facet_group):
-        """
-        Returns all facets of a group.
-
-        :param facet_group: The id or name of the facet group.
-        """
-
-        if isinstance(facet_group, (str, unicode)):
-            facet_group = self.__facet_map[facet_group]
-
-        return self.__facet_groups[facet_group]
-
-
-
-if __name__ == '__main__':
-    c = EasyCollins(JSONConfig("slicedice-config.json"))
-    #open('dump.json','w').write(json.dumps(c.products([227838, 287677], fields=[]), indent=4))

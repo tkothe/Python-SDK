@@ -6,12 +6,12 @@
 Welcome to python-shop-sdk's documentation!
 ===========================================
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
 
+   setup
    collins
+   easycollins
 
 
 

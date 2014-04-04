@@ -4,6 +4,7 @@
 """
 import unittest
 import collins
+import collins.easy
 
 TEST_CONFIG = "slicedice-config.json"
 TEST_SESSION_ID = "fa8e2e2210n"
@@ -76,7 +77,8 @@ class CollinsTest(unittest.TestCase):
 
     def testProductsearch(self):
         # i belive we search shorts now o.O
-        response = self.collins.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
+        response = self.collins.productsearch(TEST_SESSION_ID,
+                                              filter={"categories":[16354]})
         self.log.info(response)
 
     def testSuggest(self):
@@ -87,8 +89,18 @@ class CollinsTest(unittest.TestCase):
 
 class TestEasyCollins(unittest.TestCase):
 
+    @staticmethod
+    def setUpClass(self):
+        config = collins.JSONConfig(TEST_CONFIG)
+        self.easy = collins.easy.EasyCollins(config)
+
     def testCategories(self):
         pass
+
+    def testProductById(self):
+        p = self.easy.productById(227838)
+
+        self.assertEqual(p.id, 227838)
 
 
 if __name__ == '__main__':
