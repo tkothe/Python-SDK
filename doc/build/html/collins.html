@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="python-shop-sdk 0.1 documentation" href="index.html" />
     <link rel="next" title="collins.easy" href="easycollins.html" />
-    <link rel="prev" title="Setup" href="setup.html" /> 
+    <link rel="prev" title="Run Tests" href="howtos/tests.html" /> 
   </head>
   <body>
       <div class="header"><h1 class="heading"><a href="index.html">
@@ -35,7 +35,7 @@
       <div class="topnav">
       
         <p>
-        «&#160;&#160;<a href="setup.html">Setup</a>
+        «&#160;&#160;<a href="howtos/tests.html">Run Tests</a>
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="index.html">Contents</a>
         &#160;&#160;::&#160;&#160;
@@ -52,7 +52,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Arne Simon =&gt; email::[arne_simon&#64;gmx.de]</td>
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Arne Simon [<a class="reference external" href="mailto:arne&#46;simon&#37;&#52;&#48;slice-dice&#46;de">arne<span>&#46;</span>simon<span>&#64;</span>slice-dice<span>&#46;</span>de</a>]</td>
 </tr>
 </tbody>
 </table>
@@ -269,28 +269,6 @@ The oprions are <a class="reference internal" href="#collins.Constants.TYPES" ti
 </dd></dl>
 
 <dl class="method">
-<dt id="collins.Collins.basketadd">
-<tt class="descname">basketadd</tt><big>(</big><em>sessionid</em>, <em>variants</em><big>)</big><a class="headerlink" href="#collins.Collins.basketadd" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>sessionid</strong> (<em>str</em>) &#8211; identification of the basket -&gt; user,
-user -&gt; basket</li>
-<li><strong>variants</strong> (<em>list</em>) &#8211; is the array of variant ids</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The basket JSON.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Example</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="collins.Collins.basketget">
 <tt class="descname">basketget</tt><big>(</big><em>sessionid</em><big>)</big><a class="headerlink" href="#collins.Collins.basketget" title="Permalink to this definition">¶</a></dt>
 <dd><p>This returns the current basket for a User / Session ID.
@@ -311,6 +289,26 @@ user -&gt; basket</td>
 <dt id="collins.Collins.basketremove">
 <tt class="descname">basketremove</tt><big>(</big><em>sessionid</em>, <em>variants</em><big>)</big><a class="headerlink" href="#collins.Collins.basketremove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes elements from the basket associated with the session id.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.basketset">
+<tt class="descname">basketset</tt><big>(</big><em>sessionid</em>, <em>variants</em><big>)</big><a class="headerlink" href="#collins.Collins.basketset" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sessionid</strong> (<em>str</em>) &#8211; identification of the basket -&gt; user, user -&gt; basket</li>
+<li><strong>variants</strong> (<em>list</em>) &#8211; is the array of variant ids</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The basket JSON.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -544,6 +542,16 @@ And could differ vs. a &#8220;product search&#8221; or &#8220;product&#8221; que
 <dt id="collins.Collins.producteans">
 <tt class="descname">producteans</tt><big>(</big><em>eans</em>, <em>fields=None</em><big>)</big><a class="headerlink" href="#collins.Collins.producteans" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns products by eans.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>eans</strong> (<em>list</em>) &#8211; An array of eans.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Array of products.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -794,6 +802,45 @@ _all field.</td>
 <span class="p">}</span>
 </pre></div>
 </div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;sale&quot;</span><span class="p">:</span><span class="bp">True</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;sale&quot;</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span> <span class="s">&quot;limit&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">collins</span><span class="o">.</span><span class="n">productsearch</span><span class="p">(</span><span class="s">&quot;sessionid&quot;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+    <span class="nt">&quot;product_count&quot;</span><span class="p">:</span> <span class="mi">5866</span><span class="p">,</span>
+    <span class="nt">&quot;pageHash&quot;</span><span class="p">:</span> <span class="s2">&quot;c54cc835-2b2f-448b-84a8-ef1e23fa7280&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;facets&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;sale&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;_type&quot;</span><span class="p">:</span> <span class="s2">&quot;terms&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;total&quot;</span><span class="p">:</span> <span class="mi">29797</span><span class="p">,</span>
+            <span class="nt">&quot;terms&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;count&quot;</span><span class="p">:</span> <span class="mi">23931</span><span class="p">,</span>
+                    <span class="nt">&quot;term&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;count&quot;</span><span class="p">:</span> <span class="mi">5866</span><span class="p">,</span>
+                    <span class="nt">&quot;term&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;other&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;missing&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;products&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">297395</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Fischer Skihose, \u00bbLimit\u00ab&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">300068</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Armbanduhr, Esprit, \u00bbglamonza silver ES105432004\u00ab&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -853,7 +900,7 @@ often in combination with these terms before.</p>
 
 <dl class="class">
 <dt id="collins.Config">
-<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">Config</tt><big>(</big><em>entry_point_url=None</em>, <em>app_id=None</em>, <em>app_password=None</em>, <em>agent=None</em>, <em>authorization=None</em>, <em>image_url=None</em>, <em>logconf=None</em><big>)</big><a class="headerlink" href="#collins.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">Config</tt><big>(</big><em>entry_point_url=None</em>, <em>app_id=None</em>, <em>app_password=None</em>, <em>agent=None</em>, <em>image_url=None</em>, <em>logconf=None</em><big>)</big><a class="headerlink" href="#collins.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>The configuration of a collins api connection.</p>
 <p>A config class has to have the following readable attributes:</p>
@@ -896,14 +943,6 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/file">htt
 </dl>
 </li>
 </ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; The path to a JSON file which holds the configuration.</td>
-</tr>
-</tbody>
-</table>
 <dl class="attribute">
 <dt id="collins.Config.authorization">
 <tt class="descname">authorization</tt><a class="headerlink" href="#collins.Config.authorization" title="Permalink to this definition">¶</a></dt>
@@ -912,14 +951,14 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/file">htt
 
 <dl class="method">
 <dt id="collins.Config.imageurl">
-<tt class="descname">imageurl</tt><big>(</big><em>hash</em>, <em>size=None</em><big>)</big><a class="headerlink" href="#collins.Config.imageurl" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">imageurl</tt><big>(</big><em>hashid</em>, <em>size=None</em><big>)</big><a class="headerlink" href="#collins.Config.imageurl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the url for a image.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>hash</strong> &#8211; hash of the image.</li>
+<li><strong>hashid</strong> &#8211; hash of the image.</li>
 <li><strong>size</strong> &#8211; tupple of (width, height)</li>
 </ul>
 </td>
@@ -935,18 +974,6 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/file">htt
 <em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">Constants</tt><a class="headerlink" href="#collins.Constants" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>Some contsants which are blatantly copied from the php-sdk.</p>
-<div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<dl class="last docutils">
-<dt>The following constants are <strong>NOT</strong> in the PHP-SDK:</dt>
-<dd><ul class="first last simple">
-<li>FACET_CHANNEL</li>
-<li>FACET_CARE_SYMBOL</li>
-<li>FACET_CLOTHING_HATS_US</li>
-</ul>
-</dd>
-</dl>
-</div>
 <dl class="attribute">
 <dt id="collins.Constants.API_ENVIRONMENT_LIVE">
 <tt class="descname">API_ENVIRONMENT_LIVE</tt><em class="property"> = 'live'</em><a class="headerlink" href="#collins.Constants.API_ENVIRONMENT_LIVE" title="Permalink to this definition">¶</a></dt>
@@ -959,27 +986,12 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/file">htt
 
 <dl class="attribute">
 <dt id="collins.Constants.FACETS">
-<tt class="descname">FACETS</tt><em class="property"> = set([0, 1, 2, 3, 4, 5, 6, 172, 173, 174, 175, 180, 181, 187, 189, 190, 194, 195, 204, 206, 211, 231, 247])</em><a class="headerlink" href="#collins.Constants.FACETS" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">FACETS</tt><em class="property"> = set([0, 1, 194, 3, 4, 5, 6, 172, 2, 204, 173, 174, 175, 206, 195, 180, 181, 187, 189, 190])</em><a class="headerlink" href="#collins.Constants.FACETS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="collins.Constants.FACET_BRAND">
 <tt class="descname">FACET_BRAND</tt><em class="property"> = 0</em><a class="headerlink" href="#collins.Constants.FACET_BRAND" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="collins.Constants.FACET_CARE_SYMBOL">
-<tt class="descname">FACET_CARE_SYMBOL</tt><em class="property"> = 247</em><a class="headerlink" href="#collins.Constants.FACET_CARE_SYMBOL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="collins.Constants.FACET_CHANNEL">
-<tt class="descname">FACET_CHANNEL</tt><em class="property"> = 211</em><a class="headerlink" href="#collins.Constants.FACET_CHANNEL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="collins.Constants.FACET_CLOTHING_HATS_US">
-<tt class="descname">FACET_CLOTHING_HATS_US</tt><em class="property"> = 231</em><a class="headerlink" href="#collins.Constants.FACET_CLOTHING_HATS_US" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -1257,7 +1269,7 @@ characters. This is not tested or validated.</p>
       <div class="bottomnav">
       
         <p>
-        «&#160;&#160;<a href="setup.html">Setup</a>
+        «&#160;&#160;<a href="howtos/tests.html">Run Tests</a>
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="index.html">Contents</a>
         &#160;&#160;::&#160;&#160;

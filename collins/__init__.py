@@ -1,6 +1,6 @@
 #-*- encoding: utf-8 -*-
 """
-:Author:    Arne Simon => email::[arne_simon@gmx.de]
+:Author:    Arne Simon [arne.simon@slice-dice.de]
 
 This module provieds two wrappers around the Collins-Shop-API.
 
@@ -128,7 +128,7 @@ VERSION = "0.0"
 """Version of the python shop SDK."""
 
 AUTHORS = [
-    "Arne Simon => email::[arne_simon@gmx.de]"
+    "Arne Simon [arne_simon@slice-dice.de]"
 ]
 
 
@@ -140,12 +140,6 @@ class CollinsException(Exception):
 class Constants(object):
     """
     Some contsants which are blatantly copied from the php-sdk.
-
-    .. attention::
-        The following constants are **NOT** in the PHP-SDK:
-            * FACET_CHANNEL
-            * FACET_CARE_SYMBOL
-            * FACET_CLOTHING_HATS_US
     """
     FACET_BRAND = 0
     FACET_CLOTHING_MEN_BELTS_CM = 190
@@ -168,16 +162,16 @@ class Constants(object):
     FACET_SIZE_CODE = 206
     FACET_SIZE_RUN = 172
     # not in the PHP-SDK o.O ?
-    FACET_CHANNEL = 211
-    FACET_CARE_SYMBOL = 247
-    FACET_CLOTHING_HATS_US = 231
+    # FACET_CHANNEL = 211
+    # FACET_CARE_SYMBOL = 247
+    # FACET_CLOTHING_HATS_US = 231
 
     FACETS = set([FACET_BRAND, FACET_CLOTHING_MEN_BELTS_CM, FACET_CLOTHING_MEN_DE, FACET_CLOTHING_MEN_INCH,
                  FACET_CLOTHING_UNISEX_INCH, FACET_CLOTHING_UNISEX_INT, FACET_CLOTHING_UNISEX_ONESIZE,
                  FACET_CLOTHING_WOMEN_BELTS_CM, FACET_CLOTHING_WOMEN_DE, FACET_CLOTHING_WOMEN_INCH, FACET_COLOR,
                  FACET_CUPSIZE, FACET_DIMENSION3, FACET_GENDERAGE, FACET_LENGTH, FACET_SHOES_UNISEX_ADIDAS_EUR,
                  FACET_SHOES_UNISEX_EUR, FACET_SIZE, FACET_SIZE_CODE, FACET_SIZE_RUN,
-                 FACET_CHANNEL, FACET_CARE_SYMBOL, FACET_CLOTHING_HATS_US])
+                 ])
 
     SORT_CREATED = "created_date"
     SORT_MOST_VIEWED = "most_viewed"
@@ -228,7 +222,6 @@ class Config(object):
     - logconf
         A dictonary for logging.config.dictConfig.
 
-    :param str filename: The path to a JSON file which holds the configuration.
     """
     def __init__(self, entry_point_url=None, app_id=None, app_password=None,
                  agent=None, image_url=None, logconf=None):
@@ -242,17 +235,17 @@ class Config(object):
         if logconf:
             logging.config.dictConfig(logconf)
 
-    def imageurl(self, hash, size=None):
+    def imageurl(self, hashid, size=None):
         """
         Returns the url for a image.
 
-        :param hash: hash of the image.
+        :param hashid: hash of the image.
         :param size: tupple of (width, height)
         """
         if size is not None:
-            name = '{}_{}_{}'.format(hash,size[0], size[1])
+            name = '{}_{}_{}'.format(hashid, size[0], size[1])
         else:
-            name = hash
+            name = hashid
 
         return self.image_url.format(name)
 
@@ -516,23 +509,18 @@ class Collins(object):
 
         return self.send("autocompletion", complete)
 
-    def basketadd(self, sessionid, variants):
+    def basketset(self, sessionid, variants):
         """
-        :param str sessionid: identification of the basket -> user,
-                              user -> basket
+        :param str sessionid: identification of the basket -> user, user -> basket
         :param list variants: is the array of variant ids
         :returns: The basket JSON.
-
-        .. rubric:: Example
-
         """
         check_sessionid(sessionid)
 
         data = {
                 "session_id": sessionid,
-                "order_lines": [{'id':str(vid),
-                                 'variant_id':vid}
-                                    for vid in variants]
+                "order_lines": [{'id':sid, 'variant_id':vid}
+                                    for sid, vid in variants]
             }
 
         return self.send("basket", data)
@@ -555,11 +543,6 @@ class Collins(object):
         Removes elements from the basket associated with the session id.
         """
         check_sessionid(sessionid)
-
-        # WHAT THE FUCK DUDE!
-        # items are deleted not by there variants id, but by there id given by
-        # us, so we have to remeber this. Seriously, why not simply variant-id
-        # and amount. wtf, WTF!
 
         return self.send("basket", {"session_id": sessionid,
                                     "order_lines": [{"delete": str(vid)
@@ -916,7 +899,7 @@ class Collins(object):
             raise CollinsException("too many eans")
 
         # collins wants eans as strings
-        products["eans"] = [ str(e) for e in eans ]
+        products["eans"] = [str(e) for e in eans]
 
         if fields is not None:
             products["fields"] = fields

@@ -1,6 +1,6 @@
 #-*- encoding: utf-8 -*-
 """
-:Author:    Arne Simon => [arne_simon@gmx.de]
+:Author:    Arne Simon [arne.simon@slice-dice.de]
 """
 from collins.test import TEST_CONFIG
 import collins

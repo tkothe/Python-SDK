@@ -9,7 +9,7 @@ Welcome to python-shop-sdk's documentation!
 .. toctree::
    :maxdepth: 2
 
-   setup
+   howtos/howtos
    collins
    easycollins
 

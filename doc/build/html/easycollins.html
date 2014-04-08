@@ -49,27 +49,12 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Arne Simon =&gt; [<a class="reference external" href="mailto:arne_simon&#37;&#52;&#48;gmx&#46;de">arne_simon<span>&#64;</span>gmx<span>&#46;</span>de</a>]</td>
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Arne Simon [<a class="reference external" href="mailto:arne&#46;simon&#37;&#52;&#48;slice-dice&#46;de">arne<span>&#46;</span>simon<span>&#64;</span>slice-dice<span>&#46;</span>de</a>]</td>
 </tr>
 </tbody>
 </table>
 <p>EasyCollins is the attempt to make collins a little bit more userfriendly
 and hides much of the direct calls to the Collins API.</p>
-<div class="section" id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">collins</span> <span class="kn">import</span> <span class="n">JSONConfig</span>
-<span class="kn">from</span> <span class="nn">collins.easy</span> <span class="kn">import</span> <span class="n">EasyCollins</span>
-
-<span class="n">config</span> <span class="o">=</span> <span class="n">JSONConfig</span><span class="p">(</span><span class="s">&#39;slicedice-config.json&#39;</span><span class="p">)</span>
-<span class="n">easy</span> <span class="o">=</span> <span class="n">EasyCollins</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-<span class="n">product</span> <span class="o">=</span> <span class="n">easy</span><span class="o">.</span><span class="n">productById</span><span class="p">(</span><span class="mi">227838</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">easy</span><span class="o">.</span><span class="n">categories</span><span class="p">():</span>
-    <span class="k">print</span> <span class="s">&#39;---&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;---&#39;</span>
-    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-        <span class="k">print</span> <span class="n">sub</span><span class="o">.</span><span class="n">name</span>
-</pre></div>
-</div>
 <dl class="class">
 <dt id="collins.easy.Basket">
 <em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">Basket</tt><big>(</big><em>easy</em>, <em>sessionid</em><big>)</big><a class="headerlink" href="#collins.easy.Basket" title="Permalink to this definition">¶</a></dt>
@@ -193,6 +178,27 @@ are the categories.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="collins.easy.EasyCollins.categoryByName">
+<tt class="descname">categoryByName</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.categoryByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the category with the given name.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If there are more than one category with the same name.
+The last inserted category will be returned.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; The name of the category.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#collins.easy.Category" title="collins.easy.Category"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Category</span></tt></a> instance.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="collins.easy.EasyCollins.facetgroupById">
 <tt class="descname">facetgroupById</tt><big>(</big><em>facet_group</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.facetgroupById" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all facets of a group.</p>
@@ -242,8 +248,19 @@ are the categories.</p>
 
 <dl class="method">
 <dt id="collins.easy.EasyCollins.search">
-<tt class="descname">search</tt><big>(</big><em>sessionid</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.search" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">search</tt><big>(</big><em>sessionid</em>, <em>filter=None</em>, <em>result=None</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new <a class="reference internal" href="#collins.easy.Search" title="collins.easy.Search"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Search</span></tt></a> instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sessionid</strong> &#8211; The user session id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#collins.easy.Search" title="collins.easy.Search"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Search</span></tt></a> instance.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="collins.easy.EasyCollins.suggest">
@@ -273,6 +290,7 @@ are the categories.</p>
 <dt id="collins.easy.EasyNode">
 <em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">EasyNode</tt><big>(</big><em>easy</em>, <em>obj</em><big>)</big><a class="headerlink" href="#collins.easy.EasyNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A simple wrapper around a dict object.</p>
 </dd></dl>
 
 <dl class="class">
@@ -299,9 +317,47 @@ are the categories.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="collins.easy.SearchResult">
-<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">SearchResult</tt><big>(</big><em>easy</em><big>)</big><a class="headerlink" href="#collins.easy.SearchResult" title="Permalink to this definition">¶</a></dt>
+<dt id="collins.easy.ResultProducts">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">ResultProducts</tt><big>(</big><em>search</em><big>)</big><a class="headerlink" href="#collins.easy.ResultProducts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="collins.easy.ResultProducts.all">
+<tt class="descname">all</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.ResultProducts.all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.Search">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">Search</tt><big>(</big><em>easy</em>, <em>sessionid</em>, <em>filter=None</em>, <em>result=None</em><big>)</big><a class="headerlink" href="#collins.easy.Search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="collins.easy.Search.gather">
+<tt class="descname">gather</tt><big>(</big><em>offset</em>, <em>limit</em><big>)</big><a class="headerlink" href="#collins.easy.Search.gather" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.SearchFilter">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">SearchFilter</tt><a class="headerlink" href="#collins.easy.SearchFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="collins.easy.SearchFilter.build">
+<tt class="descname">build</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.SearchFilter.build" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="collins.easy.SearchResult">
+<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">SearchResult</tt><a class="headerlink" href="#collins.easy.SearchResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="collins.easy.SearchResult.build">
+<tt class="descname">build</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.SearchResult.build" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -331,7 +387,6 @@ are the categories.</p>
 
 </dd></dl>
 
-</div>
 </div>
 
 

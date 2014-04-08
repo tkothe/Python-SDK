@@ -1,32 +1,17 @@
 #-*- encoding: utf-8 -*-
 """
-:Author:    Arne Simon => [arne_simon@gmx.de]
+:Author:    Arne Simon [arne.simon@slice-dice.de]
 
 EasyCollins is the attempt to make collins a little bit more userfriendly
 and hides much of the direct calls to the Collins API.
 
-Example
--------
-
-.. code-block:: python
-
-    from collins import JSONConfig
-    from collins.easy import EasyCollins
-
-    config = JSONConfig('slicedice-config.json')
-    easy = EasyCollins(config)
-
-    product = easy.productById(227838)
-
-    for c in easy.categories():
-        print '---', c.name, '---'
-        for sub in c:
-            print sub.name
 """
 from collins import Collins, Constants, CollinsException
 
 
 class EasyNode(object):
+    """A simple wrapper around a dict object."""
+
     def __init__(self, easy, obj):
         self.easy = easy
         self.obj = obj
@@ -45,14 +30,16 @@ class Category(EasyNode):
         self.sub_categories = []
 
     def treeiter(self):
-        def browse(node):
-            yield node
+        def browse(level, node):
+            yield level, node
+
+            nextlevel = level + 1
 
             for sub in node.sub_categories:
-                for child in browse(sub):
+                for child in browse(nextlevel, sub):
                     yield child
 
-        return browse(self)
+        return browse(0, self)
 
     def __iter__(self):
         for sub in self.sub_categories:
@@ -139,8 +126,7 @@ class Product(EasyNode):
 
 
 class SearchFilter(object):
-    def __init__(self, search):
-        self.search = search
+    def __init__(self):
         self.categories = set()
         self.facets = {}
         self.prices_from = None
@@ -170,17 +156,16 @@ class SearchFilter(object):
 
 
 class SearchResult(object):
-    def __init__(self, search):
-        self.search = search
+    def __init__(self):
         self.sale = False
         self.price = False
-        self.facets = False
+        self.facets = None
         self.limit = None
         self.offset = None
         self.categories = None
 
     def build(self):
-        s = {"sale": self.sale, "price": self.price, "facets": self.facets}
+        s = {"sale": self.sale, "price": self.price}
 
         if self.limit is not None:
             s["limit"] = self.limit
@@ -191,37 +176,73 @@ class SearchResult(object):
         if self.categories is not None:
             s["categories"] = self.categories
 
+        if self.facets is not None:
+            s["facets"] = self.facets
 
-class Result(object):
-    def __init__(self, search, response):
+        return s
+
+
+class ResultProducts(object):
+    def __init__(self, search):
         self.search = search
-        self.count = response["product_count"]
+        self.buffer = [None] * search.count
+
+    def all(self):
+        return self.__buffer
+
+    def __getindex__(self, idx):
+        if self.buffer[idx] is not None:
+            return self.buffer[idx]
+        else:
+            self.gather()
+
+    def __iter__(self):
+        step = 0
+        for i in xrange(self.search.count):
+            if self.buffer[i] is None:
+                self.search.gather(i, 20)
+
+            yield self.buffer[i]
+
+
+class Search(object):
+    def __init__(self, easy, sessionid, filter=None, result=None):
+        self.easy = easy
+        self.sessionid = sessionid
+        self.filter = filter
         self.categories = {}
+
+        if result is None:
+            self.result = {"limit": 0, "offset": 0}
+        else:
+            self.result = result
+            self.result["limit"] = 0
+            self.result["offset"] = 0
+
+        response = self.easy.collins.productsearch(self.sessionid,
+                                                   filter=self.filter,
+                                                   result=self.result)
+
+        self.count = response["product_count"]
+
+        self.products = ResultProducts(self)
 
         if "categories" in response["facets"]:
             for el in response["factes"]["categories"]:
                 cat = self.search.easy.categoryById(el["term"])
                 self.categories[cat] = el["count"]
 
-        self.products = [Product(self.search.easy, p)
-                            for p in response["products"]]
 
-class Search(object):
-    def __init__(self, easy, sessionid):
-        self.easy = easy
-        self.sessionid = sessionid
-        self.filter = SearchFilter(self)
-        self.result = SearchResult(self)
-
-    def perform(self):
-        filter = self.filter.build()
-        result = self.result.build()
-
+    def gather(self, offset, limit):
         response = self.easy.collins.productsearch(self.sessionid,
-                                                   filter=filter,
-                                                   result=result)
+                                                   filter=self.filter,
+                                                   result={"offset":offset,
+                                                            "limit": limit})
 
-        return Result(self, response)
+        for i, p in enumerate(response["products"]):
+            self.products.buffer[i+offset] = Product(self.easy, p)
+
+        return self.products.buffer[offset:offset+limit]
 
 
 class Basket(object):
@@ -235,17 +256,16 @@ class Basket(object):
 
         self.__variants = {}
 
-    def __getindex__(self, idx):
-        if issubclass(idx, Variant):
-            return self.__variants[idx]
-        else:
-            raise CollinsException("accepts only Variant instances as key")
+    def __getitem__(self, idx):
+        # self.easy
+        return self.__variants[idx]
 
-    def __setindex__(self, idx, val):
-        if issubclass(idx, Variant):
-            self.__variants[idx] = val
-        else:
-            raise CollinsException("accepts only Variant instances as key")
+    def __setitem__(self, idx, val):
+        self.__variants[idx] = val
+
+    def __delitem__(self, idx):
+        #self.easy.basketadd()
+        del self.__variants[idx]
 
     def order(self):
         """
@@ -264,6 +284,7 @@ class EasyCollins(object):
         self.collins = Collins(self.config)
         self.__categorytree = None
         self.__category_ids = {}
+        self.__category_names = {}
 
         self.__facet_map = None
         self.__facet_groups = {}
@@ -277,6 +298,7 @@ class EasyCollins(object):
         def build(n):
             c = Category(self, n)
             self.__category_ids[c.id] = c
+            self.__category_names[c.name] = c
             c.sub_categories = [build(x) for x in n["sub_categories"]]
             return c
 
@@ -337,6 +359,21 @@ class EasyCollins(object):
 
         return self.__category_ids[cid]
 
+    def categoryByName(self, name):
+        """
+        Returns the category with the given name.
+
+        .. note:: If there are more than one category with the same name.
+                    The last inserted category will be returned.
+
+        :param str name: The name of the category.
+        :returns: A :py:class:`collins.easy.Category` instance.
+        """
+        if self.__categorytree is None:
+            self.__build_categories()
+
+        return self.__category_names[name]
+
     def facetgroupById(self, facet_group):
         """
         Returns all facets of a group.
@@ -381,14 +418,14 @@ class EasyCollins(object):
 
         return p
 
-    def search(self, sessionid):
+    def search(self, sessionid, filter=None, result=None):
         """
         Creates a new :py:class:`collins.easy.Search` instance.
 
         :param sessionid: The user session id.
         :returns: A :py:class:`collins.easy.Search` instance.
         """
-        return Search(self, sessionid)
+        return Search(self, sessionid, filter, result)
 
     def autocomplete(self, searchword, types=None, limit=None):
         """
