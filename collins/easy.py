@@ -6,7 +6,7 @@ EasyCollins is the attempt to make collins a little bit more userfriendly
 and hides much of the direct calls to the Collins API.
 
 """
-from collins import Collins, Constants, CollinsException
+from . import Collins, Constants, CollinsException
 
 
 class EasyNode(object):
