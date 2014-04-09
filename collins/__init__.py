@@ -203,37 +203,36 @@ class Constants(object):
 
 
 class Config(object):
+    PARAMS = set(["entry_point_url", "app_id", "app_token", "app_secret",
+                        "agent", "image_url", "loginUrl", "resourceUrl",
+                        "redirectUri", "logconf"])
     """
     The configuration of a collins api connection.
 
     A config class has to have the following readable attributes:
 
-    - entry_point_url:
-        The url for collins.
-    - app_id
-        The application id.
-    - app_password
-        The password for the corresponding application id.
-    - agent
-        The name of the browser agent to fake.
-    - image_url
-        A string as template for the image urls.
-        As example http://cdn.mary-paul.de/file/{}.
-    - logconf
-        A dictonary for logging.config.dictConfig.
-
+    :param entry_point_url: The url for collins.
+    :param app_id: The application id.
+    :param app_token: The password aka token for the corresponding application id.
+    :param app_secret: The secret of the appliction.
+    :param agent: The name of the browser agent to fake.
+    :param image_url: A string as template for the image urls.
+                        As example http://cdn.mary-paul.de/file/{}.
+    :param loginUrl: For the OAuth process the login url.
+    :param resourceUrl: For the OAuth process the resource url.
+    :param redirectUri: For the OAuth process the redirect url.
+    :param dict logconf: A dictonary for logging.config.dictConfig.
     """
-    def __init__(self, entry_point_url=None, app_id=None, app_password=None,
-                 agent=None, image_url=None, logconf=None):
+    def __init__(self, **kwargs):
 
-        self.entry_point_url = entry_point_url
-        self.app_id = app_id
-        self.app_password = app_password
-        self.agent = agent
-        self.image_url = image_url
+        for key, value in kwargs.items():
+            if key in PARAMS:
+                setattr(self, key, value)
+            else:
+                raise CollinsException("unknown configuration key parameter")
 
-        if logconf:
-            logging.config.dictConfig(logconf)
+        if "logconf" in kwargs:
+            logging.config.dictConfig(kwargs["logconf"])
 
     def imageurl(self, hashid, size=None):
         """
@@ -254,7 +253,7 @@ class Config(object):
         """
         Content for the authorization header.
         """
-        data = "{}:{}".format(self.app_id, self.app_password)
+        data = "{}:{}".format(self.app_id, self.app_token)
         encoded = base64.b64encode(data)
         return "Basic " + encoded.decode("ascii")
 
@@ -321,6 +320,8 @@ class JSONEnvironmentFallbackConfig(Config):
     If a config value is not found in the JSON config, the given environment
     variable is used instead.
 
+    :param jsonfile: The path to the json configuration file.
+
     .. rubric:: Example
 
     .. code-block:: python
@@ -330,15 +331,15 @@ class JSONEnvironmentFallbackConfig(Config):
         # config variable authorization.
         conf = JSONEnvironmentFallbackConfig('myconf.json', authorization='COLLINS_AUTH')
     """
-    def __init__(self, jsonfile, entry_point_url=None, app_id=None,
-                 app_password=None, agent=None,
-                 image_url=None, logconf=None):
+    def __init__(self, jsonfile, **kwargs):
         with open(jsonfile) as cfgfile:
             self.data = json.load(cfgfile)
 
         loc = locals()
-        for key in ["entry_point_url", "app_id", "app_password", "agent",
-                    "image_url", "logconf"]:
+        for key, value in kwargs.items():
+            if key not in Config.PARAMS:
+                raise CollinsException("unknown configuration key parameter")
+
             if key not in self.data:
                 if loc[key] is not None:
                     self.data[key] = os.environ[loc[key]]
@@ -758,7 +759,7 @@ class Collins(object):
                                canceled. (see checkout api)
         :param str error_url: this is a callback url if the order throwed
                               exceptions (see checkout api)
-        :returns:
+        :returns: JSON
         """
         check_sessionid(sessionid)
 
