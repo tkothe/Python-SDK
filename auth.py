@@ -84,7 +84,7 @@ class Auth(object):
         # the sdk requires state was given for auth request..
         if self.states['csrf']:
             states = self.__parseStateUrlValue(request['state']);
-            if 'csrf' in states && self.states['csrf'] == states['csrf']:
+            if 'csrf' in states and self.states['csrf'] == states['csrf']:
 
                 # version a) if set directly by authserver
                 if 'code' in request:
@@ -172,7 +172,7 @@ class Auth(object):
         else:
             raise AuthException('not logged in')
 
-    def api(self, resourcePath, httpMethod='get', params=[], lastRetry=False):
+    def api(self, resourcePath, method='get', params={}):
         tokenResult = self.getToken()
 
         headers = {
@@ -181,17 +181,19 @@ class Auth(object):
                 "Authorization": 'Bearer {}'.format(tokenResult),
         }
 
-        url = self.resourceUrl + '/api' . $resourcePath, $params
-        req = urllib2.Request(url, None, headers)
+        if method == 'get':
+            url = '{}/api{}?{}'.format(self.resourceUrl,
+                                       resourcePath, urllib.urlencode(params))
+            req = urllib2.Request(url, headers=headers)
+        else:
+            url = '{}/api{}'.format(self.resourceUrl)
+            req = urllib2.Request(url, data=params, headers=headers)
+
         response = urllib2.urlopen(req)
 
+        status = response.getcode()
 
-if __name__ == '__main__':
-    import sys
-    import os
-    sys.path.append('..')
-    from collins import JSONConfig
-
-    auth = Auth(JSONConfig(os.path.abspath('.')+'/110slicedice-config.json'), "", "")
-
-    print auth.getToken()
+        if status == 200:
+            return response.read()
+        else:
+            raise AuthException(response.read())
