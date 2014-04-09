@@ -80,8 +80,32 @@ class Auth(object):
 
         return sign
 
-    def parseRedirectResponse(self):
-        pass
+    def parseRedirectResponse(self, request):
+        # the sdk requires state was given for auth request..
+        if self.states['csrf']:
+            states = self.__parseStateUrlValue(request['state']);
+            if 'csrf' in states && self.states['csrf'] == states['csrf']:
+
+                # version a) if set directly by authserver
+                if 'code' in request:
+                    self.grantCode = request['code']
+                    self.accessToken = None
+                    return 'success'
+
+                # varsion b TODO unused) if "wrapped" by checkout
+                if 'result' in request:
+
+                    if request['result'] == 'success':
+                        self.grantCode = request['code']
+                        self.accessToken = None
+                        return request['result']
+                    else:
+                        if request['result'] == 'cancel':
+                            return request['result']
+                        else:
+                            return False
+
+        return False
 
     def getLoginUrl(self):
         """
@@ -100,6 +124,12 @@ class Auth(object):
         sign = self.__sign(payload)
 
         return self.config.loginUrl + "?app_id=" + self.config.app_id + "&asr=" + payload
+
+    def logout(self):
+        self.grantCode = None
+        self.accessToken = None
+        self.states.clear()
+        self.userAuthResult = None
 
     def getToken(self):
         """
@@ -136,13 +166,25 @@ class Auth(object):
                 result = response.read()
                 self.accessToken = json.loads(result)
                 self.grantCode = None
+                return self.accessToken
             else:
-                AuthException("could not fetch token, because auf HTTP: {}".format(status))
+                raise AuthException("could not fetch token, because auf HTTP: {}".format(status))
         else:
             raise AuthException('not logged in')
 
-    def api(self):
-        pass
+    def api(self, resourcePath, httpMethod='get', params=[], lastRetry=False):
+        tokenResult = self.getToken()
+
+        headers = {
+                "Content-Type": "text/plain;charset=UTF-8",
+                "User-Agent": self.config.agent,
+                "Authorization": 'Bearer {}'.format(tokenResult),
+        }
+
+        url = self.resourceUrl + '/api' . $resourcePath, $params
+        req = urllib2.Request(url, None, headers)
+        response = urllib2.urlopen(req)
+
 
 if __name__ == '__main__':
     import sys

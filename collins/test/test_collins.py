@@ -3,14 +3,14 @@
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 """
 from collins.test import TEST_CONFIG, TEST_SESSION
-import collins
+from collins import Collins, JSONConfig, Constants
 
 
 class TestCollins:
 
     @staticmethod
     def setup_class(self):
-        self.collins = collins.Collins(collins.JSONConfig(TEST_CONFIG))
+        self.collins = Collins(JSONConfig(TEST_CONFIG))
 
     def setup_method(self, method):
         self.log = self.collins.log.getChild(method.__name__)
@@ -37,11 +37,11 @@ class TestCollins:
         #self.log.info(tree)
 
     def testFacets(self):
-        self.collins.facets([collins.Constants.FACET_CUPSIZE])
+        self.collins.facets([Constants.FACET_CUPSIZE])
 
     def testFacettypes(self):
         ftypes = self.collins.facettypes()
-        self.log.info(set(ftypes)-collins.Constants.FACETS)
+        self.log.info(set(ftypes)-Constants.FACETS)
 
     def testGetorder(self):
         #self.collins.getorder(orderid)
