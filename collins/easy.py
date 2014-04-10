@@ -55,6 +55,13 @@ class FacetGroup(object):
     def __getitem__(self, idx):
         return self.facets[idx]
 
+    def __iter__(self):
+        for name, facet in self.facets.items():
+            yield name, facet
+
+    def __len__(self):
+        return len(self.facets)
+
     def __str__(self):
         return self.name
 
