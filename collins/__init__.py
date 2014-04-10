@@ -308,7 +308,8 @@ class JSONConfig(Config):
         with open(filename) as cfgfile:
             self.data = json.load(cfgfile)
 
-        logging.config.dictConfig(self.data["logconf"])
+        if "logconf" in self.data and self.data["logconf"] is not None:
+            logging.config.dictConfig(self.data["logconf"])
 
     def __getattr__(self, name):
         return self.data[name]
@@ -347,7 +348,7 @@ class JSONEnvironmentFallbackConfig(Config):
                     msg = 'config value "{}" not present'.format(key)
                     raise CollinsException(msg)
 
-        if self.data["logconf"]:
+        if "logconf" in self.data and self.data["logconf"] is not None:
             logging.config.dictConfig(self.data["logconf"])
 
     def __getattr__(self, name):
