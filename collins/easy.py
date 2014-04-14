@@ -96,10 +96,17 @@ class VariantAttributes(object):
         for name, value in obj.items():
             grpid = int(name[prefixlen:])
             facets = easy.facetgroupById(grpid)
-            self.__data[facets] = [facets[f] for f in value]
+            self.__data[facets.name] = [facets[f] for f in value]
+            self.__data[facets.id] = self.__data[facets.name]
 
     def keys(self):
         return self.__data.keys()
+
+    def __getitem__(self, idx):
+        if idx in self.__data:
+            return self.__data[idx]
+        else:
+            return []
 
 
 class Variant(EasyNode):
@@ -143,12 +150,6 @@ class Product(EasyNode):
 
     @property
     def variants(self):
-        if self.__variants is None:
-            response = self.easy.collins.products(ids=[self.id],
-                                             fields=[Constants.PRODUCT_FIELD_VARIANTS])
-
-            self.__variants = [Variant(self.easy, v)
-                                for v in response["ids"][str(self.id)]["variants"]]
         return self.__variants
 
 
