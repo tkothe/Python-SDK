@@ -61,7 +61,7 @@ Object Structure
         <tr><td>sale</td><td></td></tr>
         <tr><td>default_image</td><td></td></tr>
         <tr><td>attributes_merged</td><td></td></tr>
-        <tr><td>categories.appID</td><td></td></tr>
+        <tr><td port="category">categories.appID</td><td></td></tr>
     </table>>];
 
     variant[label=<<table cellspacing="0" border="0" cellborder="1">
@@ -72,7 +72,7 @@ Object Structure
         <tr><td>old_price</td><td></td></tr>
         <tr><td>retail_price</td><td></td></tr>
         <tr><td>default</td><td></td></tr>
-        <tr><td>attributes</td><td></td></tr>
+        <tr><td port="attribute">attributes</td><td></td></tr>
         <tr><td port="image">images</td><td></td></tr>
         <tr><td>updated_date</td></tr>
         <tr><td>first_active_date</td></tr>
@@ -106,9 +106,11 @@ Object Structure
     basket:products:w -> product;
     basket_variant:id:w -> variant:id:w;
     basket_variant:product:w -> product:id:w;
+    product:category -> category;
     category:sub:w -> category;
     product:variant:w -> variant;
     variant:image:w -> image;
+    variant:attribute -> facet;
 
 
 """
@@ -193,10 +195,12 @@ class Constants(object):
     PRODUCT_FIELD_SALE = "sale"
     PRODUCT_FIELD_DEFAULT_VARIANT = "default_variant"
     PRODUCT_FIELD_DEFAULT_IMAGE = "default_image"
+    PRODUCT_FIELD_CATEGORIES = "categories"
     PRODUCT_FIELDS = set([PRODUCT_FIELD_VARIANTS, PRODUCT_FIELD_DESCRIPTION_LONG,
                         PRODUCT_FIELD_DESCRIPTION_SHORT, PRODUCT_FIELD_MIN_PRICE,
                         PRODUCT_FIELD_MAX_PRICE, PRODUCT_FIELD_SALE,
-                        PRODUCT_FIELD_DEFAULT_VARIANT, PRODUCT_FIELD_DEFAULT_IMAGE,])
+                        PRODUCT_FIELD_DEFAULT_VARIANT, PRODUCT_FIELD_DEFAULT_IMAGE,
+                        PRODUCT_FIELD_CATEGORIES,])
 
     API_ENVIRONMENT_STAGE = "stage"
     API_ENVIRONMENT_LIVE = "live"

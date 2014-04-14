@@ -45,6 +45,12 @@ class Category(EasyNode):
         for sub in self.sub_categories:
             yield sub
 
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
 
 class FacetGroup(object):
     def __init__(self, easy, fid, name, facets):
@@ -118,10 +124,22 @@ class Product(EasyNode):
 
         if "variants" not in obj:
             data = self.easy.collins.products(ids=[self.id],
-                                            fields=[Constants.PRODUCT_FIELD_VARIANTS])
+                                            fields=[Constants.PRODUCT_FIELD_VARIANTS,
+                                                    Constants.PRODUCT_FIELD_CATEGORIES])
             self.obj.update(data["ids"][str(self.id)])
 
-        self.__variants = [Variant(easy, v) for v in obj["variants"]]
+        self.__variants = [Variant(easy, v) for v in self.obj["variants"]]
+
+        catname = "categories.{}".format(self.easy.config.app_id)
+        self.__categories = [[self.easy.categoryById(cid) for cid in path]
+                                for path in self.obj[catname]]
+
+    @property
+    def categories(self):
+        """
+        :returns: A list of :py:class:`collins.easy.Category`.
+        """
+        return self.__categories
 
     @property
     def variants(self):
@@ -407,7 +425,8 @@ class EasyCollins(object):
         """
         spid = str(pid)
         response = self.collins.products(ids=[pid],
-                                         fields=[Constants.PRODUCT_FIELD_VARIANTS])
+                                         fields=[Constants.PRODUCT_FIELD_VARIANTS,
+                                                Constants.PRODUCT_FIELD_CATEGORIES])
 
         p = Product(self, response["ids"][spid])
 
