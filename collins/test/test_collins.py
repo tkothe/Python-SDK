@@ -52,8 +52,7 @@ class TestCollins:
         pass
 
     def testLivevariant(self):
-        #self.collins.livevariant(ids)
-        pass
+        self.collins.livevariant([4760437])
 
     def testProducts(self):
         #self.collins.products(ids)

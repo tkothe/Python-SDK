@@ -56,8 +56,8 @@ class FacetGroup(object):
         return self.facets[idx]
 
     def __iter__(self):
-        for name, facet in self.facets.items():
-            yield name, facet
+        for facet in self.facets.values():
+            yield facet
 
     def __len__(self):
         return len(self.facets)
@@ -116,10 +116,12 @@ class Product(EasyNode):
     def __init__(self, easy, obj):
         super(Product, self).__init__(easy, obj)
 
-        if "variants" in obj:
-            self.__variants = [Variant(easy, v) for v in obj["variants"]]
-        else:
-            self.__variants = None
+        if "variants" not in obj:
+            data = self.easy.collins.products(ids=[self.id],
+                                            fields=[Constants.PRODUCT_FIELD_VARIANTS])
+            self.obj.update(data["ids"][str(self.id)])
+
+        self.__variants = [Variant(easy, v) for v in obj["variants"]]
 
     @property
     def variants(self):
@@ -424,6 +426,12 @@ class EasyCollins(object):
         p = Product(self, response[0])
 
         return p
+
+    def variantById(self, vid):
+        """
+        """
+        response = self.collins.livevariant([vid])
+        return response
 
     def search(self, sessionid, filter=None, result=None):
         """
