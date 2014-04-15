@@ -9,8 +9,8 @@ This module provieds two wrappers around the Collins-Shop-API.
 * EasyCollins, which is a more convient layer of abstraction of the API as an
   object herachie which caches results and query results if there are needed.
 
-Object Structure
-----------------
+Collins Object Structure
+------------------------
 
 .. digraph:: objects
 

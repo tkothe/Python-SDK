@@ -29,10 +29,22 @@ class TestEasyCollins:
         p = self.easy.productById(227838)
 
         assert p.id == 227838
+        assert p.description_short is not None
+        assert p.description_long is not None
+
+    def testProductsById(self):
+        ids = [237188, 237116]
+        for p in self.easy.productsById(ids):
+            assert p.id in ids
 
     def testSearch(self):
         result = self.easy.search(TEST_SESSION,
-                                  {"sale": True},
-                                  {"sale":True, "limit": 2})
+                                  filter={"categories":[19631, 19654]},
+                                  result={})
 
         assert result.count > 0
+
+        for p in result.products:
+            for v in p.variants:
+                # o.write(u"{}".format(v.obj))
+                assert v.id is not None

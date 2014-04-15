@@ -124,6 +124,10 @@ class Variant(EasyNode):
     def attributes(self):
         return self.__attributes
 
+    @property
+    def live(self):
+        return self.easy.collins.livevariant([self.id])
+
 
 class Product(EasyNode):
     def __init__(self, easy, obj):
@@ -135,22 +139,87 @@ class Product(EasyNode):
                                                     Constants.PRODUCT_FIELD_CATEGORIES])
             self.obj.update(data["ids"][str(self.id)])
 
-        self.__variants = [Variant(easy, v) for v in self.obj["variants"]]
-
-        catname = "categories.{}".format(self.easy.config.app_id)
-        self.__categories = [[self.easy.categoryById(cid) for cid in path]
-                                for path in self.obj[catname]]
+        self.__variants = None
+        self.__categories = None
+        self.__short_description = None
+        self.__long_description = None
+        self.__default_image = None
+        self.__default_variant = None
 
     @property
     def categories(self):
         """
         :returns: A list of :py:class:`collins.easy.Category`.
         """
+        if self.__categories is None:
+            catname = "categories.{}".format(self.easy.config.app_id)
+
+            if catname not in obj:
+                data = self.easy.collins.products(ids=[self.id],
+                                                fields=[Constants.PRODUCT_FIELD_CATEGORIES])
+                self.obj.update(data["ids"][str(self.id)])
+
+            self.__categories = [[self.easy.categoryById(cid) for cid in path]
+                                for path in self.obj[catname]]
+
         return self.__categories
 
     @property
     def variants(self):
+        """
+        :returns: A list of :py:class:`collins.easy.Variant`.
+        """
+        if self.__variants is None:
+            if "variants" not in self.obj:
+                data = self.easy.collins.products(ids=[self.id],
+                                                fields=[Constants.PRODUCT_FIELD_VARIANTS])
+                self.obj.update(data["ids"][str(self.id)])
+
+            self.__variants = [Variant(self.easy, v) for v in self.obj["variants"]]
+
         return self.__variants
+
+    @property
+    def default_image(self):
+        if self.__default_image is None:
+            if "default_image" not in self.obj:
+                data = self.easy.collins.products(ids=[self.id],
+                                                fields=[Constants.PRODUCT_FIELD_DEFAULT_IMAGE])
+                self.obj.update(data["ids"][str(self.id)])
+
+            self.__default_image = Image(self.easy, self.obj["default_image"])
+
+        return self.__default_image
+
+    @property
+    def default_variant(self):
+        if self.__default_variant is None:
+            if "default_variant" not in self.obj:
+                data = self.easy.collins.products(ids=[self.id],
+                                                fields=[Constants.PRODUCT_FIELD_DEFAULT_VARIANT])
+                self.obj.update(data["ids"][str(self.id)])
+
+            self.__default_variant = Variant(self.easy, self.obj["default_variant"])
+
+        return self.__default_variant
+
+    @property
+    def description_short(self):
+        if "description_short" not in self.obj:
+            data = self.easy.collins.products(ids=[self.id],
+                                            fields=[Constants.PRODUCT_FIELD_DESCRIPTION_SHORT])
+            self.obj.update(data["ids"][str(self.id)])
+
+        return self.obj["description_short"]
+
+    @property
+    def description_long(self):
+        if "description_long" not in self.obj:
+            data = self.easy.collins.products(ids=[self.id],
+                                            fields=[Constants.PRODUCT_FIELD_DESCRIPTION_LONG])
+            self.obj.update(data["ids"][str(self.id)])
+
+        return self.obj["description_long"]
 
 
 class SearchFilter(object):
@@ -219,10 +288,10 @@ class ResultProducts(object):
         return self.__buffer
 
     def __getindex__(self, idx):
-        if self.buffer[idx] is not None:
-            return self.buffer[idx]
-        else:
-            self.gather()
+        if self.buffer[idx] is None:
+            self.gather(idx, 1)
+
+        return self.buffer[idx]
 
     def __iter__(self):
         step = 0
@@ -425,13 +494,23 @@ class EasyCollins(object):
         :returns: A :py:class:`collins.easy.Product` instance.
         """
         spid = str(pid)
-        response = self.collins.products(ids=[pid],
-                                         fields=[Constants.PRODUCT_FIELD_VARIANTS,
-                                                Constants.PRODUCT_FIELD_CATEGORIES])
+        response = self.collins.products(ids=[pid])
 
         p = Product(self, response["ids"][spid])
 
         return p
+
+    def productsById(self, pids):
+        """
+        Gets a products by its id.
+
+        :param list pids: A list of product ids.
+        :returns: A list of :py:class:`collins.easy.Product` instance.
+        """
+        spid = [str(pid) for pid in pids]
+        response = self.collins.products(ids=pids)
+
+        return [Product(self, p) for p in response["ids"].values()]
 
     def productByEAN(self, ean):
         """

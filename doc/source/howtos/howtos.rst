@@ -7,4 +7,6 @@ Howtos
    configuration
    search
    category_tree
+   usage
+   caching
    tests

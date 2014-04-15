@@ -247,6 +247,22 @@ The last inserted category will be returned.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="collins.easy.EasyCollins.productsById">
+<tt class="descname">productsById</tt><big>(</big><em>pids</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.productsById" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a products by its id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pids</strong> (<em>list</em>) &#8211; A list of product ids.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#collins.easy.Product" title="collins.easy.Product"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Product</span></tt></a> instance.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="collins.easy.EasyCollins.search">
 <tt class="descname">search</tt><big>(</big><em>sessionid</em>, <em>filter=None</em>, <em>result=None</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new <a class="reference internal" href="#collins.easy.Search" title="collins.easy.Search"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Search</span></tt></a> instance.</p>
@@ -330,7 +346,15 @@ The last inserted category will be returned.</p>
 <dl class="attribute">
 <dt id="collins.easy.Product.variants">
 <tt class="descname">variants</tt><a class="headerlink" href="#collins.easy.Product.variants" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#collins.easy.Variant" title="collins.easy.Variant"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Variant</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -390,6 +414,11 @@ The last inserted category will be returned.</p>
 <dl class="attribute">
 <dt id="collins.easy.Variant.images">
 <tt class="descname">images</tt><a class="headerlink" href="#collins.easy.Variant.images" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.easy.Variant.live">
+<tt class="descname">live</tt><a class="headerlink" href="#collins.easy.Variant.live" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
