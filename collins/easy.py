@@ -287,9 +287,9 @@ class ResultProducts(object):
     def all(self):
         return self.__buffer
 
-    def __getindex__(self, idx):
+    def __getitem__(self, idx):
         if self.buffer[idx] is None:
-            self.gather(idx, 1)
+            self.search.gather(idx, 1)
 
         return self.buffer[idx]
 
@@ -387,6 +387,15 @@ class EasyCollins(object):
         self.__facet_groups = {}
 
         self.__baskets = {}
+        self.__bucket = None
+
+        if self.config.cache is not None:
+            try:
+                self.__bucket = pylibmc.Client(self.config.cache,
+                                               binary=True,
+                                               behaviors={"tcp_nodelay": True, "ketama": True})
+            except:
+                self.collins.log.exception('')
 
     def __build_categories(self):
         self.collins.log.info('cache category tree')
