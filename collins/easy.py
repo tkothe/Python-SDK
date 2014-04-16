@@ -439,7 +439,7 @@ class Search(object):
             else:
                 product = Product(self.easy, p)
 
-            self.easy.product_cach[p.id] = product
+            self.easy.product_cach[product.id] = product
             self.products.buffer[i+offset] = product
 
 
