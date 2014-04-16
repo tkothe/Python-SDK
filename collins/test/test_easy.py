@@ -2,7 +2,7 @@
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 """
-from collins.test import TEST_CONFIG, TEST_SESSION
+from __init__ import TEST_CONFIG, TEST_SESSION
 from collins import JSONConfig
 from collins.easy import EasyCollins
 
@@ -26,7 +26,7 @@ class TestEasyCollins:
         assert c.name == "Damen"
 
     def testProductById(self):
-        p = self.easy.productById(227838)
+        p = self.easy.productsById([227838])
 
         assert p.id == 227838
         assert p.description_short is not None
@@ -46,5 +46,4 @@ class TestEasyCollins:
 
         for p in result.products:
             for v in p.variants:
-                # o.write(u"{}".format(v.obj))
                 assert v.id is not None

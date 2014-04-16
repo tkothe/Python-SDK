@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>collins.easy &mdash; python-shop-sdk 0.0 documentation</title>
+    <title>collins.easy &mdash; python-shop-sdk 0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.0',
+        VERSION:     '0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,12 +23,12 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="python-shop-sdk 0.0 documentation" href="index.html" />
+    <link rel="top" title="python-shop-sdk 0.1 documentation" href="index.html" />
     <link rel="prev" title="collins" href="collins.html" /> 
   </head>
   <body>
       <div class="header"><h1 class="heading"><a href="index.html">
-          <span>python-shop-sdk 0.0 documentation</span></a></h1>
+          <span>python-shop-sdk 0.1 documentation</span></a></h1>
         <h2 class="heading"><span>collins.easy</span></h2>
       </div>
       <div class="topnav">
@@ -55,6 +55,103 @@
 </table>
 <p>EasyCollins is the attempt to make collins a little bit more userfriendly
 and hides much of the direct calls to the Collins API.</p>
+<div class="section" id="class-structures">
+<h2>Class Structures<a class="headerlink" href="#class-structures" title="Permalink to this headline">¶</a></h2>
+<p class="graphviz">
+<img src="_images/graphviz-1442ae6bf39460da2203fca60489f3409356724b.png" alt="digraph objects {
+node[shape=none];
+
+easy[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;EasyCollins&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;categories()&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;categoryById()&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;categoryByName()&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;facetgroupById()&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;productsById()&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;productsByEAN()&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+category[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;Category&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;active&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;parent&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;position&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;categories&quot;&gt;sub_categories&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;treeiter()&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+facetgroup[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;FacetGroup&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;facets&quot;&gt;facets&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+facet[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;Facet&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;facet_id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;group_name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;value&lt;/td&gt;&lt;td&gt;if not group: brand&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;options&lt;/td&gt;&lt;td&gt; if group: brand&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+image[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;Image&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;hash&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;ext&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;mime&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;size&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;image&lt;/td&gt;&lt;td&gt;&quot;width&quot;: 672, &quot;height&quot;: 960&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;url()&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+}" />
+</p>
+<p class="graphviz">
+<img src="_images/graphviz-27403cde5246917c17703ac47df5e44678a0e0be.png" alt="digraph classes2 {
+node[shape=none];
+
+product[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;Product&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;category&quot;&gt;categories&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;default_variant&quot;&gt;default_variant&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;id&quot;&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;image&quot;&gt;default_image&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;variants&quot;&gt;variants&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;active&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;description_long&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;description_short&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;max_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;min_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;sale&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;styles&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;url()&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+
+variant[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
+    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;Variant&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;attributes&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;images&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;additional_info&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;created_date&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;default&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;ean&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;first_active_date&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;first_sale_date&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;old_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;quantity&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;retail_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;updated_date&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;live()&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&gt;];
+}" />
+</p>
 <dl class="class">
 <dt id="collins.easy.Basket">
 <em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">Basket</tt><big>(</big><em>easy</em>, <em>sessionid</em><big>)</big><a class="headerlink" href="#collins.easy.Basket" title="Permalink to this definition">¶</a></dt>
@@ -215,30 +312,14 @@ The last inserted category will be returned.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="collins.easy.EasyCollins.productByEAN">
-<tt class="descname">productByEAN</tt><big>(</big><em>ean</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.productByEAN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets a product by its ean code.</p>
+<dt id="collins.easy.EasyCollins.productsByEAN">
+<tt class="descname">productsByEAN</tt><big>(</big><em>eans</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.productsByEAN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets products by its ean code.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ean</strong> (<em>int</em>) &#8211; Product ean.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#collins.easy.Product" title="collins.easy.Product"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Product</span></tt></a> instance.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="collins.easy.EasyCollins.productById">
-<tt class="descname">productById</tt><big>(</big><em>pid</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.productById" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets a product by its id.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pid</strong> (<em>int</em>) &#8211; Product id.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#collins.easy.Product" title="collins.easy.Product"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Product</span></tt></a> instance.</td>
 </tr>
@@ -266,6 +347,10 @@ The last inserted category will be returned.</p>
 <dt id="collins.easy.EasyCollins.search">
 <tt class="descname">search</tt><big>(</big><em>sessionid</em>, <em>filter=None</em>, <em>result=None</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new <a class="reference internal" href="#collins.easy.Search" title="collins.easy.Search"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.Search</span></tt></a> instance.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">See <a class="reference internal" href="collins.html#collins.Collins.productsearch" title="collins.Collins.productsearch"><tt class="xref py py-func docutils literal"><span class="pre">collins.Collins.productsearch()</span></tt></a>.</p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -300,11 +385,6 @@ The last inserted category will be returned.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="collins.easy.EasyCollins.variantById">
-<tt class="descname">variantById</tt><big>(</big><em>vid</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.variantById" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -324,6 +404,11 @@ The last inserted category will be returned.</p>
 <dt id="collins.easy.Image">
 <em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">Image</tt><big>(</big><em>easy</em>, <em>obj</em><big>)</big><a class="headerlink" href="#collins.easy.Image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#collins.easy.EasyNode" title="collins.easy.EasyNode"><tt class="xref py py-class docutils literal"><span class="pre">collins.easy.EasyNode</span></tt></a></p>
+<dl class="method">
+<dt id="collins.easy.Image.url">
+<tt class="descname">url</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.Image.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -341,6 +426,22 @@ The last inserted category will be returned.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="collins.easy.Product.default_image">
+<tt class="descname">default_image</tt><a class="headerlink" href="#collins.easy.Product.default_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="collins.easy.Product.default_variant">
+<tt class="descname">default_variant</tt><a class="headerlink" href="#collins.easy.Product.default_variant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="collins.easy.Product.url">
+<tt class="descname">url</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.Product.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the url to the product in the mary+paul shop.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -362,11 +463,6 @@ The last inserted category will be returned.</p>
 <dt id="collins.easy.ResultProducts">
 <em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">ResultProducts</tt><big>(</big><em>search</em><big>)</big><a class="headerlink" href="#collins.easy.ResultProducts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<dl class="method">
-<dt id="collins.easy.ResultProducts.all">
-<tt class="descname">all</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.ResultProducts.all" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -376,28 +472,6 @@ The last inserted category will be returned.</p>
 <dl class="method">
 <dt id="collins.easy.Search.gather">
 <tt class="descname">gather</tt><big>(</big><em>offset</em>, <em>limit</em><big>)</big><a class="headerlink" href="#collins.easy.Search.gather" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="collins.easy.SearchFilter">
-<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">SearchFilter</tt><a class="headerlink" href="#collins.easy.SearchFilter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<dl class="method">
-<dt id="collins.easy.SearchFilter.build">
-<tt class="descname">build</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.SearchFilter.build" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="collins.easy.SearchResult">
-<em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">SearchResult</tt><a class="headerlink" href="#collins.easy.SearchResult" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<dl class="method">
-<dt id="collins.easy.SearchResult.build">
-<tt class="descname">build</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.SearchResult.build" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -434,6 +508,7 @@ The last inserted category will be returned.</p>
 
 </dd></dl>
 
+</div>
 </div>
 
 

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>collins &mdash; python-shop-sdk 0.0 documentation</title>
+    <title>collins &mdash; python-shop-sdk 0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.0',
+        VERSION:     '0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,13 +23,13 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="python-shop-sdk 0.0 documentation" href="index.html" />
+    <link rel="top" title="python-shop-sdk 0.1 documentation" href="index.html" />
     <link rel="next" title="collins.easy" href="easycollins.html" />
     <link rel="prev" title="Run Tests" href="howtos/tests.html" /> 
   </head>
   <body>
       <div class="header"><h1 class="heading"><a href="index.html">
-          <span>python-shop-sdk 0.0 documentation</span></a></h1>
+          <span>python-shop-sdk 0.1 documentation</span></a></h1>
         <h2 class="heading"><span>collins</span></h2>
       </div>
       <div class="topnav">
@@ -63,10 +63,10 @@ result as the same.</li>
 <li>EasyCollins, which is a more convient layer of abstraction of the API as an
 object herachie which caches results and query results if there are needed.</li>
 </ul>
-<div class="section" id="object-structure">
-<h2>Object Structure<a class="headerlink" href="#object-structure" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="collins-object-structure">
+<h2>Collins Object Structure<a class="headerlink" href="#collins-object-structure" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="_images/graphviz-ac6b35258810c271ea679a51fa0647f6aafc8086.png" alt="digraph objects {
+<img src="_images/graphviz-dae1ddbc1a5cd40589482f1300c5bf69a0cfd907.png" alt="digraph objects {
 node[shape=none];
 
 basket[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
@@ -112,7 +112,7 @@ product[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellb
     &lt;tr&gt;&lt;td&gt;min_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;max_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;sale&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;default_image&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td port=&quot;image&quot;&gt;default_image&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;attributes_merged&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td port=&quot;category&quot;&gt;categories.appID&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;&gt;];
@@ -538,6 +538,19 @@ And could differ vs. a &#8220;product search&#8221; or &#8220;product&#8221; que
 </tr>
 </tbody>
 </table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">collins</span><span class="o">.</span><span class="n">livevariant</span><span class="p">([</span><span class="mi">4760437</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+    <span class="nt">&quot;4760437&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;available_stock&quot;</span><span class="p">:</span> <span class="mi">999</span><span class="p">,</span>
+        <span class="nt">&quot;price&quot;</span><span class="p">:</span> <span class="mi">3995</span><span class="p">,</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">4760437</span><span class="p">,</span>
+        <span class="nt">&quot;product_id&quot;</span><span class="p">:</span> <span class="mi">223910</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -1248,7 +1261,7 @@ variable is used instead.</p>
 
 <dl class="data">
 <dt id="collins.VERSION">
-<tt class="descclassname">collins.</tt><tt class="descname">VERSION</tt><em class="property"> = '0.0'</em><a class="headerlink" href="#collins.VERSION" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">collins.</tt><tt class="descname">VERSION</tt><em class="property"> = '0.1'</em><a class="headerlink" href="#collins.VERSION" title="Permalink to this definition">¶</a></dt>
 <dd><p>Version of the python shop SDK.</p>
 </dd></dl>
 

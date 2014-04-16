@@ -8,4 +8,5 @@ Howtos
    search
    category_tree
    usage
+   caching
    tests

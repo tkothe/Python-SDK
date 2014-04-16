@@ -59,7 +59,7 @@ Collins Object Structure
         <tr><td>min_price</td><td></td></tr>
         <tr><td>max_price</td><td></td></tr>
         <tr><td>sale</td><td></td></tr>
-        <tr><td>default_image</td><td></td></tr>
+        <tr><td port="image">default_image</td><td></td></tr>
         <tr><td>attributes_merged</td><td></td></tr>
         <tr><td port="category">categories.appID</td><td></td></tr>
     </table>>];
@@ -126,7 +126,7 @@ import os
 COLLINS_VERSION = "1.1"
 """The version of the collins api which is supported."""
 
-VERSION = "0.0"
+VERSION = "0.1"
 """Version of the python shop SDK."""
 
 AUTHORS = [
@@ -784,6 +784,21 @@ class Collins(object):
             And could differ vs. a "product search" or "product" query.
 
         :param list ids: array of product variant id
+
+        .. code-block:: python
+
+            >>> collins.livevariant([4760437])
+
+        .. code-block:: json
+
+            {
+                "4760437": {
+                    "available_stock": 999,
+                    "price": 3995,
+                    "id": 4760437,
+                    "product_id": 223910
+                }
+            }
         """
         idscount = len(ids)
 

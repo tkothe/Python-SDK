@@ -5,7 +5,7 @@
     "app_secret": "",
     "agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36",
     "image_url": "http://cdn.mary-paul.de/file/{}",
-    "product_url": "",
+    "product_url": "http://www.mary-paul.de/product/{}",
     "cache": null,
     "logconf": {
             "version": 1,

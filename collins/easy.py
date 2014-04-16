@@ -5,6 +5,104 @@
 EasyCollins is the attempt to make collins a little bit more userfriendly
 and hides much of the direct calls to the Collins API.
 
+
+Class Structures
+----------------
+
+.. digraph:: objects
+
+    node[shape=none];
+
+    easy[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">EasyCollins</td></tr>
+        <tr><td>categories()</td><td></td></tr>
+        <tr><td>categoryById()</td><td></td></tr>
+        <tr><td>categoryByName()</td><td></td></tr>
+        <tr><td>facetgroupById()</td><td></td></tr>
+        <tr><td>productsById()</td><td></td></tr>
+        <tr><td>productsByEAN()</td><td></td></tr>
+    </table>>];
+
+    category[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">Category</td></tr>
+        <tr><td>id</td><td></td></tr>
+        <tr><td>name</td><td></td></tr>
+        <tr><td>active</td><td></td></tr>
+        <tr><td>parent</td><td></td></tr>
+        <tr><td>position</td><td></td></tr>
+        <tr><td port="categories">sub_categories</td><td></td></tr>
+        <tr><td>treeiter()</td><td></td></tr>
+    </table>>];
+
+    facetgroup[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">FacetGroup</td></tr>
+        <tr><td>id</td><td></td></tr>
+        <tr><td>name</td><td></td></tr>
+        <tr><td port="facets">facets</td><td></td></tr>
+    </table>>];
+
+    facet[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">Facet</td></tr>
+        <tr><td>id</td><td></td></tr>
+        <tr><td>facet_id</td><td></td></tr>
+        <tr><td>group_name</td><td></td></tr>
+        <tr><td>name</td><td></td></tr>
+        <tr><td>value</td><td>if not group: brand</td></tr>
+        <tr><td>options</td><td> if group: brand</td></tr>
+    </table>>];
+
+    image[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">Image</td></tr>
+        <tr><td>hash</td><td></td></tr>
+        <tr><td>ext</td><td></td></tr>
+        <tr><td>mime</td><td></td></tr>
+        <tr><td>size</td><td></td></tr>
+        <tr><td>image</td><td>"width": 672, "height": 960</td></tr>
+        <tr><td>url()</td><td></td></tr>
+    </table>>];
+
+
+.. digraph:: classes2
+
+    node[shape=none];
+
+    product[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">Product</td></tr>
+        <tr><td port="category">categories</td><td></td></tr>
+        <tr><td port="default_variant">default_variant</td><td></td></tr>
+        <tr><td port="id">id</td><td></td></tr>
+        <tr><td port="image">default_image</td><td></td></tr>
+        <tr><td port="variants">variants</td><td></td></tr>
+        <tr><td>active</td><td></td></tr>
+        <tr><td>description_long</td><td></td></tr>
+        <tr><td>description_short</td><td></td></tr>
+        <tr><td>max_price</td><td></td></tr>
+        <tr><td>min_price</td><td></td></tr>
+        <tr><td>name</td><td></td></tr>
+        <tr><td>sale</td><td></td></tr>
+        <tr><td>styles</td><td></td></tr>
+        <tr><td>url()</td><td></td></tr>
+    </table>>];
+
+    variant[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">Variant</td></tr>
+        <tr><td>id</td><td></td></tr>
+        <tr><td>attributes</td><td></td></tr>
+        <tr><td>images</td><td></td></tr>
+        <tr><td>additional_info</td><td></td></tr>
+        <tr><td>created_date</td><td></td></tr>
+        <tr><td>default</td><td></td></tr>
+        <tr><td>ean</td><td></td></tr>
+        <tr><td>first_active_date</td><td></td></tr>
+        <tr><td>first_sale_date</td><td></td></tr>
+        <tr><td>old_price</td><td></td></tr>
+        <tr><td>price</td><td></td></tr>
+        <tr><td>quantity</td><td></td></tr>
+        <tr><td>retail_price</td><td></td></tr>
+        <tr><td>updated_date</td><td></td></tr>
+        <tr><td>live()</td><td></td></tr>
+    </table>>];
+
 """
 from . import Collins, Constants, CollinsException
 
@@ -79,6 +177,9 @@ class Image(EasyNode):
     def __init__(self, easy, obj):
         super(Image, self).__init__(easy, obj)
 
+    def url(self):
+        return self.easy.collins.config.image_url.format(self.hash)
+
     def __str__(self):
         return self.easy.collins.config.image_url.format(self.hash)
 
@@ -133,18 +234,19 @@ class Product(EasyNode):
     def __init__(self, easy, obj):
         super(Product, self).__init__(easy, obj)
 
-        if "variants" not in obj:
-            data = self.easy.collins.products(ids=[self.id],
-                                            fields=[Constants.PRODUCT_FIELD_VARIANTS,
-                                                    Constants.PRODUCT_FIELD_CATEGORIES])
-            self.obj.update(data["ids"][str(self.id)])
-
         self.__variants = None
         self.__categories = None
         self.__short_description = None
         self.__long_description = None
         self.__default_image = None
         self.__default_variant = None
+
+    def url(self):
+        """
+        Returns the url to the product in the mary+paul shop.
+        """
+        slug = self.name.strip().replace(" ", "-") + "-" + str(self.id)
+        return self.easy.collins.config.product_url.format(slug)
 
     @property
     def categories(self):
@@ -203,80 +305,73 @@ class Product(EasyNode):
 
         return self.__default_variant
 
-    @property
-    def description_short(self):
-        if "description_short" not in self.obj:
+    def __getattr__(self, name):
+        if name not in self.obj:
             data = self.easy.collins.products(ids=[self.id],
-                                            fields=[Constants.PRODUCT_FIELD_DESCRIPTION_SHORT])
+                                            fields=[
+                                                    Constants.PRODUCT_FIELD_DESCRIPTION_SHORT,
+                                                    Constants.PRODUCT_FIELD_DESCRIPTION_LONG,
+                                                    Constants.PRODUCT_FIELD_SALE])
             self.obj.update(data["ids"][str(self.id)])
 
-        return self.obj["description_short"]
-
-    @property
-    def description_long(self):
-        if "description_long" not in self.obj:
-            data = self.easy.collins.products(ids=[self.id],
-                                            fields=[Constants.PRODUCT_FIELD_DESCRIPTION_LONG])
-            self.obj.update(data["ids"][str(self.id)])
-
-        return self.obj["description_long"]
+        return self.obj[name]
 
 
-class SearchFilter(object):
-    def __init__(self):
-        self.categories = set()
-        self.facets = {}
-        self.prices_from = None
-        self.prices_to = None
-        self.searchword = None
-        self.sale = None
+# class SearchFilter(object):
+#     def __init__(self):
+#         self.categories = set()
+#         self.facets = {}
+#         self.prices_from = None
+#         self.prices_to = None
+#         self.searchword = None
+#         self.sale = None
 
-    def build(self):
-        f = {"sale": self.sale}
+#     def build(self):
+#         f = {"sale": self.sale}
 
-        if len(self.categories) > 0:
-            f["categories"] = [c.id for c in self.categories]
+#         if len(self.categories) > 0:
+#             f["categories"] = [c.id for c in self.categories]
 
-        if self.searchword is not None:
-            f["searchword"] = self.searchword
+#         if self.searchword is not None:
+#             f["searchword"] = self.searchword
 
-        if len(self.facets) > 0:
-            pass
+#         if len(self.facets) > 0:
+#             pass
 
-        if self.prices_from is not None and self.prices_to is not None:
-            f["prices"] = {
-                "from": self.prices_from,
-                "to": self.prices_to
-            }
+#         if self.prices_from is not None and self.prices_to is not None:
+#             f["prices"] = {
+#                 "from": self.prices_from,
+#                 "to": self.prices_to
+#             }
 
-        return f
+#         return f
 
 
-class SearchResult(object):
-    def __init__(self):
-        self.sale = False
-        self.price = False
-        self.facets = None
-        self.limit = None
-        self.offset = None
-        self.categories = None
+# class SearchResult(object):
+#     def __init__(self):
+#         self.sale = False
+#         self.price = False
+#         self.facets = None
+#         self.limit = None
+#         self.offset = None
+#         self.categories = None
 
-    def build(self):
-        s = {"sale": self.sale, "price": self.price}
+#     def build(self):
+#         s = {"sale": self.sale, "price": self.price}
 
-        if self.limit is not None:
-            s["limit"] = self.limit
+#         if self.limit is not None:
+#             s["limit"] = self.limit
 
-        if self.offset is not None:
-            s["offset"] = self.offset
+#         if self.offset is not None:
+#             s["offset"] = self.offset
 
-        if self.categories is not None:
-            s["categories"] = self.categories
+#         if self.categories is not None:
+#             s["categories"] = self.categories
 
-        if self.facets is not None:
-            s["facets"] = self.facets
+#         if self.facets is not None:
+#             s["facets"] = self.facets
 
-        return s
+#         return s
 
 
 class ResultProducts(object):
@@ -284,20 +379,22 @@ class ResultProducts(object):
         self.search = search
         self.buffer = [None] * search.count
 
-    def all(self):
-        return self.__buffer
-
     def __getitem__(self, idx):
+        if isinstance(idx, slice):
+            self.search.gather(idx.start, idx.stop-idx.start)
+
+            return [self.buffer[i] for i in xrange(idx.start, idx.stop, idx.step)]
+
         if self.buffer[idx] is None:
             self.search.gather(idx, 1)
 
         return self.buffer[idx]
 
     def __iter__(self):
-        step = 0
-        for i in xrange(self.search.count):
+        step = 100
+        for i in xrange(0, self.search.count, step):
             if self.buffer[i] is None:
-                self.search.gather(i, 20)
+                self.search.gather(i, step)
 
             yield self.buffer[i]
 
@@ -316,16 +413,16 @@ class Search(object):
             self.result["limit"] = 0
             self.result["offset"] = 0
 
-        response = self.easy.collins.productsearch(self.sessionid,
+        self.obj = self.easy.collins.productsearch(self.sessionid,
                                                    filter=self.filter,
                                                    result=self.result)
 
-        self.count = response["product_count"]
+        self.count = self.obj["product_count"]
 
         self.products = ResultProducts(self)
 
-        if "categories" in response["facets"]:
-            for el in response["factes"]["categories"]:
+        if "categories" in self.obj["facets"]:
+            for el in self.obj["factes"]["categories"]:
                 cat = self.search.easy.categoryById(el["term"])
                 self.categories[cat] = el["count"]
 
@@ -337,9 +434,13 @@ class Search(object):
                                                             "limit": limit})
 
         for i, p in enumerate(response["products"]):
-            self.products.buffer[i+offset] = Product(self.easy, p)
+            if p["id"] in self.easy.product_cach:
+                product = self.easy.product_cach[p["id"]]
+            else:
+                product = Product(self.easy, p)
 
-        return self.products.buffer[offset:offset+limit]
+            self.easy.product_cach[p.id] = product
+            self.products.buffer[i+offset] = product
 
 
 class Basket(object):
@@ -387,15 +488,15 @@ class EasyCollins(object):
         self.__facet_groups = {}
 
         self.__baskets = {}
-        self.__bucket = None
+        self.product_cach = {}
 
-        if self.config.cache is not None:
-            try:
-                self.__bucket = pylibmc.Client(self.config.cache,
-                                               binary=True,
-                                               behaviors={"tcp_nodelay": True, "ketama": True})
-            except:
-                self.collins.log.exception('')
+        # if self.config.cache is not None:
+        #     try:
+        #         self.__bucket = pylibmc.Client(self.config.cache,
+        #                                        binary=True,
+        #                                        behaviors={"tcp_nodelay": True, "ketama": True})
+        #     except:
+        #         self.collins.log.exception('')
 
     def __build_categories(self):
         self.collins.log.info('cache category tree')
@@ -495,20 +596,6 @@ class EasyCollins(object):
 
         return self.__facet_groups[facet_group]
 
-    def productById(self, pid):
-        """
-        Gets a product by its id.
-
-        :param int pid: Product id.
-        :returns: A :py:class:`collins.easy.Product` instance.
-        """
-        spid = str(pid)
-        response = self.collins.products(ids=[pid])
-
-        p = Product(self, response["ids"][spid])
-
-        return p
-
     def productsById(self, pids):
         """
         Gets a products by its id.
@@ -516,34 +603,38 @@ class EasyCollins(object):
         :param list pids: A list of product ids.
         :returns: A list of :py:class:`collins.easy.Product` instance.
         """
-        spid = [str(pid) for pid in pids]
-        response = self.collins.products(ids=pids)
+        spid = [str(pid) for pid in pids if pid not in self.product_cach]
 
-        return [Product(self, p) for p in response["ids"].values()]
+        products = [self.product_cach[pid] for pid in pids if pid in self.product_cach]
 
-    def productByEAN(self, ean):
+        if len(spid) > 0:
+            response = self.collins.products(ids=pids, fields=[Constants.PRODUCT_FIELD_SALE])
+
+            new = [Product(self, p) for p in response["ids"].values()]
+
+            for n in new:
+                self.product_cach[n.id] = n
+
+            products += new
+
+        return products
+
+    def productsByEAN(self, eans):
         """
-        Gets a product by its ean code.
+        Gets products by its ean code.
 
         :param int ean: Product ean.
         :returns: A :py:class:`collins.easy.Product` instance.
         """
-        response = self.collins.producteans(eans=[ean],
-                                     fields=[Constants.PRODUCT_FIELD_VARIANTS])
+        response = self.collins.producteans(eans=eans)
 
-        p = Product(self, response[0])
-
-        return p
-
-    def variantById(self, vid):
-        """
-        """
-        response = self.collins.livevariant([vid])
-        return response
+        return [Product(self, p) for p in response]
 
     def search(self, sessionid, filter=None, result=None):
         """
         Creates a new :py:class:`collins.easy.Search` instance.
+
+        .. note:: See :py:func:`collins.Collins.productsearch`.
 
         :param sessionid: The user session id.
         :returns: A :py:class:`collins.easy.Search` instance.
