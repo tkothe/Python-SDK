@@ -390,6 +390,9 @@ class ResultProducts(object):
 
         return self.buffer[idx]
 
+    def __len__(self):
+        return self.search.count
+
     def __iter__(self):
         step = 100
         for i in xrange(0, self.search.count, step):
