@@ -395,7 +395,7 @@ class ResultProducts(object):
 
     def __iter__(self):
         step = 100
-        for i in xrange(0, self.search.count, step):
+        for i in xrange(0, self.search.count):
             if self.buffer[i] is None:
                 self.search.gather(i, step)
 
