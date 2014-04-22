@@ -460,7 +460,7 @@ class Collins(object):
             return result
 
         except urllib2.HTTPError as err:
-            message = "{} {} {}".format(err.code, err.reason, err.read())
+            message = "{} {} {}".format(err.code, err.msg, err.read())
             self.log.exception(message)
             raise CollinsException(message)
         except urllib2.URLError as err:
