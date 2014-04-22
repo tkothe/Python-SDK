@@ -114,6 +114,9 @@ class EasyNode(object):
         self.easy = easy
         self.obj = obj
 
+        if "error_message" in obj or "error_code" in obj:
+            raise CollinsException("{} {}".format(obj["error_code"], obj["error_message"]))
+
     def __getattr__(self, name):
         return self.obj[name]
 
@@ -611,6 +614,7 @@ class EasyCollins(object):
         products = [self.product_cach[pid] for pid in pids if pid in self.product_cach]
 
         if len(spid) > 0:
+
             response = self.collins.products(ids=pids, fields=[Constants.PRODUCT_FIELD_SALE])
 
             new = [Product(self, p) for p in response["ids"].values()]
