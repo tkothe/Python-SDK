@@ -230,7 +230,7 @@ class Config(object):
     def __init__(self, **kwargs):
 
         for key, value in kwargs.items():
-            if key in PARAMS:
+            if key in Config.PARAMS:
                 setattr(self, key, value)
             else:
                 raise CollinsException("unknown configuration key parameter")
@@ -460,7 +460,7 @@ class Collins(object):
             return result
 
         except urllib2.HTTPError as err:
-            message = "{} {} {}".format(err.code, err.reason, err.read())
+            message = "{} {} {}".format(err.code, err.msg, err.read())
             self.log.exception(message)
             raise CollinsException(message)
         except urllib2.URLError as err:
