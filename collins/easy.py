@@ -493,6 +493,8 @@ class EasyCollins(object):
         self.__facet_map = None
         self.__facet_groups = {}
 
+        self.__simple_colors = None
+
         self.__baskets = {}
         self.product_cach = {}
 
