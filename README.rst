@@ -31,6 +31,8 @@ Documentation is found in HTML format in the *doc/build* sub-folder.
 Change Log
 ----------
 
+    * Error handling fix.
+
 - 0.1
     * Products return now there url to the mary+paul shop.
     * Dirty caching without memcached.

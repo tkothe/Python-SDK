@@ -572,6 +572,23 @@ class EasyCollins(object):
 
         return self.__category_ids[cid]
 
+    def getSimpleColors(self):
+        """
+        Returns an array of facet colors which are a simple selection out
+        of the hugh possebilities.
+        """
+        if self.__facet_map is None:
+            self.__build_facets()
+
+        if self.__simple_colors is None:
+            colors = self.facetgroupById('color')
+            self.__simple_colors = []
+            for fid in [570, 168, 67, 247, 48, 14, 18, 204, 30, 1, 579, 15, 12,
+                        11, 55, 580, 9, 333, 646, 3257]:
+                self.__simple_colors.append(colors[fid])
+
+        return self.__simple_colors
+
     def categoryByName(self, name):
         """
         Returns the category with the given name.
