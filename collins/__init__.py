@@ -230,7 +230,7 @@ class Config(object):
     def __init__(self, **kwargs):
 
         for key, value in kwargs.items():
-            if key in PARAMS:
+            if key in Config.PARAMS:
                 setattr(self, key, value)
             else:
                 raise CollinsException("unknown configuration key parameter")
