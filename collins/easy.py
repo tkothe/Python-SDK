@@ -259,7 +259,7 @@ class Product(EasyNode):
         if self.__categories is None:
             catname = "categories.{}".format(self.easy.config.app_id)
 
-            if catname not in obj:
+            if catname not in self.obj:
                 data = self.easy.collins.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_CATEGORIES])
                 self.obj.update(data["ids"][str(self.id)])
