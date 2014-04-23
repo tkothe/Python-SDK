@@ -586,7 +586,7 @@ class EasyCollins(object):
             colors = self.facetgroupById('color')
             self.__simple_colors = []
             for fid in [570, 168, 67, 247, 48, 14, 18, 204, 30, 1, 579, 15, 12,
-                        11, 55, 580, 9, 333, 646, 3257]:
+                        11, 55, 580, 9, 333, 646]:
                 self.__simple_colors.append(colors[fid])
 
         return self.__simple_colors
