@@ -47,3 +47,6 @@ class TestEasyCollins:
         for p in result.products:
             for v in p.variants:
                 assert v.id is not None
+
+    def testSimpleColors(self):
+        self.easy.getSimpleColors()

@@ -260,6 +260,7 @@ class Product(EasyNode):
             catname = "categories.{}".format(self.easy.config.app_id)
 
             if catname not in self.obj:
+                self.easy.collins.log.debug('update categories from product %s', self.obj['id'])
                 data = self.easy.collins.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_CATEGORIES])
                 self.obj.update(data["ids"][str(self.id)])
@@ -276,6 +277,7 @@ class Product(EasyNode):
         """
         if self.__variants is None:
             if "variants" not in self.obj:
+                self.easy.collins.log.debug('update variants from product %s', self.obj['id'])
                 data = self.easy.collins.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_VARIANTS])
                 self.obj.update(data["ids"][str(self.id)])
@@ -288,6 +290,7 @@ class Product(EasyNode):
     def default_image(self):
         if self.__default_image is None:
             if "default_image" not in self.obj:
+                self.easy.collins.log.debug('update default_image from product %s', self.obj['id'])
                 data = self.easy.collins.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_DEFAULT_IMAGE])
                 self.obj.update(data["ids"][str(self.id)])
@@ -300,6 +303,7 @@ class Product(EasyNode):
     def default_variant(self):
         if self.__default_variant is None:
             if "default_variant" not in self.obj:
+                self.easy.collins.log.debug('update default_variant from product %s', self.obj['id'])
                 data = self.easy.collins.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_DEFAULT_VARIANT])
                 self.obj.update(data["ids"][str(self.id)])
@@ -310,6 +314,7 @@ class Product(EasyNode):
 
     def __getattr__(self, name):
         if name not in self.obj:
+            self.easy.collins.log.debug('update %s from product %s', name, self.obj['id'])
             data = self.easy.collins.products(ids=[self.id],
                                             fields=[
                                                     Constants.PRODUCT_FIELD_DESCRIPTION_SHORT,
@@ -397,7 +402,7 @@ class ResultProducts(object):
         return self.search.count
 
     def __iter__(self):
-        step = 100
+        step = 200
         for i in xrange(0, self.search.count):
             if self.buffer[i] is None:
                 self.search.gather(i, step)
@@ -434,10 +439,14 @@ class Search(object):
 
 
     def gather(self, offset, limit):
+        self.result['offset'] = offset
+        self.result['limit'] = limit
+
+        self.easy.collins.log.debug('gather %s %s %s', self.sessionid, self.filter, self.result)
+
         response = self.easy.collins.productsearch(self.sessionid,
                                                    filter=self.filter,
-                                                   result={"offset":offset,
-                                                            "limit": limit})
+                                                   result=self.result)
 
         for i, p in enumerate(response["products"]):
             if p["id"] in self.easy.product_cach:
@@ -498,13 +507,14 @@ class EasyCollins(object):
         self.__baskets = {}
         self.product_cach = {}
 
-        # if self.config.cache is not None:
-        #     try:
-        #         self.__bucket = pylibmc.Client(self.config.cache,
-        #                                        binary=True,
-        #                                        behaviors={"tcp_nodelay": True, "ketama": True})
-        #     except:
-        #         self.collins.log.exception('')
+        if self.config.cache is not None:
+            try:
+                self.cache = pylibmc.Client(self.config.cache,
+                                            binary=True,
+                                            behaviors={"tcp_nodelay": True, "ketama": True})
+            except:
+                self.collins.log.exception('')
+                self.cache = []
 
     def __build_categories(self):
         self.collins.log.info('cache category tree')

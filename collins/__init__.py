@@ -990,6 +990,8 @@ class Collins(object):
         +----------+-----------------------------------------------------------+
         |facets    |object of which facet get back what count of facets        |
         +----------+-----------------------------------------------------------+
+        |fields    | array of product field names                              |
+        +----------+-----------------------------------------------------------+
         |categories|set if get or not back the categories in which are products|
         |          |and the count of products                                  |
         +----------+-----------------------------------------------------------+
