@@ -208,8 +208,9 @@ class Constants(object):
 
 class Config(object):
     PARAMS = set(["entry_point_url", "app_id", "app_token", "app_secret",
-                        "agent", "image_url", "loginUrl", "resourceUrl",
-                        "redirectUri", "logconf"])
+                  "cache",
+                  "agent", "image_url", "loginUrl", "resourceUrl",
+                  "redirectUri", "logconf"])
     """
     The configuration of a collins api connection.
 
