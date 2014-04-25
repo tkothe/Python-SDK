@@ -209,7 +209,7 @@ class Constants(object):
 class Config(object):
     PARAMS = set(["entry_point_url", "app_id", "app_token", "app_secret",
                         "agent", "image_url", "loginUrl", "resourceUrl",
-                        "redirectUri", "logconf"])
+                        "redirectUri", "cache", "logconf"])
     """
     The configuration of a collins api connection.
 
@@ -276,6 +276,7 @@ class JSONConfig(Config):
             "app_password": "",
             "agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36",
             "image_url": "http://cdn.mary-paul.de/files/{}",
+            "cache": null,
             "logconf": {
                     "version": 1,
                     "disable_existing_loggers": false,
@@ -316,7 +317,7 @@ class JSONConfig(Config):
             logging.config.dictConfig(self.data["logconf"])
 
     def __getattr__(self, name):
-        return self.data[name]
+        return self.data.get(name, None)
 
 
 class JSONEnvironmentFallbackConfig(Config):

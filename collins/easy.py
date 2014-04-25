@@ -505,7 +505,6 @@ class EasyCollins(object):
         self.__simple_colors = None
 
         self.__baskets = {}
-        self.product_cach = {}
 
         if self.config.cache is not None:
             try:
@@ -593,6 +592,8 @@ class EasyCollins(object):
             self.__build_facets()
 
         if self.__simple_colors is None:
+            self.collins.log.info('build simple colors')
+
             colors = self.facetgroupById('color')
             self.__simple_colors = []
             for fid in [570, 168, 67, 247, 48, 14, 18, 204, 30, 1, 579, 15, 12,
@@ -638,9 +639,18 @@ class EasyCollins(object):
         :param list pids: A list of product ids.
         :returns: A list of :py:class:`collins.easy.Product` instance.
         """
-        spid = [str(pid) for pid in pids if pid not in self.product_cach]
+        spid = []
+        products = []
 
-        products = [self.product_cach[pid] for pid in pids if pid in self.product_cach]
+        # get products from cache or mark unknown products
+        for pid in pids:
+            sid = str(pid)
+            p = self.cache.get(sid)
+
+            if p is None:
+                spid.append(sid)
+            else:
+                products.append(p)
 
         if len(spid) > 0:
 
