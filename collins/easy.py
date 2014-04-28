@@ -105,6 +105,23 @@ Class Structures
 
 """
 from . import Collins, Constants, CollinsException
+import bz2
+import json
+import logging
+
+
+logger = logging.getLogger('collins.sdk')
+
+
+def safe(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            logger.exception('stuff')
+            raise e
+
+    return wrapper
 
 
 class EasyNode(object):
@@ -449,12 +466,12 @@ class Search(object):
                                                    result=self.result)
 
         for i, p in enumerate(response["products"]):
-            if p["id"] in self.easy.product_cach:
-                product = self.easy.product_cach[p["id"]]
-            else:
+            product = self.easy.cache.get(str(p["id"]))
+            if product is None:
                 product = Product(self.easy, p)
+                print product
+                self.easy.cache[str(product.id)] = product
 
-            self.easy.product_cach[product.id] = product
             self.products.buffer[i+offset] = product
 
 
@@ -508,16 +525,31 @@ class EasyCollins(object):
 
         if self.config.cache is not None:
             try:
-                self.cache = pylibmc.Client(self.config.cache,
+                import pylibmc
+
+                self.cache = pylibmc.Client(self.config.cache['hosts'],
                                             binary=True,
                                             behaviors={"tcp_nodelay": True, "ketama": True})
+                self.cache.get('')
+                self.collins.log.info('use memcached via pylibmc')
             except:
                 self.collins.log.exception('')
-                self.cache = []
+                self.cache = None
 
     def __build_categories(self):
-        self.collins.log.info('cache category tree')
-        tree = self.collins.categorytree()
+        tree = None
+
+        if self.cache is not None:
+            tree = self.cache.get('categorytree')
+
+        if tree is None:
+            self.collins.log.info('get category tree from collins')
+            tree = self.collins.categorytree()
+            self.cache.set('categorytree', bz2.compress(json.dumps(tree)),
+                           time=self.config.cache['timeout'])
+        else:
+            tree = json.loads(bz2.decompress(tree))
+            self.collins.log.info('cached category tree')
 
         def build(n):
             c = Category(self, n)
@@ -529,20 +561,35 @@ class EasyCollins(object):
         self.__categorytree = [build(node) for node in tree]
 
     def __build_facets(self):
-        self.collins.log.info('cache facets')
+        facets = None
+
+        if self.cache is not None:
+            facets = self.cache.get('facettypes')
+            response = self.cache.get('facets')
+
+        if facets is None:
+            facets = self.collins.facettypes()
+            response = self.collins.facets(facets)["facet"]
+            self.cache.set('facettypes', bz2.compress(json.dumps(facets)),
+                           self.config.cache['timeout'])
+            self.cache.set('facets', bz2.compress(json.dumps(response)),
+                           self.config.cache['timeout'])
+        else:
+            facets = json.loads(bz2.decompress(facets))
+            response = json.loads(bz2.decompress(response))
+            self.collins.log.info('cached facets')
 
         self.__facet_map = {}
-        facets = self.collins.facettypes()
-        for f in facets:
-            response = self.collins.facets([f])["facet"]
-            self.__facet_map[response[0]["group_name"]] = f
-            self.__facet_map[f] = response[0]["group_name"]
+        for facet in response:
+            f = EasyNode(self, facet)
+            group = self.__facet_map.get(f.group_name)
+            if group is None:
+                group = FacetGroup(self, f.id, f.group_name, {})
+                self.__facet_map[group.name] = group
+                self.__facet_map[group.id] = group
 
-            group = FacetGroup(self, f, response[0]["group_name"],
-                               dict(((r["facet_id"], EasyNode(self, r))
-                                                for r in response)))
+            group.facets[f.facet_id] = f
 
-            self.__facet_groups[f] = group
 
     def basketBySession(self, sessionid):
         """
@@ -560,6 +607,7 @@ class EasyCollins(object):
 
             return b
 
+    @safe
     def categories(self):
         """
         Returns the category tree.
@@ -571,6 +619,7 @@ class EasyCollins(object):
 
         return self.__categorytree
 
+    @safe
     def categoryById(self, cid):
         """
         Returns the category with the given id.
@@ -583,6 +632,7 @@ class EasyCollins(object):
 
         return self.__category_ids[cid]
 
+    @safe
     def getSimpleColors(self):
         """
         Returns an array of facet colors which are a simple selection out
@@ -602,6 +652,7 @@ class EasyCollins(object):
 
         return self.__simple_colors
 
+    @safe
     def categoryByName(self, name):
         """
         Returns the category with the given name.
@@ -617,6 +668,17 @@ class EasyCollins(object):
 
         return self.__category_names[name]
 
+    @safe
+    def facetGroups(self):
+        """
+        :Retuns: A set of all known facet groups.
+        """
+        if self.__facet_map is None:
+            self.__build_facets()
+
+        return set(self.__facet_groups.values())
+
+    @safe
     def facetgroupById(self, facet_group):
         """
         Returns all facets of a group.
@@ -627,11 +689,9 @@ class EasyCollins(object):
         if self.__facet_map is None:
             self.__build_facets()
 
-        if isinstance(facet_group, (str, unicode)):
-            facet_group = self.__facet_map[facet_group]
+        return self.__facet_map[facet_group]
 
-        return self.__facet_groups[facet_group]
-
+    @safe
     def productsById(self, pids):
         """
         Gets a products by its id.
@@ -643,28 +703,30 @@ class EasyCollins(object):
         products = []
 
         # get products from cache or mark unknown products
-        for pid in pids:
-            sid = str(pid)
-            p = self.cache.get(sid)
+        if self.cache is not None:
+            for pid in pids:
+                sid = str(pid)
+                p = self.cache.get(sid)
 
-            if p is None:
-                spid.append(sid)
-            else:
-                products.append(p)
+                if p is None:
+                    spid.append(sid)
+                else:
+                    products.append(p)
 
         if len(spid) > 0:
-
-            response = self.collins.products(ids=pids, fields=[Constants.PRODUCT_FIELD_SALE])
+            response = self.collins.products(ids=pids, fields=['sale', 'active'])
 
             new = [Product(self, p) for p in response["ids"].values()]
 
-            for n in new:
-                self.product_cach[n.id] = n
+            if self.cache is not None:
+                for n in new:
+                    self.cache.set(str(n.id), n, self.config.cache['timeout'])
 
             products += new
 
         return products
 
+    @safe
     def productsByEAN(self, eans):
         """
         Gets products by its ean code.
@@ -676,6 +738,7 @@ class EasyCollins(object):
 
         return [Product(self, p) for p in response]
 
+    @safe
     def search(self, sessionid, filter=None, result=None):
         """
         Creates a new :py:class:`collins.easy.Search` instance.
@@ -687,6 +750,7 @@ class EasyCollins(object):
         """
         return Search(self, sessionid, filter, result)
 
+    @safe
     def autocomplete(self, searchword, types=None, limit=None):
         """
         Autocompletes the searchword and looks in the products and/or

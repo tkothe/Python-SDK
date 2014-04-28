@@ -208,8 +208,8 @@ class Constants(object):
 
 class Config(object):
     PARAMS = set(["entry_point_url", "app_id", "app_token", "app_secret",
-                        "agent", "image_url", "loginUrl", "resourceUrl",
-                        "redirectUri", "cache", "logconf"])
+                    "agent", "image_url", "loginUrl", "resourceUrl",
+                    "redirectUri", "cache", "logconf"])
     """
     The configuration of a collins api connection.
 
@@ -428,7 +428,7 @@ class Collins(object):
     def __init__(self, config):
         self.config = config
 
-        logname = "python-shop.collins.{}".format(self.config.app_id)
+        logname = "collins.sdk.{}".format(self.config.app_id)
         self.log = logging.getLogger(logname)
         self.log.debug("instantiated")
 
