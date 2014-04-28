@@ -466,11 +466,16 @@ class Search(object):
                                                    result=self.result)
 
         for i, p in enumerate(response["products"]):
-            product = self.easy.cache.get(str(p["id"]))
+            product = None
+
+            if self.easy.cache is not None:
+                product = self.easy.cache.get(str(p["id"]))
+
             if product is None:
                 product = Product(self.easy, p)
-                print product
-                self.easy.cache[str(product.id)] = product
+
+                if self.easy.cache is not None:
+                    self.easy.cache[str(product.id)] = product
 
             self.products.buffer[i+offset] = product
 
