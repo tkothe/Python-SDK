@@ -535,7 +535,7 @@ class EasyCollins(object):
                 self.cache = pylibmc.Client(self.config.cache['hosts'],
                                             binary=True,
                                             behaviors={"tcp_nodelay": True, "ketama": True})
-                self.cache.get('')
+                self.cache.get('TEST_TOKEN')
                 self.collins.log.info('use memcached via pylibmc')
             except:
                 self.collins.log.exception('')
@@ -546,15 +546,16 @@ class EasyCollins(object):
 
         if self.cache is not None:
             tree = self.cache.get('categorytree')
+            tree = json.loads(bz2.decompress(tree))
+            self.collins.log.info('cached category tree')
 
         if tree is None:
             self.collins.log.info('get category tree from collins')
             tree = self.collins.categorytree()
-            self.cache.set('categorytree', bz2.compress(json.dumps(tree)),
-                           time=self.config.cache['timeout'])
-        else:
-            tree = json.loads(bz2.decompress(tree))
-            self.collins.log.info('cached category tree')
+
+            if self.cache is not None:
+                self.cache.set('categorytree', bz2.compress(json.dumps(tree)),
+                                time=self.config.cache['timeout'])
 
         def build(n):
             c = Category(self, n)
@@ -571,18 +572,19 @@ class EasyCollins(object):
         if self.cache is not None:
             facets = self.cache.get('facettypes')
             response = self.cache.get('facets')
+            facets = json.loads(bz2.decompress(facets))
+            response = json.loads(bz2.decompress(response))
+            self.collins.log.info('cached facets')
 
         if facets is None:
             facets = self.collins.facettypes()
             response = self.collins.facets(facets)["facet"]
-            self.cache.set('facettypes', bz2.compress(json.dumps(facets)),
-                           self.config.cache['timeout'])
-            self.cache.set('facets', bz2.compress(json.dumps(response)),
-                           self.config.cache['timeout'])
-        else:
-            facets = json.loads(bz2.decompress(facets))
-            response = json.loads(bz2.decompress(response))
-            self.collins.log.info('cached facets')
+
+            if self.cache is not None:
+                self.cache.set('facettypes', bz2.compress(json.dumps(facets)),
+                               self.config.cache['timeout'])
+                self.cache.set('facets', bz2.compress(json.dumps(response)),
+                               self.config.cache['timeout'])
 
         self.__facet_map = {}
         for facet in response:

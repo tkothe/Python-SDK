@@ -26,7 +26,11 @@ class TestEasyCollins:
         assert c.name == "Damen"
 
     def testProductById(self):
-        p = self.easy.productsById([227838])
+        products = self.easy.productsById([227838])
+
+        assert len(products) == 1
+
+        p = products[0]
 
         assert p.id == 227838
         assert p.description_short is not None
@@ -40,7 +44,7 @@ class TestEasyCollins:
     def testSearch(self):
         result = self.easy.search(TEST_SESSION,
                                   filter={"categories":[19631, 19654]},
-                                  result={})
+                                  result={"limit": 20})
 
         assert result.count > 0
 

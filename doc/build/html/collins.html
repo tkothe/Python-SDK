@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>collins &mdash; python-shop-sdk 0.1 documentation</title>
+    <title>collins &mdash; python-shop-sdk 0.2 documentation</title>
     
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,13 +23,13 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="python-shop-sdk 0.1 documentation" href="index.html" />
+    <link rel="top" title="python-shop-sdk 0.2 documentation" href="index.html" />
     <link rel="next" title="collins.easy" href="easycollins.html" />
     <link rel="prev" title="Run Tests" href="howtos/tests.html" /> 
   </head>
   <body>
       <div class="header"><h1 class="heading"><a href="index.html">
-          <span>python-shop-sdk 0.1 documentation</span></a></h1>
+          <span>python-shop-sdk 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>collins</span></h2>
       </div>
       <div class="topnav">
@@ -762,14 +762,17 @@ also some statistical information in eurocent.</td>
 <tr class="row-odd"><td>facets</td>
 <td>object of which facet get back what count of facets</td>
 </tr>
-<tr class="row-even"><td>categories</td>
+<tr class="row-even"><td>fields</td>
+<td>array of product field names</td>
+</tr>
+<tr class="row-odd"><td>categories</td>
 <td>set if get or not back the categories in which are products
 and the count of products</td>
 </tr>
-<tr class="row-odd"><td>limit</td>
+<tr class="row-even"><td>limit</td>
 <td>how many products to get back</td>
 </tr>
-<tr class="row-even"><td>offset</td>
+<tr class="row-odd"><td>offset</td>
 <td>the offset where to start to get the products from</td>
 </tr>
 </tbody>
@@ -919,7 +922,7 @@ often in combination with these terms before.</p>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="attribute">
 <dt id="collins.Config.PARAMS">
-<tt class="descname">PARAMS</tt><em class="property"> = set(['entry_point_url', 'resourceUrl', 'app_secret', 'app_id', 'agent', 'redirectUri', 'image_url', 'app_token', 'logconf', 'loginUrl'])</em><a class="headerlink" href="#collins.Config.PARAMS" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">PARAMS</tt><em class="property"> = set(['entry_point_url', 'resourceUrl', 'app_secret', 'cache', 'app_id', 'agent', 'redirectUri', 'image_url', 'app_token', 'logconf', 'loginUrl'])</em><a class="headerlink" href="#collins.Config.PARAMS" title="Permalink to this definition">¶</a></dt>
 <dd><p>The configuration of a collins api connection.</p>
 <p>A config class has to have the following readable attributes:</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1200,6 +1203,7 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/file">htt
     <span class="nt">&quot;app_password&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36&quot;</span><span class="p">,</span>
     <span class="nt">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://cdn.mary-paul.de/files/{}&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;cache&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
     <span class="nt">&quot;logconf&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nt">&quot;disable_existing_loggers&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
@@ -1261,7 +1265,7 @@ variable is used instead.</p>
 
 <dl class="data">
 <dt id="collins.VERSION">
-<tt class="descclassname">collins.</tt><tt class="descname">VERSION</tt><em class="property"> = '0.1'</em><a class="headerlink" href="#collins.VERSION" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">collins.</tt><tt class="descname">VERSION</tt><em class="property"> = '0.2'</em><a class="headerlink" href="#collins.VERSION" title="Permalink to this definition">¶</a></dt>
 <dd><p>Version of the python shop SDK.</p>
 </dd></dl>
 

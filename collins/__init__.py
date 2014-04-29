@@ -126,7 +126,7 @@ import os
 COLLINS_VERSION = "1.1"
 """The version of the collins api which is supported."""
 
-VERSION = "0.1"
+VERSION = "0.2"
 """Version of the python shop SDK."""
 
 AUTHORS = [
