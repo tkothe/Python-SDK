@@ -614,7 +614,7 @@ class EasyCollins(object):
 
             return b
 
-    @safe
+
     def categories(self):
         """
         Returns the category tree.
@@ -626,7 +626,7 @@ class EasyCollins(object):
 
         return self.__categorytree
 
-    @safe
+
     def categoryById(self, cid):
         """
         Returns the category with the given id.
@@ -639,7 +639,7 @@ class EasyCollins(object):
 
         return self.__category_ids[cid]
 
-    @safe
+
     def getSimpleColors(self):
         """
         Returns an array of facet colors which are a simple selection out
@@ -659,7 +659,7 @@ class EasyCollins(object):
 
         return self.__simple_colors
 
-    @safe
+
     def categoryByName(self, name):
         """
         Returns the category with the given name.
@@ -675,7 +675,7 @@ class EasyCollins(object):
 
         return self.__category_names[name]
 
-    @safe
+
     def facetGroups(self):
         """
         :Retuns: A set of all known facet groups.
@@ -685,7 +685,7 @@ class EasyCollins(object):
 
         return set(self.__facet_groups.values())
 
-    @safe
+
     def facetgroupById(self, facet_group):
         """
         Returns all facets of a group.
@@ -698,7 +698,7 @@ class EasyCollins(object):
 
         return self.__facet_map[facet_group]
 
-    @safe
+
     def productsById(self, pids):
         """
         Gets a products by its id.
@@ -733,7 +733,7 @@ class EasyCollins(object):
 
         return products
 
-    @safe
+
     def productsByEAN(self, eans):
         """
         Gets products by its ean code.
@@ -745,7 +745,7 @@ class EasyCollins(object):
 
         return [Product(self, p) for p in response]
 
-    @safe
+
     def search(self, sessionid, filter=None, result=None):
         """
         Creates a new :py:class:`collins.easy.Search` instance.
@@ -757,7 +757,7 @@ class EasyCollins(object):
         """
         return Search(self, sessionid, filter, result)
 
-    @safe
+
     def autocomplete(self, searchword, types=None, limit=None):
         """
         Autocompletes the searchword and looks in the products and/or
