@@ -399,6 +399,18 @@ class Product(EasyNode):
 #         return s
 
 
+class SearchException(Exception):
+    """
+    :param msg: An error message
+    :param found: The products with error.
+    :param withError: The products with error.
+    """
+    def __init__(self, msg, found, withError):
+        super(type(self), self).__init__(msg)
+        self.found = found
+        self.withError = withError
+
+
 class ResultProducts(object):
     def __init__(self, search):
         self.search = search
@@ -539,6 +551,7 @@ class EasyCollins(object):
                 self.cache.get('TEST_TOKEN')
                 self.collins.log.info('use memcached via pylibmc')
             except:
+                self.cache = None
                 self.collins.log.exception('')
 
     def __build_categories(self):
@@ -708,6 +721,7 @@ class EasyCollins(object):
         """
         spid = []
         products = []
+        withError = []
 
         # get products from cache or mark unknown products
         if self.cache is not None:
@@ -719,17 +733,25 @@ class EasyCollins(object):
                     spid.append(sid)
                 else:
                     products.append(p)
+        else:
+            spid = [str(p) for p in pids]
 
         if len(spid) > 0:
             response = self.collins.products(ids=pids, fields=['sale', 'active'])
 
-            new = [Product(self, p) for p in response["ids"].values()]
+            for pid, p in response["ids"].items():
+                if "error_message" in p:
+                    withError.append((pid, p['error_message']))
+                else:
+                    products.append(Product(self, p))
 
             if self.cache is not None:
                 for n in new:
                     self.cache.set(str(n.id), n, self.config.cache['timeout'])
 
-            products += new
+
+        if len(withError) > 0:
+            raise SearchException('not all products were found', products, withError)
 
         return products
 
