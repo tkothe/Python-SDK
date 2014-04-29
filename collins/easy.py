@@ -528,6 +528,7 @@ class EasyCollins(object):
 
         self.__baskets = {}
 
+        self.cache = None
         if self.config.cache is not None:
             try:
                 import pylibmc
@@ -539,7 +540,6 @@ class EasyCollins(object):
                 self.collins.log.info('use memcached via pylibmc')
             except:
                 self.collins.log.exception('')
-                self.cache = None
 
     def __build_categories(self):
         tree = None
