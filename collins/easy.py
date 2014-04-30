@@ -567,7 +567,7 @@ class EasyCollins(object):
         self.__category_names = {}
 
         self.__facet_map = None
-        self.__facet_groups = {}
+        self.__facet_groups = []
 
         self.__simple_colors = None
 
@@ -640,6 +640,7 @@ class EasyCollins(object):
                 group = FacetGroup(self, f.id, f.group_name, {})
                 self.__facet_map[group.name] = group
                 self.__facet_map[group.id] = group
+                self.__facet_groups.append(group)
 
             group.facets[f.facet_id] = f
 
@@ -729,7 +730,7 @@ class EasyCollins(object):
         if self.__facet_map is None:
             self.__build_facets()
 
-        return set(self.__facet_groups.values())
+        return self.__facet_groups
 
 
     def facetgroupById(self, facet_group):
