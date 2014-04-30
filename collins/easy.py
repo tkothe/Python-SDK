@@ -432,9 +432,17 @@ class ResultProducts(object):
 
     def __getitem__(self, idx):
         if isinstance(idx, slice):
-            self.search.gather(idx.start, idx.stop-idx.start)
+            start = idx.start
+            if start is None:
+                start = 0
 
-            return [self.buffer[i] for i in xrange(idx.start, idx.stop, idx.step)]
+            stop = idx.stop
+            if stop is None:
+                stop = self.search.count
+
+            self.search.gather(start, stop-start)
+
+            return [self.buffer[i] for i in xrange(start, stop, idx.step)]
 
         if self.buffer[idx] is None:
             self.search.gather(idx, 1)
