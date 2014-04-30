@@ -437,14 +437,21 @@ class ResultProducts(object):
                 start = 0
 
             stop = idx.stop
-            if stop is None:
-                stop = self.search.count
+            stop = min(stop, self.search.count)
 
             step = idx.step
             if step is None:
                 step = 1
 
-            self.search.gather(start, stop-start)
+            count = stop-start
+            pos = start
+            for i in xrange(count/200):
+                self.search.gather(pos, 200)
+                pos += 200
+
+            self.search.gather(pos, 200)
+
+            # print start, stop, step
 
             return [self.buffer[i] for i in xrange(start, stop, step)]
 
