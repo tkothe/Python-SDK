@@ -440,9 +440,13 @@ class ResultProducts(object):
             if stop is None:
                 stop = self.search.count
 
+            step = idx.step
+            if step is None:
+                step = 1
+
             self.search.gather(start, stop-start)
 
-            return [self.buffer[i] for i in xrange(start, stop, idx.step)]
+            return [self.buffer[i] for i in xrange(start, stop, step)]
 
         if self.buffer[idx] is None:
             self.search.gather(idx, 1)
