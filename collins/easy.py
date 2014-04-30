@@ -210,6 +210,7 @@ class Image(EasyNode):
 class VariantAttributes(object):
     def __init__(self, easy, obj):
         self.obj = obj
+        self.easy = easy
 
         prefixlen = len("attributes_")
         self.__data = {}
@@ -217,8 +218,19 @@ class VariantAttributes(object):
         for name, value in obj.items():
             grpid = int(name[prefixlen:])
             facets = easy.facetgroupById(grpid)
-            self.__data[facets.name] = [facets[f] for f in value]
-            self.__data[facets.id] = self.__data[facets.name]
+
+            collection = []
+            for f in value:
+                g = facets.facets.get(f, None)
+
+                if g is None:
+                    g = EasyNode(easy, {'id': facets.id, 'name': 'unknown_{}'.format(f), 'value': 'unknown_{}'.format(f), 'facet_id': f})
+                    facets.facets[f] = g
+
+                collection.append(g)
+
+            self.__data[facets.name] = collection
+            self.__data[facets.id] = collection
 
     def keys(self):
         return self.__data.keys()
@@ -293,11 +305,13 @@ class Product(EasyNode):
         :returns: A list of :py:class:`collins.easy.Variant`.
         """
         if self.__variants is None:
+
             if "variants" not in self.obj:
                 self.easy.collins.log.debug('update variants from product %s', self.obj['id'])
                 data = self.easy.collins.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_VARIANTS])
                 self.obj.update(data["ids"][str(self.id)])
+
 
             self.__variants = [Variant(self.easy, v) for v in self.obj["variants"]]
 

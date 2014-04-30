@@ -27,6 +27,14 @@ Documentation
 
 Documentation is found in HTML format in the *doc/build* sub-folder.
 
+Endpoints
+---------
+
+- Staging
+    http://ant-core-staging-s-api1.wavecloud.de/api
+- Live
+    http://ant-shop-api1.wavecloud.de/api
+
 
 Change Log
 ----------
