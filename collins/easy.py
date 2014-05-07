@@ -451,8 +451,6 @@ class ResultProducts(object):
 
             self.search.gather(pos, 200)
 
-            # print start, stop, step
-
             return [self.buffer[i] for i in xrange(start, stop, step)]
 
         if self.buffer[idx] is None:
