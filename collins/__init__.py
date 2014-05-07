@@ -320,6 +320,57 @@ class JSONConfig(Config):
         return self.data.get(name, None)
 
 
+try:
+    import yaml
+
+    class YAMLConfig(Config):
+        """
+        .. code-block:: yaml
+
+            "entry_point_url": "http://ant-core-staging-s-api1.wavecloud.de/api"
+            "app_id": ""
+            "app_password": ""
+            "agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36"
+            "image_url": "http://cdn.mary-paul.de/files/{}"
+            "cache": ["127.0.0.1:11211"]
+            "logconf":
+                    "version": 1
+                    "disable_existing_loggers": false
+                    "formatters":
+                        "simple":
+                            "format": "%(asctime)s | %(levelname)-7s | %(name)-20s | %(message)s"
+                    "handlers":
+                        "rotating":
+                            "level": "DEBUG"
+                            "class": "logging.handlers.TimedRotatingFileHandler"
+                            "formatter": "simple"
+                            "when": "midnight"
+                            "filename": "collins.log"
+                    "loggers":
+                        "python-shop.collins":
+                            "level": "DEBUG"
+                            "handlers": ["rotating"]
+                    "root":
+                        "handlers": []
+                        "level": "DEBUG"
+                        "propagate": true
+        """
+        def __init__(self, filename):
+            pass
+
+        with open(filename) as cfgfile:
+            self.data = yaml.load(cfgfile)
+
+        if "logconf" in self.data and self.data["logconf"] is not None:
+            logging.config.dictConfig(self.data["logconf"])
+
+        def __getattr__(self, name):
+            return self.data.get(name, None)
+except:
+    # No YAML config :(
+    pass
+
+
 class JSONEnvironmentFallbackConfig(Config):
     """
     This is the real hot shit.
