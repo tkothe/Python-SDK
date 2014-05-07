@@ -356,13 +356,11 @@ try:
                         "propagate": true
         """
         def __init__(self, filename):
-            pass
+            with open(filename) as cfgfile:
+                self.data = yaml.load(cfgfile)
 
-        with open(filename) as cfgfile:
-            self.data = yaml.load(cfgfile)
-
-        if "logconf" in self.data and self.data["logconf"] is not None:
-            logging.config.dictConfig(self.data["logconf"])
+            if "logconf" in self.data and self.data["logconf"] is not None:
+                logging.config.dictConfig(self.data["logconf"])
 
         def __getattr__(self, name):
             return self.data.get(name, None)

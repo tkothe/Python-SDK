@@ -39,6 +39,8 @@ Endpoints
 Change Log
 ----------
 
+	* YAML configuration files
+	
 - 0.2
     * Caching with Memcached and pylibmc
     * EasyCollins has function, *getSimpleColors*

@@ -2,7 +2,9 @@
 *.log*
 *.pyc
 dump.json
-slicedice-config.json
+slice-dice.yaml
 110slicedice-config.json
 examples/*
 test.py
+categories.yaml
+facets.yaml

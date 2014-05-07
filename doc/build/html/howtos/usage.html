@@ -51,7 +51,7 @@
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="brand">
 <h2>Brand?<a class="headerlink" href="#brand" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span> <span class="o">=</span> <span class="n">easy</span><span class="o">.</span><span class="n">productById</span><span class="p">(</span><span class="mi">239982</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span> <span class="o">=</span> <span class="n">easy</span><span class="o">.</span><span class="n">producstById</span><span class="p">([</span><span class="mi">239982</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="k">print</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span>
 
@@ -63,8 +63,17 @@
 </div>
 <div class="section" id="many-products-by-id">
 <h2>Many products by id<a class="headerlink" href="#many-products-by-id" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">easy</span><span class="o">.</span><span class="n">productsById</span><span class="p">([</span><span class="mi">237188</span><span class="p">,</span> <span class="mi">237116</span><span class="p">]):</span>
-    <span class="k">print</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">collins</span> <span class="kn">import</span> <span class="n">YAMLConfig</span>
+<span class="kn">from</span> <span class="nn">collins.easy</span> <span class="kn">import</span> <span class="n">EasyCollins</span><span class="p">,</span> <span class="n">SearchException</span>
+
+<span class="n">easy</span> <span class="o">=</span> <span class="n">EasyCollins</span><span class="p">(</span><span class="n">YAMLConfig</span><span class="p">(</span><span class="s">&quot;myconfig.yaml&quot;</span><span class="p">))</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">easy</span><span class="o">.</span><span class="n">productsById</span><span class="p">([</span><span class="mi">237188</span><span class="p">,</span> <span class="mi">237116</span><span class="p">]):</span>
+        <span class="k">print</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span>
+<span class="k">except</span> <span class="n">SearchException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">e</span><span class="o">.</span><span class="n">withError</span>   <span class="c"># list of tuples (id, [errors]) for not found products</span>
+    <span class="k">print</span> <span class="n">e</span><span class="o">.</span><span class="n">found</span>       <span class="c"># list of found products</span>
 </pre></div>
 </div>
 </div>

@@ -1269,6 +1269,41 @@ variable is used instead.</p>
 <dd><p>Version of the python shop SDK.</p>
 </dd></dl>
 
+<dl class="class">
+<dt id="collins.YAMLConfig">
+<em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">YAMLConfig</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#collins.YAMLConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#collins.Config" title="collins.Config"><tt class="xref py py-class docutils literal"><span class="pre">collins.Config</span></tt></a></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="s">&quot;entry_point_url&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;http://ant-core-staging-s-api1.wavecloud.de/api&quot;</span>
+<span class="s">&quot;app_id&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;&quot;</span>
+<span class="s">&quot;app_password&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;&quot;</span>
+<span class="s">&quot;agent&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;Mozilla/5.0</span><span class="nv"> </span><span class="s">(X11;</span><span class="nv"> </span><span class="s">Linux</span><span class="nv"> </span><span class="s">i686)</span><span class="nv"> </span><span class="s">AppleWebKit/537.36</span><span class="nv"> </span><span class="s">(KHTML,</span><span class="nv"> </span><span class="s">like</span><span class="nv"> </span><span class="s">Gecko)</span><span class="nv"> </span><span class="s">Chrome/33.0.1750.152</span><span class="nv"> </span><span class="s">Safari/537.36&quot;</span>
+<span class="s">&quot;image_url&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;http://cdn.mary-paul.de/files/{}&quot;</span>
+<span class="s">&quot;cache&quot;</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;127.0.0.1:11211&quot;</span><span class="p-Indicator">]</span>
+<span class="s">&quot;logconf&quot;</span><span class="p-Indicator">:</span>
+        <span class="s">&quot;version&quot;</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+        <span class="s">&quot;disable_existing_loggers&quot;</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+        <span class="s">&quot;formatters&quot;</span><span class="p-Indicator">:</span>
+            <span class="s">&quot;simple&quot;</span><span class="p-Indicator">:</span>
+                <span class="s">&quot;format&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;%(asctime)s</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">%(levelname)-7s</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">%(name)-20s</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">%(message)s&quot;</span>
+        <span class="s">&quot;handlers&quot;</span><span class="p-Indicator">:</span>
+            <span class="s">&quot;rotating&quot;</span><span class="p-Indicator">:</span>
+                <span class="s">&quot;level&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;DEBUG&quot;</span>
+                <span class="s">&quot;class&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;logging.handlers.TimedRotatingFileHandler&quot;</span>
+                <span class="s">&quot;formatter&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;simple&quot;</span>
+                <span class="s">&quot;when&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;midnight&quot;</span>
+                <span class="s">&quot;filename&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;collins.log&quot;</span>
+        <span class="s">&quot;loggers&quot;</span><span class="p-Indicator">:</span>
+            <span class="s">&quot;python-shop.collins&quot;</span><span class="p-Indicator">:</span>
+                <span class="s">&quot;level&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;DEBUG&quot;</span>
+                <span class="s">&quot;handlers&quot;</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;rotating&quot;</span><span class="p-Indicator">]</span>
+        <span class="s">&quot;root&quot;</span><span class="p-Indicator">:</span>
+            <span class="s">&quot;handlers&quot;</span><span class="p-Indicator">:</span> <span class="p-Indicator">[]</span>
+            <span class="s">&quot;level&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;DEBUG&quot;</span>
+            <span class="s">&quot;propagate&quot;</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="function">
 <dt id="collins.check_sessionid">
 <tt class="descclassname">collins.</tt><tt class="descname">check_sessionid</tt><big>(</big><em>sessionid</em><big>)</big><a class="headerlink" href="#collins.check_sessionid" title="Permalink to this definition">¶</a></dt>

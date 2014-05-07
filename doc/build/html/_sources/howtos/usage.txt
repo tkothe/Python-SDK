@@ -6,7 +6,7 @@ Brand?
 
 .. code-block:: python
 
-    p = easy.productById(239982)
+    p = easy.producstById([239982])[0]
 
     print p.name
 
@@ -20,8 +20,17 @@ Many products by id
 
 .. code-block:: python
 
-    for p in easy.productsById([237188, 237116]):
-        print p.name
+    from collins import YAMLConfig    
+    from collins.easy import EasyCollins, SearchException
+
+    easy = EasyCollins(YAMLConfig("myconfig.yaml"))
+
+    try:
+        for p in easy.productsById([237188, 237116]):
+            print p.name
+    except SearchException as e:
+        print e.withError   # list of tuples (id, [errors]) for not found products
+        print e.found       # list of found products
 
 
 Search for Colors in Categories

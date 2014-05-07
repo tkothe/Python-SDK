@@ -415,6 +415,8 @@ class Product(EasyNode):
 
 class SearchException(Exception):
     """
+    An exception thrown by productsById.
+
     :param msg: An error message
     :param found: The products with error.
     :param withError: The products with error.
@@ -449,7 +451,8 @@ class ResultProducts(object):
                 self.search.gather(pos, 200)
                 pos += 200
 
-            self.search.gather(pos, 200)
+            if count%200 != 0:
+                self.search.gather(pos, 200)
 
             return [self.buffer[i] for i in xrange(start, stop, step)]
 
@@ -748,8 +751,13 @@ class EasyCollins(object):
         """
         Gets a products by its id.
 
+        .. attention:: 
+            If not all products where found an exception is thrown, 
+            which contains a list of all found and all not found products.
+
         :param list pids: A list of product ids.
         :returns: A list of :py:class:`collins.easy.Product` instance.
+        :throws: :py:class:`collins.easy.SearchException`
         """
         spid = []
         products = []

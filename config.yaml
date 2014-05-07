@@ -1,0 +1,32 @@
+# "entry_point_url": "http://ant-core-staging-s-api1.wavecloud.de/api"
+"entry_point_url": "http://ant-core-staging-s-api1.wavecloud.de/api"
+"app_id": ""
+"app_token": ""
+"app_secret": ""
+"agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36"
+"image_url": "http://cdn.mary-paul.de/file/{}"
+"product_url": "http://www.mary-paul.de/product/{}"
+"cache":
+        "hosts": ["127.0.0.1:11211"]
+        "timeout": 86400
+"logconf":
+        "version": 1
+        "disable_existing_loggers": false
+        "formatters":
+            "simple":
+                "format": "%(asctime)s |%(levelname)-7s | %(name)-20s | %(message)s"
+        "handlers":
+            "rotating":
+                "level": "DEBUG"
+                "class": "logging.handlers.TimedRotatingFileHandler"
+                "formatter": "simple"
+                "when": "midnight"
+                "filename": "collins.log"
+        "loggers":
+            "collins.sdk":
+                "level": "DEBUG"
+                "handlers": ["rotating"]
+        "root":
+            "handlers": []
+            "level": "DEBUG"
+            "propagate": true

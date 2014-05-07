@@ -49,17 +49,19 @@
         
   <div class="section" id="configuration">
 <h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
-<p>The SDK has to be configured for your connection. The SDK comes with three
+<p>The SDK has to be configured for your connection. The SDK comes with four
 instances:</p>
 <blockquote>
 <div><ul class="simple">
 <li><a class="reference internal" href="../collins.html#collins.Config" title="collins.Config"><tt class="xref py py-class docutils literal"><span class="pre">collins.Config</span></tt></a></li>
+<li><a class="reference internal" href="../collins.html#collins.YAMLConfig" title="collins.YAMLConfig"><tt class="xref py py-class docutils literal"><span class="pre">collins.YAMLConfig</span></tt></a></li>
 <li><a class="reference internal" href="../collins.html#collins.JSONConfig" title="collins.JSONConfig"><tt class="xref py py-class docutils literal"><span class="pre">collins.JSONConfig</span></tt></a></li>
 <li><a class="reference internal" href="../collins.html#collins.JSONEnvironmentFallbackConfig" title="collins.JSONEnvironmentFallbackConfig"><tt class="xref py py-class docutils literal"><span class="pre">collins.JSONEnvironmentFallbackConfig</span></tt></a></li>
 </ul>
 </div></blockquote>
-<p>A good practice is to use the JSONConfig instance, so your app-id and password
-are not hard coded in the source code.</p>
+<p>A good practice is to use the YAMLConfig instance, so your app-id and password
+are not hard coded in the source code and YAML provides a nice and user-friendly
+data layout.</p>
 </div>
 
 

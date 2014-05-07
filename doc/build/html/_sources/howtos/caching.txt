@@ -17,7 +17,7 @@ To enable caching fill cache options in your configuration file.
         "agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36",
         "image_url": "http://cdn.mary-paul.de/file/{}",
         "product_url": "",
-        "cache": ["127.0.0.1"]
+        "cache": ["127.0.0.1:11211"]
     }
 
 
