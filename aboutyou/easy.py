@@ -300,7 +300,7 @@ class Product(EasyNode):
         if self.__categories is None:
             catname = "categories.{}".format(self.easy.config.app_id)
 
-            if catname not in self.obj:
+            if catname not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update categories from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_CATEGORIES])
@@ -318,7 +318,7 @@ class Product(EasyNode):
         """
         if self.__variants is None:
 
-            if "variants" not in self.obj:
+            if "variants" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update variants from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_VARIANTS])
@@ -336,7 +336,7 @@ class Product(EasyNode):
         :returns: :py:class:`aboutyou.easy.Image`
         """
         if self.__default_image is None:
-            if "default_image" not in self.obj:
+            if "default_image" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update default_image from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_DEFAULT_IMAGE])
@@ -349,7 +349,7 @@ class Product(EasyNode):
     @property
     def default_variant(self):
         if self.__default_variant is None:
-            if "default_variant" not in self.obj:
+            if "default_variant" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update default_variant from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_DEFAULT_VARIANT])
@@ -360,7 +360,7 @@ class Product(EasyNode):
         return self.__default_variant
 
     def __getattr__(self, name):
-        if name not in self.obj:
+        if name not in self.obj and self.easy.config.auto_fetch:
             self.easy.aboutyou.log.debug('update %s from product %s', name, self.obj['id'])
             data = self.easy.aboutyou.products(ids=[self.id],
                                             fields=[

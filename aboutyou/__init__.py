@@ -30,7 +30,7 @@ import os
 ABOUTYOU_VERSION = "1.1"
 """The version of the aboutyou api which is supported."""
 
-VERSION = "0.3"
+VERSION = "0.3.1"
 """Version of the python shop SDK."""
 
 AUTHORS = [
