@@ -2,7 +2,7 @@
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 """
-from collins.easy import EasyNode
+from aboutyou.easy import EasyNode
 
 
 def testCategories(easy):

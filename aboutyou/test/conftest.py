@@ -4,21 +4,21 @@
 """
 import pytest
 
-from collins import YAMLConfig, Collins
-from collins.easy import EasyCollins
+from aboutyou import YAMLConfig, Aboutyou
+from aboutyou.easy import EasyAboutYou
 
 
 config = YAMLConfig('slice-dice.yaml')
 
 
 @pytest.fixture(scope='session')
-def collins():
-    return Collins(config)
+def aboutyou():
+    return Aboutyou(config)
 
 
 @pytest.fixture(scope='session')
 def easy():
-    return EasyCollins(config)
+    return EasyAboutYou(config)
 
 
 @pytest.fixture
@@ -27,5 +27,5 @@ def session():
 
 
 @pytest.fixture
-def log(request, collins):
-    return collins.log.getChild(request.function.__name__)
+def log(request, aboutyou):
+    return aboutyou.log.getChild(request.function.__name__)

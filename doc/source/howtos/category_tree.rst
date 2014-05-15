@@ -4,8 +4,8 @@ Category Tree
 .. code-block:: python
     :linenos:
 
-    from collins.easy import EasyCollins
-    from collins import JSONConfig
+    from aboutyou.easy import EasyCollins
+    from aboutyou import JSONConfig
 
     easy = EasyCollins(JSONConfig('slice-dice-config.json'))
 

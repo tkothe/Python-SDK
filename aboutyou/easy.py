@@ -2,8 +2,8 @@
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 
-EasyCollins is the attempt to make collins a little bit more userfriendly
-and hides much of the direct calls to the Collins API.
+EasyAboutYou is the attempt to make aboutyou a little bit more userfriendly
+and hides much of the direct calls to the aboutyou API.
 
 
 Class Structures
@@ -14,7 +14,7 @@ Class Structures
     node[shape=none];
 
     easy[label=<<table cellspacing="0" border="0" cellborder="1">
-        <tr><td colspan="2">EasyCollins</td></tr>
+        <tr><td colspan="2">EasyAboutYou</td></tr>
         <tr><td>categories()</td><td></td></tr>
         <tr><td>categoryById()</td><td></td></tr>
         <tr><td>categoryByName()</td><td></td></tr>
@@ -104,13 +104,13 @@ Class Structures
     </table>>];
 
 """
-from . import Collins, Constants, CollinsException
+from . import Aboutyou, Constants, AboutYouException
 import bz2
 import json
 import logging
 
 
-logger = logging.getLogger('collins.sdk')
+logger = logging.getLogger('aboutyou')
 
 
 def safe(func):
@@ -132,7 +132,7 @@ class EasyNode(object):
         self.obj = obj
 
         if "error_message" in obj or "error_code" in obj:
-            raise CollinsException("{} {}".format(obj["error_code"], obj["error_message"]))
+            raise AboutYouException("{} {}".format(obj["error_code"], obj["error_message"]))
 
     def __getattr__(self, name):
         return self.obj[name]
@@ -198,13 +198,13 @@ class Image(EasyNode):
         super(Image, self).__init__(easy, obj)
 
     def url(self):
-        return self.easy.collins.config.image_url.format(self.hash)
+        return self.easy.aboutyou.config.image_url.format(self.hash)
 
     def __str__(self):
-        return self.easy.collins.config.image_url.format(self.hash)
+        return self.easy.aboutyou.config.image_url.format(self.hash)
 
     def __unicode__(self):
-        return self.easy.collins.config.image_url.format(self.hash)
+        return self.easy.aboutyou.config.image_url.format(self.hash)
 
 
 class VariantAttributes(object):
@@ -252,7 +252,7 @@ class Variant(EasyNode):
     @property
     def images(self):
         """
-        An array of :py:class:`collins.easy.Image`.
+        An array of :py:class:`aboutyou.easy.Image`.
         """
         return self.__images
 
@@ -268,7 +268,7 @@ class Variant(EasyNode):
         """
         The live data to this variant.
         """
-        return self.easy.collins.livevariant([self.id])
+        return self.easy.aboutyou.livevariant([self.id])
 
 
 class Product(EasyNode):
@@ -290,19 +290,19 @@ class Product(EasyNode):
         Returns the url to the product in the shop.
         """
         slug = self.name.strip().replace(" ", "-") + "-" + str(self.id)
-        return self.easy.collins.config.product_url.format(slug)
+        return self.easy.aboutyou.config.product_url.format(slug)
 
     @property
     def categories(self):
         """
-        :returns: A list of :py:class:`collins.easy.Category`.
+        :returns: A list of :py:class:`aboutyou.easy.Category`.
         """
         if self.__categories is None:
             catname = "categories.{}".format(self.easy.config.app_id)
 
             if catname not in self.obj:
-                self.easy.collins.log.debug('update categories from product %s', self.obj['id'])
-                data = self.easy.collins.products(ids=[self.id],
+                self.easy.aboutyou.log.debug('update categories from product %s', self.obj['id'])
+                data = self.easy.aboutyou.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_CATEGORIES])
                 self.obj.update(data["ids"][str(self.id)])
 
@@ -314,13 +314,13 @@ class Product(EasyNode):
     @property
     def variants(self):
         """
-        :returns: A list of :py:class:`collins.easy.Variant`.
+        :returns: A list of :py:class:`aboutyou.easy.Variant`.
         """
         if self.__variants is None:
 
             if "variants" not in self.obj:
-                self.easy.collins.log.debug('update variants from product %s', self.obj['id'])
-                data = self.easy.collins.products(ids=[self.id],
+                self.easy.aboutyou.log.debug('update variants from product %s', self.obj['id'])
+                data = self.easy.aboutyou.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_VARIANTS])
                 self.obj.update(data["ids"][str(self.id)])
 
@@ -333,12 +333,12 @@ class Product(EasyNode):
     def default_image(self):
         """
         The default image of this product.
-        :returns: :py:class:`collins.easy.Image`
+        :returns: :py:class:`aboutyou.easy.Image`
         """
         if self.__default_image is None:
             if "default_image" not in self.obj:
-                self.easy.collins.log.debug('update default_image from product %s', self.obj['id'])
-                data = self.easy.collins.products(ids=[self.id],
+                self.easy.aboutyou.log.debug('update default_image from product %s', self.obj['id'])
+                data = self.easy.aboutyou.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_DEFAULT_IMAGE])
                 self.obj.update(data["ids"][str(self.id)])
 
@@ -350,8 +350,8 @@ class Product(EasyNode):
     def default_variant(self):
         if self.__default_variant is None:
             if "default_variant" not in self.obj:
-                self.easy.collins.log.debug('update default_variant from product %s', self.obj['id'])
-                data = self.easy.collins.products(ids=[self.id],
+                self.easy.aboutyou.log.debug('update default_variant from product %s', self.obj['id'])
+                data = self.easy.aboutyou.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_DEFAULT_VARIANT])
                 self.obj.update(data["ids"][str(self.id)])
 
@@ -361,8 +361,8 @@ class Product(EasyNode):
 
     def __getattr__(self, name):
         if name not in self.obj:
-            self.easy.collins.log.debug('update %s from product %s', name, self.obj['id'])
-            data = self.easy.collins.products(ids=[self.id],
+            self.easy.aboutyou.log.debug('update %s from product %s', name, self.obj['id'])
+            data = self.easy.aboutyou.products(ids=[self.id],
                                             fields=[
                                                     Constants.PRODUCT_FIELD_DESCRIPTION_SHORT,
                                                     Constants.PRODUCT_FIELD_DESCRIPTION_LONG,
@@ -446,7 +446,7 @@ class Search(object):
             self.result["limit"] = 0
             self.result["offset"] = 0
 
-        self.obj = self.easy.collins.productsearch(self.sessionid,
+        self.obj = self.easy.aboutyou.productsearch(self.sessionid,
                                                    filter=self.filter,
                                                    result=self.result)
 
@@ -464,9 +464,9 @@ class Search(object):
         self.result['offset'] = offset
         self.result['limit'] = limit
 
-        self.easy.collins.log.debug('gather %s %s %s', self.sessionid, self.filter, self.result)
+        self.easy.aboutyou.log.debug('gather %s %s %s', self.sessionid, self.filter, self.result)
 
-        response = self.easy.collins.productsearch(self.sessionid,
+        response = self.easy.aboutyou.productsearch(self.sessionid,
                                                    filter=self.filter,
                                                    result=self.result)
 
@@ -495,7 +495,7 @@ class BasketException(Exception):
 
 class Basket(object):
     """
-    :param easy: The EasyCollins instance.
+    :param easy: The EasyAboutYou instance.
     :param sessionid: The session id the basket is associated with.
     """
     def __init__(self, easy, sessionid):
@@ -538,22 +538,22 @@ class Basket(object):
         for variant, count in self.__variants.items():
             pass
 
-        response = self.easy.collins.basketset(self.sessionid, variants)
+        response = self.easy.aboutyou.basketset(self.sessionid, variants)
 
-        return self.easy.collins.order(self.sessionid, sucess_url,
+        return self.easy.aboutyou.order(self.sessionid, sucess_url,
                                        cancel_url, error_url)
 
 
-class EasyCollins(object):
+class EasyAboutYou(object):
     """
-    An abstraction layer around the thin collins api.
+    An abstraction layer around the thin aboutyou api.
 
-    :param config: A :py:class:`collins.Config` instance.
+    :param config: A :py:class:`aboutyou.Config` instance.
     """
     def __init__(self, config):
         self.config = config
 
-        self.collins = Collins(self.config)
+        self.aboutyou = Aboutyou(self.config)
         self.__categorytree = None
         self.__category_ids = {}
         self.__category_names = {}
@@ -575,10 +575,10 @@ class EasyCollins(object):
                                             binary=True,
                                             behaviors={"tcp_nodelay": True, "ketama": True})
                 self.cache.get('TEST_TOKEN')
-                self.collins.log.info('use memcached via pylibmc')
+                self.aboutyou.log.info('use memcached via pylibmc')
             except:
                 self.cache = None
-                self.collins.log.exception('')
+                self.aboutyou.log.exception('')
 
     def __build_categories(self):
         tree = None
@@ -586,11 +586,11 @@ class EasyCollins(object):
         if self.cache is not None:
             tree = self.cache.get('categorytree')
             tree = json.loads(bz2.decompress(tree))
-            self.collins.log.info('cached category tree')
+            self.aboutyou.log.info('cached category tree')
 
         if tree is None:
-            self.collins.log.info('get category tree from collins')
-            tree = self.collins.categorytree()
+            self.aboutyou.log.info('get category tree from aboutyou')
+            tree = self.aboutyou.categorytree()
 
             if self.cache is not None:
                 self.cache.set('categorytree', bz2.compress(json.dumps(tree)),
@@ -613,11 +613,11 @@ class EasyCollins(object):
             response = self.cache.get('facets')
             facets = json.loads(bz2.decompress(facets))
             response = json.loads(bz2.decompress(response))
-            self.collins.log.info('cached facets')
+            self.aboutyou.log.info('cached facets')
 
         if facets is None:
-            facets = self.collins.facettypes()
-            response = self.collins.facets(facets)["facet"]
+            facets = self.aboutyou.facettypes()
+            response = self.aboutyou.facets(facets)["facet"]
 
             if self.cache is not None:
                 self.cache.set('facettypes', bz2.compress(json.dumps(facets)),
@@ -643,7 +643,7 @@ class EasyCollins(object):
         Returns a basket for the session id.
 
         :param sessionid: The session id the basket is associated with.
-        :returns: :py:class:`collins.easy.Basket`
+        :returns: :py:class:`aboutyou.easy.Basket`
         """
         if sessionid in self.__baskets:
             return self.__baskets[sessionid]
@@ -659,7 +659,7 @@ class EasyCollins(object):
         """
         Returns the category tree.
 
-        :returns: A list of :py:class:`collins.easy.Category`.
+        :returns: A list of :py:class:`aboutyou.easy.Category`.
         """
         if self.__categorytree is None:
             self.__build_categories()
@@ -672,7 +672,7 @@ class EasyCollins(object):
         Returns the category with the given id.
 
         :param cid: The id of the category to get.
-        :returns: A :py:class:`collins.easy.Category` instance.
+        :returns: A :py:class:`aboutyou.easy.Category` instance.
         """
         if self.__categorytree is None:
             self.__build_categories()
@@ -689,7 +689,7 @@ class EasyCollins(object):
             self.__build_facets()
 
         if self.__simple_colors is None:
-            self.collins.log.info('build simple colors')
+            self.aboutyou.log.info('build simple colors')
 
             colors = self.facetgroupById('color')
             self.__simple_colors = []
@@ -708,7 +708,7 @@ class EasyCollins(object):
                     The last inserted category will be returned.
 
         :param str name: The name of the category.
-        :returns: A :py:class:`collins.easy.Category` instance.
+        :returns: A :py:class:`aboutyou.easy.Category` instance.
         """
         if self.__categorytree is None:
             self.__build_categories()
@@ -731,7 +731,7 @@ class EasyCollins(object):
         Returns all facets of a group.
 
         :param facet_group: The id or name of the facet group.
-        :returns: A :py:class:`collins.easy.FacetGroup` instance.
+        :returns: A :py:class:`aboutyou.easy.FacetGroup` instance.
         """
         if self.__facet_map is None:
             self.__build_facets()
@@ -748,8 +748,8 @@ class EasyCollins(object):
             which contains a list of all found and all not found products.
 
         :param list pids: A list of product ids.
-        :returns: A list of :py:class:`collins.easy.Product` instance.
-        :throws: :py:class:`collins.easy.SearchException`
+        :returns: A list of :py:class:`aboutyou.easy.Product` instance.
+        :throws: :py:class:`aboutyou.easy.SearchException`
 
         .. rubric:: Example
 
@@ -780,7 +780,7 @@ class EasyCollins(object):
             spid = [str(p) for p in pids]
 
         if len(spid) > 0:
-            response = self.collins.products(ids=pids, fields=['sale', 'active'])
+            response = self.aboutyou.products(ids=pids, fields=['sale', 'active'])
 
             for pid, p in response["ids"].items():
                 if "error_message" in p:
@@ -804,21 +804,21 @@ class EasyCollins(object):
         Gets products by its ean code.
 
         :param int ean: Product ean.
-        :returns: A :py:class:`collins.easy.Product` instance.
+        :returns: A :py:class:`aboutyou.easy.Product` instance.
         """
-        response = self.collins.producteans(eans=eans)
+        response = self.aboutyou.producteans(eans=eans)
 
         return [Product(self, p) for p in response]
 
 
     def search(self, sessionid, filter=None, result=None):
         """
-        Creates a new :py:class:`collins.easy.Search` instance.
+        Creates a new :py:class:`aboutyou.easy.Search` instance.
 
-        .. note:: See :py:func:`collins.Collins.productsearch`.
+        .. note:: See :py:func:`aboutyou.aboutyou.productsearch`.
 
         :param sessionid: The user session id.
-        :returns: A :py:class:`collins.easy.Search` instance.
+        :returns: A :py:class:`aboutyou.easy.Search` instance.
         """
         return Search(self, sessionid, filter, result)
 
@@ -830,7 +830,7 @@ class EasyCollins(object):
 
         :param str searchword: The abbriviation.
         :param list types: against which types should be autocompleted.
-                            The oprions are :py:class:`collins.Constants.TYPES`
+                            The oprions are :py:class:`aboutyou.Constants.TYPES`
         :param int limit: the amount of items returned per selected type
         :returns: A tuple of two list. First one are the products and the second
                  are the categories.
@@ -841,7 +841,7 @@ class EasyCollins(object):
 
             >>> products, categories = easy.autocomplete("sho")
         """
-        result = self.collins.autocomplete(searchword,
+        result = self.aboutyou.autocomplete(searchword,
                                            types=types,
                                            limit=limit)
 
@@ -862,7 +862,7 @@ class EasyCollins(object):
                 if scid in self.__category_ids:
                     categories.append(self.__category_ids)
                 else:
-                    raise CollinsException("unknown category {}".format(scid))
+                    raise AboutYouException("unknown category {}".format(scid))
 
         return products, categories
 
@@ -871,7 +871,7 @@ class EasyCollins(object):
         Suggest additional words to the provided searchword.
 
         :param str searchword: A search string to suggest items for.
-        :param list categories: A list of :py:class:`collins.easy.Category`.
+        :param list categories: A list of :py:class:`aboutyou.easy.Category`.
         :param int limit: The maximum amount of results.
         :returns: A list of strings.
         """
@@ -880,7 +880,7 @@ class EasyCollins(object):
         else:
             categoriescast = None
 
-        result = self.collins.suggest(searchword,
+        result = self.aboutyou.suggest(searchword,
                                       categories=categoriescast,
                                       limit=limit)
         return result

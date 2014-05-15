@@ -2,21 +2,21 @@
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 
-This module provieds two wrappers around the Collins-Shop-API.
+This module provieds two wrappers around the AboutYou-Shop-API.
 
 * A thin python wrapper which takes Python dict's and list's and returns the
   result as the same.
-* EasyCollins, which is a more convient layer of abstraction of the API as an
+* Easyaboutyou, which is a more convient layer of abstraction of the API as an
   object herachie which caches results and query results if there are needed.
 
 
 .. autosummary::
     :nosignatures:
 
-    collins.Config
-    collins.Collins
-    collins.YAMLConfig
-    collins.JSONConfig
+    Config
+    Aboutyou
+    YAMLConfig
+    JSONConfig
 """
 import time
 import base64
@@ -27,8 +27,8 @@ import urllib2
 import os
 
 
-COLLINS_VERSION = "1.1"
-"""The version of the collins api which is supported."""
+ABOUTYOU_VERSION = "1.1"
+"""The version of the aboutyou api which is supported."""
 
 VERSION = "0.3"
 """Version of the python shop SDK."""
@@ -38,8 +38,8 @@ AUTHORS = [
 ]
 
 
-class CollinsException(Exception):
-    """An exception in the collins module."""
+class AboutYouException(Exception):
+    """An exception in the aboutyou module."""
     pass
 
 
@@ -110,13 +110,13 @@ class Constants(object):
 class Config(object):
     PARAMS = set(["entry_point_url", "app_id", "app_token", "app_secret",
                     "agent", "image_url", "product_url", "shop_url",
-                    "auto_fetch", "cache", "logconf"])
+                    "auto_fetch", "cache", "logging"])
     """
-    The configuration of a collins api connection.
+    The configuration of a aboutyou api connection.
 
     A config class has to have the following readable attributes:
 
-    :param entry_point_url: The url for collins.
+    :param entry_point_url: The url for aboutyou.
     :param app_id: The application id.
     :param app_token: The password aka token for the corresponding application id.
     :param app_secret: The secret of the appliction.
@@ -125,9 +125,9 @@ class Config(object):
                         As example http://cdn.mary-paul.de/file/{}.
     :param product_url: The template for a product.
     :param shop_url: The url template for the shop.
-    :param auto_fetch: If set True, EasyCollins fetches automaticly missing fields.
+    :param auto_fetch: If set True, Easyaboutyou fetches automaticly missing fields.
     :param cache: An array of Memcached servers.
-    :param dict logconf: A dictonary for logging.config.dictConfig.
+    :param dict logging: A dictonary for logging.config.dictConfig.
     """
     def __init__(self, **kwargs):
         for key in Config.PARAMS:
@@ -137,10 +137,10 @@ class Config(object):
             if key in Config.PARAMS:
                 setattr(self, key, value)
             else:
-                raise CollinsException("unknown configuration key parameter")
+                raise AboutYouException("unknown configuration key parameter")
 
-        if "logconf" in kwargs:
-            logging.config.dictConfig(kwargs["logconf"])
+        if "logging" in kwargs:
+            logging.config.dictConfig(kwargs["logging"])
 
     def imageurl(self, hashid, size=None):
         """
@@ -179,8 +179,8 @@ class JSONConfig(Config):
         with open(filename) as cfgfile:
             self.data = json.load(cfgfile)
 
-        if "logconf" in self.data and self.data["logconf"] is not None:
-            logging.config.dictConfig(self.data["logconf"])
+        if "logging" in self.data and self.data["logging"] is not None:
+            logging.config.dictConfig(self.data["logging"])
 
     def __getattr__(self, name):
         return self.data.get(name, None)
@@ -202,8 +202,8 @@ try:
             with open(filename) as cfgfile:
                 self.data = yaml.load(cfgfile)
 
-            if "logconf" in self.data and self.data["logconf"] is not None:
-                logging.config.dictConfig(self.data["logconf"])
+            if "logging" in self.data and self.data["logging"] is not None:
+                logging.config.dictConfig(self.data["logging"])
 
         def __getattr__(self, name):
             return self.data.get(name, None)
@@ -223,9 +223,9 @@ class JSONEnvironmentFallbackConfig(Config):
     .. code-block:: python
 
         # if the field *authorization* is not present in the config file,
-        # then the environment variable *COLLINS_AUTH* will be used for the
+        # then the environment variable *aboutyou_AUTH* will be used for the
         # config variable authorization.
-        conf = JSONEnvironmentFallbackConfig('myconf.json', authorization='COLLINS_AUTH')
+        conf = JSONEnvironmentFallbackConfig('myconf.json', authorization='aboutyou_AUTH')
     """
     def __init__(self, jsonfile, **kwargs):
         with open(jsonfile) as cfgfile:
@@ -234,17 +234,17 @@ class JSONEnvironmentFallbackConfig(Config):
         loc = locals()
         for key, value in kwargs.items():
             if key not in Config.PARAMS:
-                raise CollinsException("unknown configuration key parameter")
+                raise AboutYouException("unknown configuration key parameter")
 
             if key not in self.data:
                 if loc[key] is not None:
                     self.data[key] = os.environ[loc[key]]
                 else:
                     msg = 'config value "{}" not present'.format(key)
-                    raise CollinsException(msg)
+                    raise AboutYouException(msg)
 
-        if "logconf" in self.data and self.data["logconf"] is not None:
-            logging.config.dictConfig(self.data["logconf"])
+        if "logging" in self.data and self.data["logging"] is not None:
+            logging.config.dictConfig(self.data["logging"])
 
     def __getattr__(self, name):
         return self.data[name]
@@ -254,18 +254,18 @@ def check_sessionid(sessionid):
     """
     .. note::
         We copied it from the php-sdk.
-        collins seems to want have the session-id a minimum length of five
+        aboutyou seems to want have the session-id a minimum length of five
         characters. This is not tested or validated.
     """
     if len(sessionid) < 5:
-        raise CollinsException("The session id must have at least 5 characters")
+        raise AboutYouException("The session id must have at least 5 characters")
 
 
-class Collins(object):
+class Aboutyou(object):
     """
-    An interface to the Collins API.
+    An interface to the aboutyou API.
 
-    This is thin warper around the Collins API.
+    This is thin warper around the aboutyou API.
     All functions return the JSON responses as Python List and Dictonarys.
 
     :param config: A Config instance.
@@ -274,8 +274,8 @@ class Collins(object):
 
     .. code-block:: python
 
-        >>> from pythonshop.collins import Collins, Constants, YAMLConfig
-        >>> c =  Collins(YAMLConfig("myconfig.yml"))
+        >>> from aboutyou import Aboutyou, Constants, YAMLConfig
+        >>> c =  Aboutyou(YAMLConfig("myconfig.yml"))
         >>> c.facets([Constants.FACET_CUPSIZE])
 
     .. code-block:: json
@@ -324,7 +324,7 @@ class Collins(object):
 
     def send(self, cmd, obj):
         """
-        Sends a Pyhton structure of dict's and list's as raw JSON to collins and
+        Sends a Pyhton structure of dict's and list's as raw JSON to aboutyou and
         returns a Python structure of dict's and list's from the JSON answer.
 
         :param cmd: The name of the command.
@@ -346,29 +346,29 @@ class Collins(object):
             result = json.loads(result, encoding="utf-8")[0][cmd]
 
             if "error_message" in result:
-                raise CollinsException(result["error_message"])
+                raise AboutYouException(result["error_message"])
 
             return result
 
         except urllib2.HTTPError as err:
             message = "{} {} {}".format(err.code, err.msg, err.read())
             self.log.exception(message)
-            raise CollinsException(message)
+            raise AboutYouException(message)
         except urllib2.URLError as err:
             self.log.exception('')
-            raise CollinsException(err.reason)
+            raise AboutYouException(err.reason)
 
     def autocomplete(self, searchword, limit=None, types=None):
         """
         :param str searchword: The abbriviation.
         :param list types: against which types should be autocompleted.
-                            The oprions are :py:class:`collins.Constants.TYPES`
+                            The oprions are :py:class:`aboutyou.Constants.TYPES`
         :param int limit: the amount of items returned per selected type
         :returns: A dict with "products" and/or "categories".
 
         .. code-block:: python
 
-            >>> collins.autocomplete("sho", types=[Constants.TYPE_PRODUCTS])
+            >>> aboutyou.autocomplete("sho", types=[Constants.TYPE_PRODUCTS])
 
         .. code-block:: json
 
@@ -392,13 +392,13 @@ class Collins(object):
 
         if limit is not None:
             if limit < 1 or limit > 200:
-                raise CollinsException("limit out of range")
+                raise AboutYouException("limit out of range")
 
             complete["limit"] = limit
 
         if types is not None:
             if len(set(types) - Constants.TYPES) > 0:
-                raise CollinsException("unknown types")
+                raise AboutYouException("unknown types")
 
             complete["types"] = types
 
@@ -412,7 +412,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            >>> collins.basketset('someid', [('my4813890', 4813890),])
+            >>> aboutyou.basketset('someid', [('my4813890', 4813890),])
 
         .. code-block:: json
 
@@ -496,7 +496,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            >>> collins.basketget('someid')
+            >>> aboutyou.basketget('someid')
 
         .. code-block:: json
 
@@ -570,7 +570,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            >>> collins.basketremove('someid', ['my4813890'])
+            >>> aboutyou.basketremove('someid', ['my4813890'])
 
         .. code-block:: json
 
@@ -647,7 +647,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            >>> collins.category([16077])
+            >>> aboutyou.category([16077])
 
         .. code-block:: json
 
@@ -664,10 +664,10 @@ class Collins(object):
         idscount = len(ids)
 
         if idscount < 1:
-            raise CollinsException("to few ids")
+            raise AboutYouException("to few ids")
 
         if idscount > 200:
-            raise CollinsException("to many ids, maximum is 200")
+            raise AboutYouException("to many ids, maximum is 200")
 
         return self.send("category", {"ids": ids})
 
@@ -680,7 +680,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            >>> collins.categorytree()
+            >>> aboutyou.categorytree()
 
         .. code-block:: json
 
@@ -726,10 +726,10 @@ class Collins(object):
             cmd = {}
         else:
             if max_depth < -1:
-                raise CollinsException("max_depth to small")
+                raise AboutYouException("max_depth to small")
 
             if max_depth > 10:
-                raise CollinsException("max_depth to big")
+                raise AboutYouException("max_depth to big")
 
             cmd = {"max_depth": max_depth}
 
@@ -746,7 +746,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            >>> collins.facets([Constants.FACET_CUPSIZE])
+            >>> aboutyou.facets([Constants.FACET_CUPSIZE])
 
         .. code-block:: json
 
@@ -788,7 +788,7 @@ class Collins(object):
 
         if limit is not None:
             if limit < 1:
-                raise CollinsException("limit is to small")
+                raise AboutYouException("limit is to small")
 
             facets["limit"] = limit
 
@@ -797,7 +797,7 @@ class Collins(object):
 
         if offset is not None:
             if offset < 0:
-                raise CollinsException('offset out of range')
+                raise AboutYouException('offset out of range')
 
             facets["offset"] = offset
 
@@ -809,7 +809,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            >>> collins.facettypes()
+            >>> aboutyou.facettypes()
 
         .. code-block:: json
 
@@ -874,7 +874,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            >>> collins.livevariant([4760437])
+            >>> aboutyou.livevariant([4760437])
 
         .. code-block:: json
 
@@ -890,10 +890,10 @@ class Collins(object):
         idscount = len(ids)
 
         if idscount < 1:
-            raise CollinsException("too few ids")
+            raise AboutYouException("too few ids")
 
         if idscount > 200:
-            raise CollinsException("too many ids")
+            raise AboutYouException("too many ids")
 
         return self.send("live_variant", {"ids": ids})
 
@@ -928,7 +928,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            >>> collins.products(ids=[227838, 287677], fields=["variants"])
+            >>> aboutyou.products(ids=[227838, 287677], fields=["variants"])
 
         .. code-block:: json
 
@@ -977,10 +977,10 @@ class Collins(object):
         count = len(ids)
 
         if count < 1:
-            raise CollinsException("too few ids")
+            raise AboutYouException("too few ids")
 
         if count > 200:
-            raise CollinsException("too many ids")
+            raise AboutYouException("too many ids")
 
         products["ids"] = ids
 
@@ -1001,12 +1001,12 @@ class Collins(object):
         count = len(eans)
 
         if count < 1:
-            raise CollinsException("too few eans")
+            raise AboutYouException("too few eans")
 
         if count > 200:
-            raise CollinsException("too many eans")
+            raise AboutYouException("too many eans")
 
-        # collins wants eans as strings
+        # aboutyou wants eans as strings
         products["eans"] = [str(e) for e in eans]
 
         if fields is not None:
@@ -1035,7 +1035,7 @@ class Collins(object):
                set see "Facet types"
 
         .. note::
-            To get facet types see :py:class:`collins.Constants`
+            To get facet types see :py:class:`aboutyou.Constants`
 
         :param str sessionid: the session_id of the frontend customer
         :param dict filter: object of filter information, these filters do
@@ -1108,7 +1108,7 @@ class Collins(object):
 
         .. code-block:: python
 
-            >>> collins.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
+            >>> aboutyou.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
 
         .. code-block:: json
 
@@ -1128,7 +1128,7 @@ class Collins(object):
 
             >>> filter={"sale":True}
             >>> result={"sale":True, "limit":2}
-            >>> collins.productsearch("sessionid", filter=filter, result=result)
+            >>> aboutyou.productsearch("sessionid", filter=filter, result=result)
 
         .. code-block:: json
 
@@ -1195,7 +1195,7 @@ class Collins(object):
 
         if limit is not None:
             if limit < 1 or limit > 200:
-                raise CollinsException('The limit has to between 1 and 200.')
+                raise AboutYouException('The limit has to between 1 and 200.')
 
             suggest["limit"] = limit
 

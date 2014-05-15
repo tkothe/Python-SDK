@@ -1,7 +1,7 @@
-collins.easy
-============
+aboutyou
+========
 
-.. automodule:: collins.easy
+.. automodule:: aboutyou.__init__
     :members:
     :undoc-members:
     :show-inheritance:

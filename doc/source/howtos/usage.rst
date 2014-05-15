@@ -20,10 +20,10 @@ Many products by id
 
 .. code-block:: python
 
-    from collins import YAMLConfig    
-    from collins.easy import EasyCollins, SearchException
+    from aboutyou import YAMLConfig
+    from aboutyou.easy import EasyAboutYou, SearchException
 
-    easy = EasyCollins(YAMLConfig("myconfig.yaml"))
+    easy = EasyAboutYou(YAMLConfig("myconfig.yaml"))
 
     try:
         for p in easy.productsById([237188, 237116]):

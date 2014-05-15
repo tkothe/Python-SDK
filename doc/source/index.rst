@@ -10,9 +10,9 @@ Welcome to aboutyou-shop-sdk's documentation!
    :maxdepth: 2
 
    howtos/howtos
-   collins_objects
-   collins
-   easycollins
+   aboutyou_objects
+   aboutyou
+   easy
 
 
 

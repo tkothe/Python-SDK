@@ -11,7 +11,7 @@
 "cache":
         "hosts": ["127.0.0.1:11211"]
         "timeout": 86400
-"logconf":
+"logging":
         "version": 1
         "disable_existing_loggers": false
         "formatters":

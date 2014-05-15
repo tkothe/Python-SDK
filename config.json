@@ -12,7 +12,7 @@
             "timeout": 86400
         },
     "auto_fetch": true,
-    "logconf": {
+    "logging": {
             "version": 1,
             "disable_existing_loggers": false,
             "formatters": {
