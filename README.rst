@@ -2,7 +2,6 @@ AboutYou-Shop-SDK
 =================
 
 | **Author:** Arne Simon [arne.simon@silce-dice.de]
-| **Version:** 0.3.1
 
 A Python implementation for the AboutYou shop API.
 
@@ -50,6 +49,7 @@ Change Log
 
 - 0.3:
     * Additional docmentation.
+    * Auto fetch flag.
     * PyPI integration.
     * YAML configuration files.
 
