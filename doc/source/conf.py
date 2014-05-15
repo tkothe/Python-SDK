@@ -31,6 +31,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.todo',
     'sphinx.ext.pngmath',
     'sphinx.ext.graphviz',
@@ -49,8 +50,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'python-shop-sdk'
-copyright = u'2014, Arne Simon => email::[arne.simon@slice-dice.de]'
+project = u'aboutyou-shop-sdk'
+copyright = u'2014, Arne Simon [arne.simon@slice-dice.de]'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -183,7 +184,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'python-shop-sdkdoc'
+htmlhelp_basename = 'aboutyou-shop-sdkdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -203,8 +204,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'python-shop-sdk.tex', u'python-shop-sdk Documentation',
-   u'Arne Simon =\\textgreater{} email::{[}arne.simon@slice-dice.de{]}', 'manual'),
+  ('index', 'aboutyou-shop-sdk.tex', u'aboutyou-shop-sdk Documentation',
+   u'Arne Simon {[}arne.simon@slice-dice.de{]}', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -233,8 +234,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'python-shop-sdk', u'python-shop-sdk Documentation',
-     [u'Arne Simon => email::[arne.simon@slice-dice.de]'], 1)
+    ('index', 'aboutyou-shop-sdk', u'aboutyou-shop-sdk Documentation',
+     [u'Arne Simon [arne.simon@slice-dice.de]'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -247,8 +248,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'python-shop-sdk', u'python-shop-sdk Documentation',
-   u'Arne Simon => email::[arne.simon@slice-dice.de]', 'python-shop-sdk', 'One line description of project.',
+  ('index', 'aboutyou-shop-sdk', u'aboutyou-shop-sdk Documentation',
+   u'Arne Simon [arne.simon@slice-dice.de]', 'aboutyou-shop-sdk', 'One line description of project.',
    'Miscellaneous'),
 ]
 

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>collins.easy &mdash; python-shop-sdk 0.2 documentation</title>
+    <title>collins.easy &mdash; aboutyou-shop-sdk 0.2 documentation</title>
     
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -23,12 +23,12 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="python-shop-sdk 0.2 documentation" href="index.html" />
+    <link rel="top" title="aboutyou-shop-sdk 0.2 documentation" href="index.html" />
     <link rel="prev" title="collins" href="collins.html" /> 
   </head>
   <body>
       <div class="header"><h1 class="heading"><a href="index.html">
-          <span>python-shop-sdk 0.2 documentation</span></a></h1>
+          <span>aboutyou-shop-sdk 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>collins.easy</span></h2>
       </div>
       <div class="topnav">
@@ -170,8 +170,24 @@ variant[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellb
 </table>
 <dl class="method">
 <dt id="collins.easy.Basket.order">
-<tt class="descname">order</tt><big>(</big><big>)</big><a class="headerlink" href="#collins.easy.Basket.order" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">order</tt><big>(</big><em>success_url</em>, <em>cancel_url=None</em>, <em>error_url=None</em><big>)</big><a class="headerlink" href="#collins.easy.Basket.order" title="Permalink to this definition">¶</a></dt>
 <dd><p>Begins to order this basket.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sucess_url</strong> (<em>str</em>) &#8211; this is a callback url if the order was successfully created.</li>
+<li><strong>cancel_url</strong> (<em>str</em>) &#8211; this is a callback url if the order was canceled.</li>
+<li><strong>error_url</strong> (<em>str</em>) &#8211; this is a callback url if the order throwed exceptions.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The url to the shop.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -191,6 +207,7 @@ variant[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellb
 <dt id="collins.easy.EasyCollins">
 <em class="property">class </em><tt class="descclassname">collins.easy.</tt><tt class="descname">EasyCollins</tt><big>(</big><em>config</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An abstraction layer around the thin collins api.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -351,9 +368,9 @@ of the hugh possebilities.</p>
 <dt id="collins.easy.EasyCollins.productsById">
 <tt class="descname">productsById</tt><big>(</big><em>pids</em><big>)</big><a class="headerlink" href="#collins.easy.EasyCollins.productsById" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets a products by its id.</p>
-<div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">If not all products where found an exception is thrown, 
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If not all products where found an exception is thrown,
 which contains a list of all found and all not found products.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
@@ -368,6 +385,15 @@ which contains a list of all found and all not found products.</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">easy</span><span class="o">.</span><span class="n">productsById</span><span class="p">([</span><span class="mi">237188</span><span class="p">,</span> <span class="mi">237116</span><span class="p">]):</span>
+        <span class="k">print</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span>
+<span class="k">except</span> <span class="n">SearchException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">e</span><span class="o">.</span><span class="n">withError</span>   <span class="c"># list of tuples (id, [errors]) for not found products</span>
+    <span class="k">print</span> <span class="n">e</span><span class="o">.</span><span class="n">found</span>       <span class="c"># list of found products</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -576,7 +602,7 @@ which contains a list of all found and all not found products.</p>
       </div>
 
     <div class="footer">
-        &copy; Copyright 2014, Arne Simon =&gt; email::[arne.simon@slice-dice.de].
+        &copy; Copyright 2014, Arne Simon [arne.simon@slice-dice.de].
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

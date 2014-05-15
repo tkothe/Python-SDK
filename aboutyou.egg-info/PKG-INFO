@@ -1,0 +1,80 @@
+Metadata-Version: 1.1
+Name: aboutyou
+Version: 0.2
+Summary: A connection to the aboutyou.de shop.
+Home-page: https://bitbucket.org/slicedice/aboutyou-shop-sdk-python/overview
+Author: Arne Simon
+Author-email: arne.simon@slice-dice.de
+License: MIT
+Download-URL: https://bitbucket.org/slicedice/aboutyou-shop-sdk-python/downloads
+Description: AboutYou-Shop-SDK
+        =================
+        
+        | **Author:** Arne Simon [arne.simon@silce-dice.de]
+        | **Version:** 0.3
+        
+        A Python implementation for the AboutYou shop API.
+        
+        
+        Additional Conntacts
+        --------------------
+        
+        iOS SDK
+        +++++++
+        
+        * Jesse Hinrichsen [jesse@j-apps.com]
+        * Marius Schmeding [marius.schmeding@gmail.com]
+        
+        Android SDK
+        +++++++++++
+        
+        * Henning Dodenhof [Henning.dodenhof@4inchworks.de]
+        
+        
+        Installation
+        ------------
+        
+        Install the package via PIP::
+        
+            pip install aboutyou
+        
+        
+        Documentation
+        -------------
+        
+        Documentation is found in HTML format in the *doc/build* sub-folder.
+        
+        
+        Endpoints
+        ---------
+        
+        - Staging
+            http://ant-core-staging-s-api1.wavecloud.de/api
+        - Live
+            http://ant-shop-api1.wavecloud.de/api
+        
+        
+        Change Log
+        ----------
+        
+        - 0.3:
+            * Additional docmentation.
+            * PyPI integration.
+            * YAML configuration files.
+        
+        - 0.2
+            * Caching with Memcached and pylibmc.
+            * EasyCollins has function, *getSimpleColors*.
+            * Error handling fix.
+        
+        - 0.1
+            * Products return now there url to the mary+paul shop.
+            * Dirty caching without memcached.
+            * EasyCollins products are no bulk requests.
+            * Extended documentation for EasyCollins.
+        
+Keywords: aboutyou,shop,collins
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Topic :: Internet
+Classifier: Topic :: Office/Business

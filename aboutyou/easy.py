@@ -251,18 +251,30 @@ class Variant(EasyNode):
 
     @property
     def images(self):
+        """
+        An array of :py:class:`collins.easy.Image`.
+        """
         return self.__images
 
     @property
     def attributes(self):
+        """
+        The attributes aka facets of this product variant.
+        """
         return self.__attributes
 
     @property
     def live(self):
+        """
+        The live data to this variant.
+        """
         return self.easy.collins.livevariant([self.id])
 
 
 class Product(EasyNode):
+    """
+    A product with its variants.
+    """
     def __init__(self, easy, obj):
         super(Product, self).__init__(easy, obj)
 
@@ -275,7 +287,7 @@ class Product(EasyNode):
 
     def url(self):
         """
-        Returns the url to the product in the mary+paul shop.
+        Returns the url to the product in the shop.
         """
         slug = self.name.strip().replace(" ", "-") + "-" + str(self.id)
         return self.easy.collins.config.product_url.format(slug)
@@ -319,6 +331,10 @@ class Product(EasyNode):
 
     @property
     def default_image(self):
+        """
+        The default image of this product.
+        :returns: :py:class:`collins.easy.Image`
+        """
         if self.__default_image is None:
             if "default_image" not in self.obj:
                 self.easy.collins.log.debug('update default_image from product %s', self.obj['id'])
@@ -354,63 +370,6 @@ class Product(EasyNode):
             self.obj.update(data["ids"][str(self.id)])
 
         return self.obj[name]
-
-
-# class SearchFilter(object):
-#     def __init__(self):
-#         self.categories = set()
-#         self.facets = {}
-#         self.prices_from = None
-#         self.prices_to = None
-#         self.searchword = None
-#         self.sale = None
-
-#     def build(self):
-#         f = {"sale": self.sale}
-
-#         if len(self.categories) > 0:
-#             f["categories"] = [c.id for c in self.categories]
-
-#         if self.searchword is not None:
-#             f["searchword"] = self.searchword
-
-#         if len(self.facets) > 0:
-#             pass
-
-#         if self.prices_from is not None and self.prices_to is not None:
-#             f["prices"] = {
-#                 "from": self.prices_from,
-#                 "to": self.prices_to
-#             }
-
-#         return f
-
-
-# class SearchResult(object):
-#     def __init__(self):
-#         self.sale = False
-#         self.price = False
-#         self.facets = None
-#         self.limit = None
-#         self.offset = None
-#         self.categories = None
-
-#     def build(self):
-#         s = {"sale": self.sale, "price": self.price}
-
-#         if self.limit is not None:
-#             s["limit"] = self.limit
-
-#         if self.offset is not None:
-#             s["offset"] = self.offset
-
-#         if self.categories is not None:
-#             s["categories"] = self.categories
-
-#         if self.facets is not None:
-#             s["facets"] = self.facets
-
-#         return s
 
 
 class SearchException(Exception):
@@ -526,6 +485,14 @@ class Search(object):
             self.products.buffer[i+offset] = product
 
 
+class BasketException(Exception):
+    def __init__(self, msg, fine, withError):
+        super(type(self), self).__init__(msg)
+
+        self.fine = fine
+        self.withError = withError
+
+
 class Basket(object):
     """
     :param easy: The EasyCollins instance.
@@ -548,15 +515,39 @@ class Basket(object):
         #self.easy.basketadd()
         del self.__variants[idx]
 
-    def order(self):
+    def keys(self):
+        return self.__variants.keys()
+
+    def values(self):
+        return self.__variants.values()
+
+    def items(self):
+        return self.__variants.items()
+
+    def order(self, success_url, cancel_url=None, error_url=None):
         """
         Begins to order this basket.
+
+        :param str sucess_url: this is a callback url if the order was successfully created.
+        :param str cancel_url: this is a callback url if the order was canceled.
+        :param str error_url: this is a callback url if the order throwed exceptions.
+        :returns: The url to the shop.
         """
-        pass
+        variants = []
+
+        for variant, count in self.__variants.items():
+            pass
+
+        response = self.easy.collins.basketset(self.sessionid, variants)
+
+        return self.easy.collins.order(self.sessionid, sucess_url,
+                                       cancel_url, error_url)
 
 
 class EasyCollins(object):
     """
+    An abstraction layer around the thin collins api.
+
     :param config: A :py:class:`collins.Config` instance.
     """
     def __init__(self, config):
@@ -575,7 +566,8 @@ class EasyCollins(object):
         self.__baskets = {}
 
         self.cache = None
-        if self.config.cache is not None:
+
+        if self.config.cache is not None and len(self.config.cache) > 0:
             try:
                 import pylibmc
 
@@ -646,7 +638,7 @@ class EasyCollins(object):
             group.facets[f.facet_id] = f
 
 
-    def basketBySession(self, sessionid):
+    def basket(self, sessionid):
         """
         Returns a basket for the session id.
 
@@ -751,13 +743,24 @@ class EasyCollins(object):
         """
         Gets a products by its id.
 
-        .. attention:: 
-            If not all products where found an exception is thrown, 
+        .. note::
+            If not all products where found an exception is thrown,
             which contains a list of all found and all not found products.
 
         :param list pids: A list of product ids.
         :returns: A list of :py:class:`collins.easy.Product` instance.
         :throws: :py:class:`collins.easy.SearchException`
+
+        .. rubric:: Example
+
+        .. code-block:: python
+
+            try:
+                for p in easy.productsById([237188, 237116]):
+                    print p.name
+            except SearchException as e:
+                print e.withError   # list of tuples (id, [errors]) for not found products
+                print e.found       # list of found products
         """
         spid = []
         products = []

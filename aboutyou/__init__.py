@@ -9,110 +9,14 @@ This module provieds two wrappers around the Collins-Shop-API.
 * EasyCollins, which is a more convient layer of abstraction of the API as an
   object herachie which caches results and query results if there are needed.
 
-Collins Object Structure
-------------------------
 
-.. digraph:: objects
+.. autosummary::
+    :nosignatures:
 
-    node[shape=none];
-
-    basket[label=<<table cellspacing="0" border="0" cellborder="1">
-        <tr><td colspan="2">basket</td></tr>
-        <tr><td port="variant">product_variant</td><td></td></tr>
-        <tr><td port="products">products</td><td></td></tr>
-        <tr><td>total_variants</td><td></td></tr>
-        <tr><td>amount_variants</td><td></td></tr>
-        <tr><td>total_price</td><td></td></tr>
-        <tr><td>total_net</td><td></td></tr>
-        <tr><td>total_vat</td><td></td></tr>
-    </table>>];
-
-    basket_variant[label=<<table cellspacing="0" border="0" cellborder="1">
-        <tr><td colspan="2">basket_variant</td></tr>
-        <tr><td>unit_price</td><td></td></tr>
-        <tr><td>total_price</td><td></td></tr>
-        <tr><td>total_net</td><td></td></tr>
-        <tr><td>total_vat</td><td></td></tr>
-        <tr><td>amount</td><td></td></tr>
-        <tr><td port="product">product_id</td><td></td></tr>
-        <tr><td port="id">id</td><td></td></tr>
-        <tr><td>tax</td><td></td></tr>
-    </table>>];
-
-    category[label=<<table cellspacing="0" border="0" cellborder="1">
-        <tr><td colspan="2">category</td></tr>
-        <tr><td>id</td><td></td></tr>
-        <tr><td>name</td><td></td></tr>
-        <tr><td>active</td><td></td></tr>
-        <tr><td>parent</td><td></td></tr>
-        <tr><td>position</td><td></td></tr>
-        <tr><td port="sub">sub_categories</td><td></td></tr>
-    </table>>];
-
-    product[label=<<table cellspacing="0" border="0" cellborder="1">
-        <tr><td colspan="2">product</td></tr>
-        <tr><td port="id">id</td><td></td></tr>
-        <tr><td>name</td><td></td></tr>
-        <tr><td>description_long</td><td></td></tr>
-        <tr><td>description_short</td><td></td></tr>
-        <tr><td port="variant">default_variant</td><td></td></tr>
-        <tr><td>min_price</td><td></td></tr>
-        <tr><td>max_price</td><td></td></tr>
-        <tr><td>sale</td><td></td></tr>
-        <tr><td port="image">default_image</td><td></td></tr>
-        <tr><td>attributes_merged</td><td></td></tr>
-        <tr><td port="category">categories.appID</td><td></td></tr>
-    </table>>];
-
-    variant[label=<<table cellspacing="0" border="0" cellborder="1">
-        <tr><td colspan="2">variant</td></tr>
-        <tr><td port="id">id</td><td></td></tr>
-        <tr><td>ean</td><td></td></tr>
-        <tr><td>price</td><td></td></tr>
-        <tr><td>old_price</td><td></td></tr>
-        <tr><td>retail_price</td><td></td></tr>
-        <tr><td>default</td><td></td></tr>
-        <tr><td port="attribute">attributes</td><td></td></tr>
-        <tr><td port="image">images</td><td></td></tr>
-        <tr><td>updated_date</td></tr>
-        <tr><td>first_active_date</td></tr>
-        <tr><td>first_sale_date</td></tr>
-        <tr><td>created_date</td></tr>
-        <tr><td>additional_info</td></tr>
-        <tr><td>quantity</td></tr>
-    </table>>];
-
-    image[label=<<table cellspacing="0" border="0" cellborder="1">
-        <tr><td colspan="2">image</td></tr>
-        <tr><td>hash</td><td></td></tr>
-        <tr><td>ext</td><td></td></tr>
-        <tr><td>mime</td><td></td></tr>
-        <tr><td>size</td><td></td></tr>
-        <tr><td>image</td><td>"width": 672, "height": 960</td></tr>
-    </table>>];
-
-    facet[label=<<table cellspacing="0" border="0" cellborder="1">
-        <tr><td colspan="2">facet</td></tr>
-        <tr><td>id</td><td></td></tr>
-        <tr><td>facet_id</td><td></td></tr>
-        <tr><td>group_name</td><td></td></tr>
-        <tr><td>name</td><td></td></tr>
-        <tr><td>value</td><td>if not group: brand</td></tr>
-        <tr><td>options</td><td> if group: brand</td></tr>
-    </table>>];
-
-
-    basket:variant:w -> basket_variant;
-    basket:products:w -> product;
-    basket_variant:id:w -> variant:id:w;
-    basket_variant:product:w -> product:id:w;
-    product:category -> category;
-    category:sub:w -> category;
-    product:variant:w -> variant;
-    variant:image:w -> image;
-    variant:attribute -> facet;
-
-
+    collins.Config
+    collins.Collins
+    collins.YAMLConfig
+    collins.JSONConfig
 """
 import time
 import base64
@@ -126,7 +30,7 @@ import os
 COLLINS_VERSION = "1.1"
 """The version of the collins api which is supported."""
 
-VERSION = "0.2"
+VERSION = "0.3"
 """Version of the python shop SDK."""
 
 AUTHORS = [
@@ -202,14 +106,11 @@ class Constants(object):
                         PRODUCT_FIELD_DEFAULT_VARIANT, PRODUCT_FIELD_DEFAULT_IMAGE,
                         PRODUCT_FIELD_CATEGORIES,])
 
-    API_ENVIRONMENT_STAGE = "stage"
-    API_ENVIRONMENT_LIVE = "live"
-
 
 class Config(object):
     PARAMS = set(["entry_point_url", "app_id", "app_token", "app_secret",
-                    "agent", "image_url", "loginUrl", "resourceUrl",
-                    "redirectUri", "cache", "logconf"])
+                    "agent", "image_url", "product_url", "shop_url",
+                    "auto_fetch", "cache", "logconf"])
     """
     The configuration of a collins api connection.
 
@@ -222,12 +123,15 @@ class Config(object):
     :param agent: The name of the browser agent to fake.
     :param image_url: A string as template for the image urls.
                         As example http://cdn.mary-paul.de/file/{}.
-    :param loginUrl: For the OAuth process the login url.
-    :param resourceUrl: For the OAuth process the resource url.
-    :param redirectUri: For the OAuth process the redirect url.
+    :param product_url: The template for a product.
+    :param shop_url: The url template for the shop.
+    :param auto_fetch: If set True, EasyCollins fetches automaticly missing fields.
+    :param cache: An array of Memcached servers.
     :param dict logconf: A dictonary for logging.config.dictConfig.
     """
     def __init__(self, **kwargs):
+        for key in Config.PARAMS:
+            setattr(self, key, None)
 
         for key, value in kwargs.items():
             if key in Config.PARAMS:
@@ -266,48 +170,10 @@ class JSONConfig(Config):
     """
     Uses a JSON file for configuration.
 
-    .. rubric:: Example File
+    :param jsonfile: The path to the json configuration file.
 
-    .. code-block:: json
-
-        {
-            "entry_point_url" : "http://ant-core-staging-s-api1.wavecloud.de/api",
-            "app_id": "",
-            "app_password": "",
-            "agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36",
-            "image_url": "http://cdn.mary-paul.de/files/{}",
-            "cache": null,
-            "logconf": {
-                    "version": 1,
-                    "disable_existing_loggers": false,
-                    "formatters": {
-                        "simple": {
-                            "format": "%(asctime)s | %(levelname)-7s | %(name)-20s | %(message)s"
-                        }
-                    },
-                    "handlers": {
-                        "rotating": {
-                            "level":"DEBUG",
-                            "class":"logging.handlers.TimedRotatingFileHandler",
-                            "formatter": "simple",
-                            "when": "midnight",
-                            "filename": "collins.log"
-                        }
-                    },
-
-                    "loggers": {
-                        "python-shop.collins": {
-                            "level": "DEBUG",
-                            "handlers": ["rotating"]
-                        }
-                    },
-                    "root": {
-                        "handlers": [],
-                        "level": "DEBUG",
-                        "propagate": true
-                    }
-                }
-        }
+    .. literalinclude:: ../../config.json
+        :language: json
     """
     def __init__(self, filename):
         with open(filename) as cfgfile:
@@ -325,35 +191,12 @@ try:
 
     class YAMLConfig(Config):
         """
-        .. code-block:: yaml
+        Uses a YAML file for configuration.
 
-            "entry_point_url": "http://ant-core-staging-s-api1.wavecloud.de/api"
-            "app_id": ""
-            "app_password": ""
-            "agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36"
-            "image_url": "http://cdn.mary-paul.de/files/{}"
-            "cache": ["127.0.0.1:11211"]
-            "logconf":
-                    "version": 1
-                    "disable_existing_loggers": false
-                    "formatters":
-                        "simple":
-                            "format": "%(asctime)s | %(levelname)-7s | %(name)-20s | %(message)s"
-                    "handlers":
-                        "rotating":
-                            "level": "DEBUG"
-                            "class": "logging.handlers.TimedRotatingFileHandler"
-                            "formatter": "simple"
-                            "when": "midnight"
-                            "filename": "collins.log"
-                    "loggers":
-                        "python-shop.collins":
-                            "level": "DEBUG"
-                            "handlers": ["rotating"]
-                    "root":
-                        "handlers": []
-                        "level": "DEBUG"
-                        "propagate": true
+        :param yamlfile: The path to the yaml configuration file.
+
+        .. literalinclude:: ../../config.yaml
+            :language: yaml
         """
         def __init__(self, filename):
             with open(filename) as cfgfile:
@@ -376,8 +219,6 @@ class JSONEnvironmentFallbackConfig(Config):
     variable is used instead.
 
     :param jsonfile: The path to the json configuration file.
-
-    .. rubric:: Example
 
     .. code-block:: python
 
@@ -411,7 +252,7 @@ class JSONEnvironmentFallbackConfig(Config):
 
 def check_sessionid(sessionid):
     """
-    .. attention::
+    .. note::
         We copied it from the php-sdk.
         collins seems to want have the session-id a minimum length of five
         characters. This is not tested or validated.
@@ -427,14 +268,14 @@ class Collins(object):
     This is thin warper around the Collins API.
     All functions return the JSON responses as Python List and Dictonarys.
 
-    :param config: A Config instance or a file name to a JSON config file.
+    :param config: A Config instance.
 
     .. rubric:: Example
 
     .. code-block:: python
 
-        >>> from pythonshop.collins import Collins, Constants, JSONConfig
-        >>> c =  Collins(JSONConfig("myconfig.json"))
+        >>> from pythonshop.collins import Collins, Constants, YAMLConfig
+        >>> c =  Collins(YAMLConfig("myconfig.yml"))
         >>> c.facets([Constants.FACET_CUPSIZE])
 
     .. code-block:: json
@@ -477,7 +318,7 @@ class Collins(object):
     def __init__(self, config):
         self.config = config
 
-        logname = "collins.sdk.{}".format(self.config.app_id)
+        logname = "aboutyou.{}".format(self.config.app_id)
         self.log = logging.getLogger(logname)
         self.log.debug("instantiated")
 
@@ -525,8 +366,6 @@ class Collins(object):
         :param int limit: the amount of items returned per selected type
         :returns: A dict with "products" and/or "categories".
 
-        .. rubric:: Example
-
         .. code-block:: python
 
             >>> collins.autocomplete("sho", types=[Constants.TYPE_PRODUCTS])
@@ -570,6 +409,71 @@ class Collins(object):
         :param str sessionid: identification of the basket -> user, user -> basket
         :param list variants: is the array of variant ids
         :returns: The basket JSON.
+
+        .. code-block:: python
+
+            >>> collins.basketset('someid', [('my4813890', 4813890),])
+
+        .. code-block:: json
+
+            {
+                "order_lines": [
+                    {
+                        "total_price": 1999,
+                        "product_id": 234526,
+                        "tax": 19.0,
+                        "total_net": 1680,
+                        "total_vat": 319,
+                        "variant_id": 4813890,
+                        "id": "my4813890"
+                    }
+                ],
+                "total_price": 1999,
+                "products": {
+                    "234526": {
+                        "name": "Bikinislip, LASCANA (3 Stck.)",
+                        "sale": false,
+                        "brand_id": 266,
+                        "categories.110": [
+                            [
+                                19532,
+                                19540,
+                                19615
+                            ]
+                        ],
+                        "description_long": "Superangenehm zu tragen dank besonders ",
+                        "active": true,
+                        "variants": [
+                            {
+                                "updated_date": "2014-05-14 12:03:42",
+                                "first_active_date": "2014-02-27 15:35:57",
+                                "default": false,
+                                "old_price": 0,
+                                "price": 1999,
+                                "ean": "369969656",
+                                "first_sale_date": null,
+                                "id": 4813890,
+                                "created_date": "2013-12-07 11:23:36",
+                                "images": [
+                                    {
+                                        "mime": "image/jpeg",
+                                        "image": {
+                                            "width": 672,
+                                            "height": 960
+                                        },
+                                        "hash": "7b36192b57368bd54a8be3660098f1bc",
+                                        "ext": ".jpg",
+                                        "size": 72776
+                                    }
+                            }
+                        ],
+                        "description_short": "Superangenehm zu tragen dank besonders",
+                        "id": 234526
+                    }
+                },
+                "total_vat": 319,
+                "total_net": 1680
+            }
         """
         check_sessionid(sessionid)
 
@@ -589,6 +493,72 @@ class Collins(object):
 
         :param str sessionid: identification of the basket -> user,
                               user -> basket
+
+        .. code-block:: python
+
+            >>> collins.basketget('someid')
+
+        .. code-block:: json
+
+            {
+                "order_lines": [
+                    {
+                        "total_price": 1999,
+                        "product_id": 234526,
+                        "tax": 19.0,
+                        "total_net": 1680,
+                        "total_vat": 319,
+                        "variant_id": 4813890,
+                        "id": "my4813890"
+                    }
+                ],
+                "total_price": 1999,
+                "products": {
+                    "234526": {
+                        "name": "Bikinislip, LASCANA (3 Stck.)",
+                        "sale": false,
+                        "brand_id": 266,
+                        "categories.110": [
+                            [
+                                19532,
+                                19540,
+                                19615
+                            ]
+                        ],
+                        "description_long": "Superangenehm zu tragen dank besonders ",
+                        "active": true,
+                        "variants": [
+                            {
+                                "updated_date": "2014-05-14 12:03:42",
+                                "first_active_date": "2014-02-27 15:35:57",
+                                "default": false,
+                                "old_price": 0,
+                                "price": 1999,
+                                "ean": "369969656",
+                                "first_sale_date": null,
+                                "id": 4813890,
+                                "created_date": "2013-12-07 11:23:36",
+                                "images": [
+                                    {
+                                        "mime": "image/jpeg",
+                                        "image": {
+                                            "width": 672,
+                                            "height": 960
+                                        },
+                                        "hash": "7b36192b57368bd54a8be3660098f1bc",
+                                        "ext": ".jpg",
+                                        "size": 72776
+                                    }
+                            }
+                        ],
+                        "description_short": "Superangenehm zu tragen dank besonders",
+                        "id": 234526
+                    }
+                },
+                "total_vat": 319,
+                "total_net": 1680
+            }
+
         """
         check_sessionid(sessionid)
 
@@ -597,6 +567,71 @@ class Collins(object):
     def basketremove(self, sessionid, variants):
         """
         Removes elements from the basket associated with the session id.
+
+        .. code-block:: python
+
+            >>> collins.basketremove('someid', ['my4813890'])
+
+        .. code-block:: json
+
+            {
+                "order_lines": [
+                    {
+                        "total_price": 1999,
+                        "product_id": 234526,
+                        "tax": 19.0,
+                        "total_net": 1680,
+                        "total_vat": 319,
+                        "variant_id": 4813890,
+                        "id": "my4813890"
+                    }
+                ],
+                "total_price": 1999,
+                "products": {
+                    "234526": {
+                        "name": "Bikinislip, LASCANA (3 Stck.)",
+                        "sale": false,
+                        "brand_id": 266,
+                        "categories.110": [
+                            [
+                                19532,
+                                19540,
+                                19615
+                            ]
+                        ],
+                        "description_long": "Superangenehm zu tragen dank besonders ",
+                        "active": true,
+                        "variants": [
+                            {
+                                "updated_date": "2014-05-14 12:03:42",
+                                "first_active_date": "2014-02-27 15:35:57",
+                                "default": false,
+                                "old_price": 0,
+                                "price": 1999,
+                                "ean": "369969656",
+                                "first_sale_date": null,
+                                "id": 4813890,
+                                "created_date": "2013-12-07 11:23:36",
+                                "images": [
+                                    {
+                                        "mime": "image/jpeg",
+                                        "image": {
+                                            "width": 672,
+                                            "height": 960
+                                        },
+                                        "hash": "7b36192b57368bd54a8be3660098f1bc",
+                                        "ext": ".jpg",
+                                        "size": 72776
+                                    }
+                            }
+                        ],
+                        "description_short": "Superangenehm zu tragen dank besonders",
+                        "id": 234526
+                    }
+                },
+                "total_vat": 319,
+                "total_net": 1680
+            }
         """
         check_sessionid(sessionid)
 
@@ -609,8 +644,6 @@ class Collins(object):
         You are able to retrieve single categories.
 
         :param list ids: List of category ids.
-
-        .. rubric:: Example
 
         .. code-block:: python
 
@@ -644,8 +677,6 @@ class Collins(object):
         specified max depth for your app id.
 
         :param int max_depth: max depth of your category tree counted from root
-
-        .. rubric:: Example
 
         .. code-block:: python
 
@@ -713,8 +744,6 @@ class Collins(object):
         :param int limit: limit the per page items
         :param int offset: offset for paging through the items
 
-        .. rubric:: Example
-
         .. code-block:: python
 
             >>> collins.facets([Constants.FACET_CUPSIZE])
@@ -778,8 +807,6 @@ class Collins(object):
         """
         This query returns a list of facet groups available.
 
-        .. rubric:: Example
-
         .. code-block:: python
 
             >>> collins.facettypes()
@@ -791,20 +818,21 @@ class Collins(object):
 
         return self.send("facet_types", {})
 
-    def getorder(self, orderid):
-        """Through this query you could get a order which was created
-            for/through your app. This is limited to a configured
-            timeframe and to your app.
+    # def getorder(self, orderid):
+    #     """Through this query you could get a order which was created
+    #         for/through your app. This is limited to a configured
+    #         timeframe and to your app.
 
-        :param int orderid: this is the order id to get info about
-        :returns: Order JSON
+    #     :param int orderid: this is the order id to get info about
+    #     :returns: Order JSON
+    #     """
+    #     return self.send("get_order", {"order_id": orderid})
+
+    def order(self, sessionid, sucess_url,
+              cancel_url=None, error_url=None):
         """
-        return self.send("get_order", {"order_id": orderid})
-
-    def initiateorder(self, sessionid, sucess_url,
-                      cancel_url=None, error_url=None):
-        """At this request you initiate a order to a basket.
-            This should be done if a user wants to go to the checkout.
+        At this request you initiate a order to a basket.
+        This should be done if a user wants to go to the checkout.
 
         :param str sessionid: identification of the basket -> user,
                               user -> basket (see basket_get, basket_add)
@@ -814,7 +842,7 @@ class Collins(object):
                                canceled. (see checkout api)
         :param str error_url: this is a callback url if the order throwed
                               exceptions (see checkout api)
-        :returns: JSON
+        :returns: An url to the shop.
         """
         check_sessionid(sessionid)
 
@@ -826,12 +854,21 @@ class Collins(object):
         if error_url is not None:
             order["error_url"] = error_url
 
-        return self.send("initiate_order", order)
+        response = self.send("initiate_order", order)
+
+        # the url in response["url"] seems to be invalid !!!
+
+        params = '?user_token={}&app_token={}&basketId={}&appId={}'
+        params = params.format(response["user_token"], response["app_token"],
+                               sessionid, self.config.app_id)
+
+        return self.config.shop_url + params
 
     def livevariant(self, ids):
-        """This does return the live information about the product variant.
-            This is as "live" as possible.
-            And could differ vs. a "product search" or "product" query.
+        """
+        This does return the live information about the product variant.
+        This is as "live" as possible.
+        And could differ vs. a "product search" or "product" query.
 
         :param list ids: array of product variant id
 

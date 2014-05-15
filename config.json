@@ -6,7 +6,12 @@
     "agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36",
     "image_url": "http://cdn.mary-paul.de/file/{}",
     "product_url": "http://www.mary-paul.de/product/{}",
-    "cache": null,
+    "shop_url": "https://checkout.aboutyou.de/",
+    "cache": {
+            "hosts": ["127.0.0.1:11211"],
+            "timeout": 86400
+        },
+    "auto_fetch": true,
     "logconf": {
             "version": 1,
             "disable_existing_loggers": false,
@@ -21,12 +26,18 @@
                     "class":"logging.handlers.TimedRotatingFileHandler",
                     "formatter": "simple",
                     "when": "midnight",
-                    "filename": "collins.log"
+                    "filename": "aboutyou.log"
+                },
+                "graypy": {
+                    "level": "DEBUG",
+                    "class": "graypy.GELFHandler",
+                    "host": "localhost",
+                    "port": 12201,
                 }
             },
 
             "loggers": {
-                "python-shop.collins": {
+                "aboutyou": {
                     "level": "DEBUG",
                     "handlers": ["rotating"]
                 }

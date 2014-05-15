@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>collins &mdash; python-shop-sdk 0.2 documentation</title>
+    <title>collins &mdash; aboutyou-shop-sdk 0.2 documentation</title>
     
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -23,19 +23,19 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="python-shop-sdk 0.2 documentation" href="index.html" />
+    <link rel="top" title="aboutyou-shop-sdk 0.2 documentation" href="index.html" />
     <link rel="next" title="collins.easy" href="easycollins.html" />
-    <link rel="prev" title="Run Tests" href="howtos/tests.html" /> 
+    <link rel="prev" title="Collins Object Structure" href="collins_objects.html" /> 
   </head>
   <body>
       <div class="header"><h1 class="heading"><a href="index.html">
-          <span>python-shop-sdk 0.2 documentation</span></a></h1>
+          <span>aboutyou-shop-sdk 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>collins</span></h2>
       </div>
       <div class="topnav">
       
         <p>
-        «&#160;&#160;<a href="howtos/tests.html">Run Tests</a>
+        «&#160;&#160;<a href="collins_objects.html">Collins Object Structure</a>
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="index.html">Contents</a>
         &#160;&#160;::&#160;&#160;
@@ -63,109 +63,26 @@ result as the same.</li>
 <li>EasyCollins, which is a more convient layer of abstraction of the API as an
 object herachie which caches results and query results if there are needed.</li>
 </ul>
-<div class="section" id="collins-object-structure">
-<h2>Collins Object Structure<a class="headerlink" href="#collins-object-structure" title="Permalink to this headline">¶</a></h2>
-<p class="graphviz">
-<img src="_images/graphviz-dae1ddbc1a5cd40589482f1300c5bf69a0cfd907.png" alt="digraph objects {
-node[shape=none];
-
-basket[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
-    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;basket&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;variant&quot;&gt;product_variant&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;products&quot;&gt;products&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;total_variants&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;amount_variants&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;total_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;total_net&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;total_vat&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;&gt;];
-
-basket_variant[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
-    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;basket_variant&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;unit_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;total_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;total_net&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;total_vat&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;amount&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;product&quot;&gt;product_id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;id&quot;&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;tax&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;&gt;];
-
-category[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
-    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;category&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;active&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;parent&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;position&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;sub&quot;&gt;sub_categories&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;&gt;];
-
-product[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
-    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;product&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;id&quot;&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;description_long&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;description_short&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;variant&quot;&gt;default_variant&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;min_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;max_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;sale&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;image&quot;&gt;default_image&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;attributes_merged&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;category&quot;&gt;categories.appID&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;&gt;];
-
-variant[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
-    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;variant&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;id&quot;&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;ean&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;old_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;retail_price&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;default&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;attribute&quot;&gt;attributes&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td port=&quot;image&quot;&gt;images&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;updated_date&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;first_active_date&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;first_sale_date&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;created_date&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;additional_info&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;quantity&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;&gt;];
-
-image[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
-    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;image&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;hash&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;ext&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;mime&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;size&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;image&lt;/td&gt;&lt;td&gt;&quot;width&quot;: 672, &quot;height&quot;: 960&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;&gt;];
-
-facet[label=&lt;&lt;table cellspacing=&quot;0&quot; border=&quot;0&quot; cellborder=&quot;1&quot;&gt;
-    &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;facet&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;facet_id&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;group_name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;name&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;value&lt;/td&gt;&lt;td&gt;if not group: brand&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;options&lt;/td&gt;&lt;td&gt; if group: brand&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;&gt;];
-
-
-basket:variant:w -&gt; basket_variant;
-basket:products:w -&gt; product;
-basket_variant:id:w -&gt; variant:id:w;
-basket_variant:product:w -&gt; product:id:w;
-product:category -&gt; category;
-category:sub:w -&gt; category;
-product:variant:w -&gt; variant;
-variant:image:w -&gt; image;
-variant:attribute -&gt; facet;
-}" />
-</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#collins.Config" title="collins.Config"><tt class="xref py py-obj docutils literal"><span class="pre">collins.Config</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#collins.Collins" title="collins.Collins"><tt class="xref py py-obj docutils literal"><span class="pre">collins.Collins</span></tt></a></td>
+<td>An interface to the Collins API.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#collins.YAMLConfig" title="collins.YAMLConfig"><tt class="xref py py-obj docutils literal"><span class="pre">collins.YAMLConfig</span></tt></a></td>
+<td>Uses a YAML file for configuration.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#collins.JSONConfig" title="collins.JSONConfig"><tt class="xref py py-obj docutils literal"><span class="pre">collins.JSONConfig</span></tt></a></td>
+<td>Uses a JSON file for configuration.</td>
+</tr>
+</tbody>
+</table>
 <dl class="data">
 <dt id="collins.COLLINS_VERSION">
 <tt class="descclassname">collins.</tt><tt class="descname">COLLINS_VERSION</tt><em class="property"> = '1.1'</em><a class="headerlink" href="#collins.COLLINS_VERSION" title="Permalink to this definition">¶</a></dt>
@@ -473,56 +390,6 @@ group ids which belong to me</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="collins.Collins.getorder">
-<tt class="descname">getorder</tt><big>(</big><em>orderid</em><big>)</big><a class="headerlink" href="#collins.Collins.getorder" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Through this query you could get a order which was created</dt>
-<dd>for/through your app. This is limited to a configured
-timeframe and to your app.</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>orderid</strong> (<em>int</em>) &#8211; this is the order id to get info about</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Order JSON</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="collins.Collins.initiateorder">
-<tt class="descname">initiateorder</tt><big>(</big><em>sessionid</em>, <em>sucess_url</em>, <em>cancel_url=None</em>, <em>error_url=None</em><big>)</big><a class="headerlink" href="#collins.Collins.initiateorder" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>At this request you initiate a order to a basket.</dt>
-<dd>This should be done if a user wants to go to the checkout.</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>sessionid</strong> (<em>str</em>) &#8211; identification of the basket -&gt; user,
-user -&gt; basket (see basket_get, basket_add)</li>
-<li><strong>sucess_url</strong> (<em>str</em>) &#8211; this is a callback url if the order was
-successfully created. (see checkout api)</li>
-<li><strong>cancel_url</strong> (<em>str</em>) &#8211; this is a callback url if the order was
-canceled. (see checkout api)</li>
-<li><strong>error_url</strong> (<em>str</em>) &#8211; this is a callback url if the order throwed
-exceptions (see checkout api)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">JSON</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="collins.Collins.livevariant">
 <tt class="descname">livevariant</tt><big>(</big><em>ids</em><big>)</big><a class="headerlink" href="#collins.Collins.livevariant" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
@@ -551,6 +418,36 @@ And could differ vs. a &#8220;product search&#8221; or &#8220;product&#8221; que
 <span class="p">}</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="collins.Collins.order">
+<tt class="descname">order</tt><big>(</big><em>sessionid</em>, <em>sucess_url</em>, <em>cancel_url=None</em>, <em>error_url=None</em><big>)</big><a class="headerlink" href="#collins.Collins.order" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>At this request you initiate a order to a basket.</dt>
+<dd>This should be done if a user wants to go to the checkout.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sessionid</strong> (<em>str</em>) &#8211; identification of the basket -&gt; user,
+user -&gt; basket (see basket_get, basket_add)</li>
+<li><strong>sucess_url</strong> (<em>str</em>) &#8211; this is a callback url if the order was
+successfully created. (see checkout api)</li>
+<li><strong>cancel_url</strong> (<em>str</em>) &#8211; this is a callback url if the order was
+canceled. (see checkout api)</li>
+<li><strong>error_url</strong> (<em>str</em>) &#8211; this is a callback url if the order throwed
+exceptions (see checkout api)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An url to the shop.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -922,7 +819,7 @@ often in combination with these terms before.</p>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="attribute">
 <dt id="collins.Config.PARAMS">
-<tt class="descname">PARAMS</tt><em class="property"> = set(['entry_point_url', 'resourceUrl', 'app_secret', 'cache', 'app_id', 'agent', 'redirectUri', 'image_url', 'app_token', 'logconf', 'loginUrl'])</em><a class="headerlink" href="#collins.Config.PARAMS" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">PARAMS</tt><em class="property"> = set(['entry_point_url', 'shop_url', 'app_secret', 'cache', 'app_id', 'agent', 'logconf', 'product_url', 'image_url', 'app_token', 'auto_fetch'])</em><a class="headerlink" href="#collins.Config.PARAMS" title="Permalink to this definition">¶</a></dt>
 <dd><p>The configuration of a collins api connection.</p>
 <p>A config class has to have the following readable attributes:</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -937,9 +834,10 @@ often in combination with these terms before.</p>
 <li><strong>agent</strong> &#8211; The name of the browser agent to fake.</li>
 <li><strong>image_url</strong> &#8211; A string as template for the image urls.
 As example <a class="reference external" href="http://cdn.mary-paul.de/file">http://cdn.mary-paul.de/file</a>/{}.</li>
-<li><strong>loginUrl</strong> &#8211; For the OAuth process the login url.</li>
-<li><strong>resourceUrl</strong> &#8211; For the OAuth process the resource url.</li>
-<li><strong>redirectUri</strong> &#8211; For the OAuth process the redirect url.</li>
+<li><strong>product_url</strong> &#8211; The template for a product.</li>
+<li><strong>shop_url</strong> &#8211; The url template for the shop.</li>
+<li><strong>auto_fetch</strong> &#8211; If set True, EasyCollins fetches automaticly missing fields.</li>
+<li><strong>cache</strong> &#8211; An array of Memcached servers.</li>
 <li><strong>logconf</strong> (<em>dict</em>) &#8211; A dictonary for logging.config.dictConfig.</li>
 </ul>
 </td>
@@ -1200,10 +1098,14 @@ As example <a class="reference external" href="http://cdn.mary-paul.de/file">htt
 <div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
     <span class="nt">&quot;entry_point_url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://ant-core-staging-s-api1.wavecloud.de/api&quot;</span><span class="p">,</span>
     <span class="nt">&quot;app_id&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;app_password&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;app_token&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;app_secret&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://cdn.mary-paul.de/files/{}&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://cdn.mary-paul.de/file/{}&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;product_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.mary-paul.de/product/{}&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shop_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://checkout.aboutyou.de/&quot;</span><span class="p">,</span>
     <span class="nt">&quot;cache&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;auto_fetch&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;logconf&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nt">&quot;disable_existing_loggers&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
@@ -1273,18 +1175,26 @@ variable is used instead.</p>
 <dt id="collins.YAMLConfig">
 <em class="property">class </em><tt class="descclassname">collins.</tt><tt class="descname">YAMLConfig</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#collins.YAMLConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#collins.Config" title="collins.Config"><tt class="xref py py-class docutils literal"><span class="pre">collins.Config</span></tt></a></p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="s">&quot;entry_point_url&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;http://ant-core-staging-s-api1.wavecloud.de/api&quot;</span>
+<p>Uses a YAML file for configuration.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># &quot;entry_point_url&quot;: &quot;http://ant-core-staging-s-api1.wavecloud.de/api&quot;</span>
+<span class="s">&quot;entry_point_url&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;http://ant-shop-api1.wavecloud.de/api&quot;</span>
 <span class="s">&quot;app_id&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;&quot;</span>
-<span class="s">&quot;app_password&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;&quot;</span>
+<span class="s">&quot;app_token&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;&quot;</span>
+<span class="s">&quot;app_secret&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;&quot;</span>
 <span class="s">&quot;agent&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;Mozilla/5.0</span><span class="nv"> </span><span class="s">(X11;</span><span class="nv"> </span><span class="s">Linux</span><span class="nv"> </span><span class="s">i686)</span><span class="nv"> </span><span class="s">AppleWebKit/537.36</span><span class="nv"> </span><span class="s">(KHTML,</span><span class="nv"> </span><span class="s">like</span><span class="nv"> </span><span class="s">Gecko)</span><span class="nv"> </span><span class="s">Chrome/33.0.1750.152</span><span class="nv"> </span><span class="s">Safari/537.36&quot;</span>
-<span class="s">&quot;image_url&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;http://cdn.mary-paul.de/files/{}&quot;</span>
-<span class="s">&quot;cache&quot;</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;127.0.0.1:11211&quot;</span><span class="p-Indicator">]</span>
+<span class="s">&quot;image_url&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;http://cdn.mary-paul.de/file/{}&quot;</span>
+<span class="s">&quot;product_url&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;http://www.mary-paul.de/product/{}&quot;</span>
+<span class="s">&quot;shop_url&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;https://checkout.aboutyou.de/&quot;</span>
+<span class="s">&quot;auto_fetch&quot;</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">True</span>
+<span class="s">&quot;cache&quot;</span><span class="p-Indicator">:</span>
+        <span class="s">&quot;hosts&quot;</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;127.0.0.1:11211&quot;</span><span class="p-Indicator">]</span>
+        <span class="s">&quot;timeout&quot;</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">86400</span>
 <span class="s">&quot;logconf&quot;</span><span class="p-Indicator">:</span>
         <span class="s">&quot;version&quot;</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
         <span class="s">&quot;disable_existing_loggers&quot;</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
         <span class="s">&quot;formatters&quot;</span><span class="p-Indicator">:</span>
             <span class="s">&quot;simple&quot;</span><span class="p-Indicator">:</span>
-                <span class="s">&quot;format&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;%(asctime)s</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">%(levelname)-7s</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">%(name)-20s</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">%(message)s&quot;</span>
+                <span class="s">&quot;format&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;%(asctime)s</span><span class="nv"> </span><span class="s">|%(levelname)-7s</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">%(name)-20s</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">%(message)s&quot;</span>
         <span class="s">&quot;handlers&quot;</span><span class="p-Indicator">:</span>
             <span class="s">&quot;rotating&quot;</span><span class="p-Indicator">:</span>
                 <span class="s">&quot;level&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;DEBUG&quot;</span>
@@ -1293,7 +1203,7 @@ variable is used instead.</p>
                 <span class="s">&quot;when&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;midnight&quot;</span>
                 <span class="s">&quot;filename&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;collins.log&quot;</span>
         <span class="s">&quot;loggers&quot;</span><span class="p-Indicator">:</span>
-            <span class="s">&quot;python-shop.collins&quot;</span><span class="p-Indicator">:</span>
+            <span class="s">&quot;collins.sdk&quot;</span><span class="p-Indicator">:</span>
                 <span class="s">&quot;level&quot;</span><span class="p-Indicator">:</span> <span class="s">&quot;DEBUG&quot;</span>
                 <span class="s">&quot;handlers&quot;</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;rotating&quot;</span><span class="p-Indicator">]</span>
         <span class="s">&quot;root&quot;</span><span class="p-Indicator">:</span>
@@ -1316,14 +1226,13 @@ characters. This is not tested or validated.</p>
 </dd></dl>
 
 </div>
-</div>
 
 
       </div>
       <div class="bottomnav">
       
         <p>
-        «&#160;&#160;<a href="howtos/tests.html">Run Tests</a>
+        «&#160;&#160;<a href="collins_objects.html">Collins Object Structure</a>
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="index.html">Contents</a>
         &#160;&#160;::&#160;&#160;
@@ -1333,7 +1242,7 @@ characters. This is not tested or validated.</p>
       </div>
 
     <div class="footer">
-        &copy; Copyright 2014, Arne Simon =&gt; email::[arne.simon@slice-dice.de].
+        &copy; Copyright 2014, Arne Simon [arne.simon@slice-dice.de].
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

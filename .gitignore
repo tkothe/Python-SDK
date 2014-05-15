@@ -1,10 +1,10 @@
 *.sublime*
 *.log*
 *.pyc
-dump.json
+dump.*
 slice-dice.yaml
 110slicedice-config.json
-examples/*
+dist/*
 test.py
 categories.yaml
 facets.yaml
