@@ -172,7 +172,7 @@ class JSONConfig(Config):
 
     :param jsonfile: The path to the json configuration file.
 
-    .. literalinclude:: ../../config.json
+    .. literalinclude:: ../config.json
         :language: json
     """
     def __init__(self, filename):
@@ -195,7 +195,7 @@ try:
 
         :param yamlfile: The path to the yaml configuration file.
 
-        .. literalinclude:: ../../config.yaml
+        .. literalinclude:: ../config.yaml
             :language: yaml
         """
         def __init__(self, filename):

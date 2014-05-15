@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Caching &mdash; AboutYou-Shop-SDK 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="AboutYou-Shop-SDK 0.3 documentation" href="../index.html" />
+    <link rel="up" title="Howtos" href="howtos.html" />
+    <link rel="next" title="Run Tests" href="tests.html" />
+    <link rel="prev" title="Usage" href="usage.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="../index.html">
+          <span>AboutYou-Shop-SDK 0.3 documentation</span></a></h1>
+        <h2 class="heading"><span>Caching</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="usage.html">Usage</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="tests.html">Run Tests</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="caching">
+<h1>Caching<a class="headerlink" href="#caching" title="Permalink to this headline">¶</a></h1>
+<p>Facets and Categories are always cached!
+If you enable the extra caching Products and Variants will be also cached.</p>
+<p>For caching is <a class="reference external" href="http://sendapatch.se/projects/pylibmc/">pylibmc</a> used.
+To enable caching fill cache options in your configuration file.</p>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+    <span class="nt">&quot;entry_point_url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://ant-core-staging-s-api1.wavecloud.de/api&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;app_id&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;app_token&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;app_secret&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://cdn.mary-paul.de/file/{}&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;product_url&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;cache&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;127.0.0.1:11211&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="starting-local-memcached">
+<h2>Starting local Memcached<a class="headerlink" href="#starting-local-memcached" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; memcached -d -m 512 -l 127.0.0.1 -p 11211 -u nobody
+</pre></div>
+</div>
+<p>Check if is running:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; ps -eaf | grep memcached
+</pre></div>
+</div>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="usage.html">Usage</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="tests.html">Run Tests</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2014, Arne Simon.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
