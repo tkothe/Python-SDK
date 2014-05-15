@@ -33,7 +33,7 @@ Install the package via PIP::
 Documentation
 -------------
 
-Documentation is found in HTML format in the *doc/build* sub-folder.
+Documentation is found at http://aboutyou-shop-sdk.readthedocs.org/en/latest/.
 
 
 Endpoints
