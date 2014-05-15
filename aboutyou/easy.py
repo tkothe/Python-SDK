@@ -464,7 +464,8 @@ class Search(object):
         self.result['offset'] = offset
         self.result['limit'] = limit
 
-        self.easy.aboutyou.log.debug('gather %s %s %s', self.sessionid, self.filter, self.result)
+        self.easy.aboutyou.log.debug('gather %s %s %s',
+                                     self.sessionid, self.filter, self.result)
 
         response = self.easy.aboutyou.productsearch(self.sessionid,
                                                    filter=self.filter,
@@ -739,7 +740,7 @@ class EasyAboutYou(object):
         return self.__facet_map[facet_group]
 
 
-    def productsById(self, pids):
+    def productsById(self, pids, fields=['sale', 'active', 'default_variant']):
         """
         Gets a products by its id.
 
@@ -780,7 +781,7 @@ class EasyAboutYou(object):
             spid = [str(p) for p in pids]
 
         if len(spid) > 0:
-            response = self.aboutyou.products(ids=pids, fields=['sale', 'active'])
+            response = self.aboutyou.products(ids=pids, fields=list(fields))
 
             for pid, p in response["ids"].items():
                 if "error_message" in p:

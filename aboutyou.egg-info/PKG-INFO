@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: aboutyou
-Version: 0.3
+Version: 0.3.2
 Summary: A connection to the aboutyou.de shop.
 Home-page: https://bitbucket.org/slicedice/aboutyou-shop-sdk-python/overview
 Author: Arne Simon
@@ -11,7 +11,6 @@ Description: AboutYou-Shop-SDK
         =================
         
         | **Author:** Arne Simon [arne.simon@silce-dice.de]
-        | **Version:** 0.3
         
         A Python implementation for the AboutYou shop API.
         
@@ -59,6 +58,7 @@ Description: AboutYou-Shop-SDK
         
         - 0.3:
             * Additional docmentation.
+            * Auto fetch flag.
             * PyPI integration.
             * YAML configuration files.
         
