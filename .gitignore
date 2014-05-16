@@ -5,6 +5,7 @@ dump.*
 slice-dice.yaml
 110slicedice-config.json
 dist/*
+doc/_build/*
 test.py
 categories.yaml
 facets.yaml

@@ -8,5 +8,6 @@ Howtos
    search
    category_tree
    usage
+   django
    caching
    tests
