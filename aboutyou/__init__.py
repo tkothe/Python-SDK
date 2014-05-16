@@ -108,9 +108,6 @@ class Constants(object):
 
 
 class Config(object):
-    PARAMS = set(["entry_point_url", "app_id", "app_token", "app_secret",
-                    "agent", "image_url", "product_url", "shop_url",
-                    "auto_fetch", "cache", "logging"])
     """
     The configuration of a aboutyou api connection.
 
@@ -129,9 +126,23 @@ class Config(object):
     :param cache: An array of Memcached servers.
     :param dict logging: A dictonary for logging.config.dictConfig.
     """
+    PARAMS = {
+                "entry_point_url": "http://ant-shop-api1.wavecloud.de/api",
+                "app_id": None,
+                "app_token": None,
+                "app_secret": None,
+                "agent": "AboutYou-Shop-SDK-Python",
+                "image_url": "http://cdn.mary-paul.de/file/{}",
+                "product_url": "http://www.aboutyou.de/{}",
+                "shop_url": "https://checkout.aboutyou.de/",
+                "auto_fetch": True,
+                "cache": None,
+                "logging": None
+            }
+
     def __init__(self, **kwargs):
-        for key in Config.PARAMS:
-            setattr(self, key, None)
+        for key, value in Config.PARAMS.items():
+            setattr(self, key, value)
 
         for key, value in kwargs.items():
             if key in Config.PARAMS:
@@ -141,20 +152,6 @@ class Config(object):
 
         if "logging" in kwargs:
             logging.config.dictConfig(kwargs["logging"])
-
-    def imageurl(self, hashid, size=None):
-        """
-        Returns the url for a image.
-
-        :param hashid: hash of the image.
-        :param size: tupple of (width, height)
-        """
-        if size is not None:
-            name = '{}_{}_{}'.format(hashid, size[0], size[1])
-        else:
-            name = hashid
-
-        return self.image_url.format(name)
 
     @property
     def authorization(self):
@@ -254,8 +251,8 @@ def check_sessionid(sessionid):
     """
     .. note::
         We copied it from the php-sdk.
-        aboutyou seems to want have the session-id a minimum length of five
-        characters. This is not tested or validated.
+        aboutyou seems to want, to have the session-id with a minimum length of
+        five characters. This is not tested or validated.
     """
     if len(sessionid) < 5:
         raise AboutYouException("The session id must have at least 5 characters")

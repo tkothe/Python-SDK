@@ -13,6 +13,7 @@ the entire application can access one instance.
 **settings.py**
 
 .. code-block:: python
+    :linenos:
 
     ABOUTYOU = None
 
@@ -29,7 +30,10 @@ the entire application can access one instance.
 Search Template Tag
 -------------------
 
+.. rubric:: templatetags/search.py
+
 .. code-block:: python
+    :linenos:
 
     from django import template
     from django.conf import settings
@@ -47,43 +51,50 @@ Search Template Tag
             "vid": p.default_variant.id,
             "name": p.name,
             "url": p.default_variant.images[0].url(150, 150),
+            # remeber prices are all in Euro Cent, so format
             "price": '{:.2f}'.format(float(p.default_variant.price)/100.0).replace('.', ','),
+            # filter unknown brands
             "brands": ', '.join([f.name for f in p.default_variant.attributes['brand'] if not f.name.startswith('unknown')]),
         }
 
-    @register.filter(name='search')
-    def search(product, session):
+    @register.assignment_tag
+    def search(catgeoryid, session):
         try:
             if session.session_key is None:
                 session.cycle_key()
 
-            if isinstance(product, Product):
-                filters = {
-                            "categories": [product.category],
-                            "facets": {Constants.FACET_COLOR: [product.color]},
-                        }
+            filters = {
+                        "categories": [catgeoryid],
+                        "facets": {Constants.FACET_COLOR: [product.color]},
+                    }
 
-                result = {
-                    "fields": ["variants", "active", "description_short",
-                                "description_long", "default_variant"]
-                }
+            result = {
+                "fields": ["variants", "active", "description_short",
+                            "description_long", "default_variant"]
+            }
 
-                search = settings.ABOUTYOU.search(session.session_key, filters, result)
+            search = settings.ABOUTYOU.search(session.session_key, filters, result)
 
-                prods = search.products[:20]
+            prods = search.products[:20]
 
-                return [buildproduct(p) for p in prods]
-            else:
-                logger.error("passing none product {} to search".format(product))
+            return [buildproduct(p) for p in prods]
         except:
             logger.exception('')
 
         return None
 
+.. note::
+
+    The function *buildproduct* builds a dict from the :py:class:`aboutyou.easy.Product`
+    instance, because accessing functions in Django Template-Tags can be rather
+    tricky. Thats why we choose a prepared *dict* here.
+
+.. rubric:: templates/product.html
 
 .. code-block:: html
+    :linenos:
 
-    {% with product|search:request.session as result %}
+    {% search catgeoryid request.session as result %}
     {% if result|length > 0 %}
         <h2 class="productHeading">
             <div class="marker">{{ forloop.counter }}</div>

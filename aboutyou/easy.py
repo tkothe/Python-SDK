@@ -197,8 +197,20 @@ class Image(EasyNode):
     def __init__(self, easy, obj):
         super(Image, self).__init__(easy, obj)
 
-    def url(self):
-        return self.easy.aboutyou.config.image_url.format(self.hash)
+    def url(self, width=None, height=None):
+        url = self.easy.aboutyou.config.image_url.format(self.hash)
+        sizes = []
+
+        if width:
+            sizes.append('width={}'.format(width))
+
+        if height:
+            sizes.append('height={}'.format(height))
+
+        if len(sizes) > 0:
+            url += '?' + '&'.join(sizes)
+
+        return url
 
     def __str__(self):
         return self.easy.aboutyou.config.image_url.format(self.hash)
@@ -224,7 +236,10 @@ class VariantAttributes(object):
                 g = facets.facets.get(f, None)
 
                 if g is None:
-                    g = EasyNode(easy, {'id': facets.id, 'name': 'unknown_{}'.format(f), 'value': 'unknown_{}'.format(f), 'facet_id': f})
+                    g = EasyNode(easy, {'id': facets.id,
+                                        'name': 'unknown_{}'.format(f),
+                                        'value': 'unknown_{}'.format(f),
+                                        'facet_id': f})
                     facets.facets[f] = g
 
                 collection.append(g)
@@ -243,6 +258,9 @@ class VariantAttributes(object):
 
 
 class Variant(EasyNode):
+    """
+    A variant of a Product.
+    """
     def __init__(self, easy, obj):
         super(Variant, self).__init__(easy, obj)
 
@@ -274,6 +292,13 @@ class Variant(EasyNode):
 class Product(EasyNode):
     """
     A product with its variants.
+
+    .. note::
+
+        The Product class is an extensive user of the auto_fetch feature.
+        If enabled in the configuration, when accessing a field which data
+        is not present, for example the variants, then the variants will be
+        automaticly request.
     """
     def __init__(self, easy, obj):
         super(Product, self).__init__(easy, obj)
@@ -433,6 +458,9 @@ class ResultProducts(object):
 
 
 class Search(object):
+    """
+    Representing an initiated search.
+    """
     def __init__(self, easy, sessionid, filter=None, result=None):
         self.easy = easy
         self.sessionid = sessionid
