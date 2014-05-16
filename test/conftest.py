@@ -4,11 +4,11 @@
 """
 import pytest
 
-from aboutyou import YAMLConfig, Aboutyou
+from aboutyou import Config, Aboutyou
 from aboutyou.easy import EasyAboutYou
 
 
-config = YAMLConfig('slice-dice.yaml')
+config = Config(app_id=110, app_token='ed8272cc4d993378f595d112915920bb')
 
 
 @pytest.fixture(scope='session')
