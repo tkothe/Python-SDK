@@ -7,3 +7,5 @@ aboutyou.egg-info/PKG-INFO
 aboutyou.egg-info/SOURCES.txt
 aboutyou.egg-info/dependency_links.txt
 aboutyou.egg-info/top_level.txt
+test/test_aboutyou.py
+test/test_easy.py
