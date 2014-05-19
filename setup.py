@@ -38,5 +38,5 @@ setup(
     'Programming Language :: Python :: 2.7',
     'Topic :: Internet',
     'Topic :: Office/Business',
-  ],
+  ]
 )
