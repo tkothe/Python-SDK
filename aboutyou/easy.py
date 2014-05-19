@@ -499,6 +499,8 @@ class Search(object):
                                                    filter=self.filter,
                                                    result=self.result)
 
+        self.easy.aboutyou.log.debug('result count %s', len(response['products']))
+
         for i, p in enumerate(response["products"]):
             product = None
 
