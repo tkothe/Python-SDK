@@ -6,7 +6,7 @@ slice-dice.yaml
 110slicedice-config.json
 dist/*
 doc/_build/*
-aboutyou.egg-info/
+aboutyou.egg-info/*
 test.py
 categories.yaml
 facets.yaml

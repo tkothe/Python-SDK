@@ -6,21 +6,6 @@ AboutYou-Shop-SDK
 A Python implementation for the AboutYou shop API.
 
 
-Additional Conntacts
---------------------
-
-iOS SDK
-+++++++
-
-* Jesse Hinrichsen [jesse@j-apps.com]
-* Marius Schmeding [marius.schmeding@gmail.com]
-
-Android SDK
-+++++++++++
-
-* Henning Dodenhof [Henning.dodenhof@4inchworks.de]
-
-
 Installation
 ------------
 
@@ -33,15 +18,6 @@ Documentation
 -------------
 
 Documentation is found at http://aboutyou-shop-sdk.readthedocs.org/en/latest/.
-
-
-Endpoints
----------
-
-- Staging
-    http://ant-core-staging-s-api1.wavecloud.de/api
-- Live
-    http://ant-shop-api1.wavecloud.de/api
 
 
 Change Log
