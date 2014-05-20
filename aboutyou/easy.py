@@ -289,7 +289,6 @@ class Variant(EasyNode):
         """
         return self._attributes
 
-    @property
     def live(self):
         """
         The live data to this variant.

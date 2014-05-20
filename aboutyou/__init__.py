@@ -410,13 +410,13 @@ class Aboutyou(object):
 
         .. note::
 
-        If you supply additional data to costumize a variant. You **have to** have
-        the field *description* present!
+            If you supply additional data to costumize a variant. You **have to** have
+            the field *description* present!
 
         .. code-block:: python
 
             >>> data = [('my4813890', 4813890), ('my4813890', 4813890, {'description': 'costum stuff'})]
-            >>> aboutyou.basketset('someid', data)
+            >>> aboutyou.basket_set('someid', data)
 
         .. code-block:: json
 
@@ -430,9 +430,21 @@ class Aboutyou(object):
                         "total_vat": 319,
                         "variant_id": 4813890,
                         "id": "my4813890"
+                    },
+                    {
+                        "total_price": 1999,
+                        "product_id": 234526,
+                        "tax": 19.0,
+                        "total_net": 1680,
+                        "total_vat": 319,
+                        "variant_id": 4813890,
+                        "additional_data": {
+                            "description": "costum stuff"
+                        },
+                        "id": "my4813890-costum"
                     }
                 ],
-                "total_price": 1999,
+                "total_price": 3998,
                 "products": {
                     "234526": {
                         "name": "Bikinislip, LASCANA (3 Stck.)",
@@ -445,11 +457,11 @@ class Aboutyou(object):
                                 19615
                             ]
                         ],
-                        "description_long": "Superangenehm zu tragen dank besonders ",
+                        "description_long": "Superangenehm zu tragen dank besonders ...",
                         "active": true,
                         "variants": [
                             {
-                                "updated_date": "2014-05-14 12:03:42",
+                                "updated_date": "2014-05-20 06:24:31",
                                 "first_active_date": "2014-02-27 15:35:57",
                                 "default": false,
                                 "old_price": 0,
@@ -459,25 +471,33 @@ class Aboutyou(object):
                                 "id": 4813890,
                                 "created_date": "2013-12-07 11:23:36",
                                 "images": [
-                                    {
-                                        "mime": "image/jpeg",
-                                        "image": {
-                                            "width": 672,
-                                            "height": 960
-                                        },
-                                        "hash": "7b36192b57368bd54a8be3660098f1bc",
-                                        "ext": ".jpg",
-                                        "size": 72776
-                                    }
+
+                                ],
+                                "attributes": {
+                                    "attributes_2": [
+                                        4
+                                    ],
+                                    "attributes_0": [
+                                        266
+                                    ],
+                                    "attributes_1": [
+                                        11,
+                                        48
+                                    ]
+                                },
+                                "retail_price": 0,
+                                "additional_info": {},
+                                "quantity": 999
                             }
                         ],
-                        "description_short": "Superangenehm zu tragen dank besonders",
+                        "description_short": "Superangenehm zu tragen dank besonders ...",
                         "id": 234526
                     }
                 },
-                "total_vat": 319,
-                "total_net": 1680
+                "total_vat": 638,
+                "total_net": 3360
             }
+
         """
         check_sessionid(sessionid)
 
@@ -511,7 +531,7 @@ class Aboutyou(object):
 
         .. code-block:: python
 
-            >>> aboutyou.basketget('someid')
+            >>> aboutyou.basket_get('someid')
 
         .. code-block:: json
 
@@ -525,9 +545,21 @@ class Aboutyou(object):
                         "total_vat": 319,
                         "variant_id": 4813890,
                         "id": "my4813890"
+                    },
+                    {
+                        "total_price": 1999,
+                        "product_id": 234526,
+                        "tax": 19.0,
+                        "total_net": 1680,
+                        "total_vat": 319,
+                        "variant_id": 4813890,
+                        "additional_data": {
+                            "description": "costum stuff"
+                        },
+                        "id": "my4813890-costum"
                     }
                 ],
-                "total_price": 1999,
+                "total_price": 3998,
                 "products": {
                     "234526": {
                         "name": "Bikinislip, LASCANA (3 Stck.)",
@@ -540,11 +572,11 @@ class Aboutyou(object):
                                 19615
                             ]
                         ],
-                        "description_long": "Superangenehm zu tragen dank besonders ",
+                        "description_long": "Superangenehm zu tragen dank besonders ...",
                         "active": true,
                         "variants": [
                             {
-                                "updated_date": "2014-05-14 12:03:42",
+                                "updated_date": "2014-05-20 06:24:31",
                                 "first_active_date": "2014-02-27 15:35:57",
                                 "default": false,
                                 "old_price": 0,
@@ -554,24 +586,31 @@ class Aboutyou(object):
                                 "id": 4813890,
                                 "created_date": "2013-12-07 11:23:36",
                                 "images": [
-                                    {
-                                        "mime": "image/jpeg",
-                                        "image": {
-                                            "width": 672,
-                                            "height": 960
-                                        },
-                                        "hash": "7b36192b57368bd54a8be3660098f1bc",
-                                        "ext": ".jpg",
-                                        "size": 72776
-                                    }
+
+                                ],
+                                "attributes": {
+                                    "attributes_2": [
+                                        4
+                                    ],
+                                    "attributes_0": [
+                                        266
+                                    ],
+                                    "attributes_1": [
+                                        11,
+                                        48
+                                    ]
+                                },
+                                "retail_price": 0,
+                                "additional_info": {},
+                                "quantity": 999
                             }
                         ],
-                        "description_short": "Superangenehm zu tragen dank besonders",
+                        "description_short": "Superangenehm zu tragen dank besonders ...",
                         "id": 234526
                     }
                 },
-                "total_vat": 319,
-                "total_net": 1680
+                "total_vat": 638,
+                "total_net": 3360
             }
 
         """
@@ -587,7 +626,7 @@ class Aboutyou(object):
 
         .. code-block:: python
 
-            >>> aboutyou.basketremove('someid', ['my4813890'])
+            >>> aboutyou.basket_remove('someid', ['my4813890'])
 
         .. code-block:: json
 
@@ -600,10 +639,13 @@ class Aboutyou(object):
                         "total_net": 1680,
                         "total_vat": 319,
                         "variant_id": 4813890,
-                        "id": "my4813890"
+                        "additional_data": {
+                            "description": "costum stuff"
+                        },
+                        "id": "my4813890-costum"
                     }
                 ],
-                "total_price": 1999,
+                "total_price": 3998,
                 "products": {
                     "234526": {
                         "name": "Bikinislip, LASCANA (3 Stck.)",
@@ -616,11 +658,11 @@ class Aboutyou(object):
                                 19615
                             ]
                         ],
-                        "description_long": "Superangenehm zu tragen dank besonders ",
+                        "description_long": "Superangenehm zu tragen dank besonders ...",
                         "active": true,
                         "variants": [
                             {
-                                "updated_date": "2014-05-14 12:03:42",
+                                "updated_date": "2014-05-20 06:24:31",
                                 "first_active_date": "2014-02-27 15:35:57",
                                 "default": false,
                                 "old_price": 0,
@@ -630,24 +672,31 @@ class Aboutyou(object):
                                 "id": 4813890,
                                 "created_date": "2013-12-07 11:23:36",
                                 "images": [
-                                    {
-                                        "mime": "image/jpeg",
-                                        "image": {
-                                            "width": 672,
-                                            "height": 960
-                                        },
-                                        "hash": "7b36192b57368bd54a8be3660098f1bc",
-                                        "ext": ".jpg",
-                                        "size": 72776
-                                    }
+
+                                ],
+                                "attributes": {
+                                    "attributes_2": [
+                                        4
+                                    ],
+                                    "attributes_0": [
+                                        266
+                                    ],
+                                    "attributes_1": [
+                                        11,
+                                        48
+                                    ]
+                                },
+                                "retail_price": 0,
+                                "additional_info": {},
+                                "quantity": 999
                             }
                         ],
-                        "description_short": "Superangenehm zu tragen dank besonders",
+                        "description_short": "Superangenehm zu tragen dank besonders ...",
                         "id": 234526
                     }
                 },
-                "total_vat": 319,
-                "total_net": 1680
+                "total_vat": 638,
+                "total_net": 3360
             }
         """
         check_sessionid(sessionid)
