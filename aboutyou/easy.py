@@ -340,6 +340,7 @@ class Product(EasyNode):
         self.__long_description = None
         self.__default_image = None
         self.__default_variant = None
+        self.__styles = None
 
     def url(self):
         """
@@ -394,7 +395,7 @@ class Product(EasyNode):
         if self.__default_image is None:
             if "default_image" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update default_image from product %s', self.obj['id'])
-                data = self.easy.aboutyou.products(ids=[self.id],
+                data = self.easy.aboutyou.products(ids=[self.obj['id']],
                                                 fields=[Constants.PRODUCT_FIELD_DEFAULT_IMAGE])
                 self.obj.update(data["ids"][str(self.id)])
 
@@ -407,23 +408,33 @@ class Product(EasyNode):
         if self.__default_variant is None:
             if "default_variant" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update default_variant from product %s', self.obj['id'])
-                data = self.easy.aboutyou.products(ids=[self.id],
+                data = self.easy.aboutyou.products(ids=[self.obj['id']],
                                                 fields=[Constants.PRODUCT_FIELD_DEFAULT_VARIANT])
-                self.obj.update(data["ids"][str(self.id)])
+                self.obj.update(data["ids"][str(self.obj['id'])])
 
             self.__default_variant = Variant(self.easy, self.obj["default_variant"])
 
         return self.__default_variant
 
+    @property
+    def styles(self):
+        if self.__styles is None:
+            if "styles" not in self.obj and self.easy.config.auto_fetch:
+                self.easy.aboutyou.log.debug('update styles from product %s', self.obj['id'])
+
+                self.obj.update(data["ids"][str(self.obj['id'])])
+
+        return self.__styles
+
     def __getattr__(self, name):
         if name not in self.obj and self.easy.config.auto_fetch:
             self.easy.aboutyou.log.debug('update %s from product %s', name, self.obj['id'])
-            data = self.easy.aboutyou.products(ids=[self.id],
+            data = self.easy.aboutyou.products(ids=[self.obj['id']],
                                             fields=[
                                                     Constants.PRODUCT_FIELD_DESCRIPTION_SHORT,
                                                     Constants.PRODUCT_FIELD_DESCRIPTION_LONG,
                                                     Constants.PRODUCT_FIELD_SALE])
-            self.obj.update(data["ids"][str(self.id)])
+            self.obj.update(data["ids"][str(self.obj['id'])])
 
         return self.obj[name]
 
@@ -448,7 +459,7 @@ class SearchException(Exception):
 class ResultProducts(object):
     def __init__(self, search):
         self.search = search
-        self.buffer = [None] * search.count
+        self.buffer = []
 
     def __getitem__(self, idx):
         if isinstance(idx, slice):
@@ -463,14 +474,18 @@ class ResultProducts(object):
             if step is None:
                 step = 1
 
-            count = stop-start
-            pos = start
-            for i in xrange(count/200):
-                self.search.gather(pos, 200)
-                pos += 200
+            gather_start = len(self.buffer)
 
-            if count%200 != 0:
-                self.search.gather(pos, 200)
+            if gather_start < stop:
+                pos = gather_start
+                count = stop - gather_start
+
+                for i in xrange(count / 200):
+                    self.search.gather(pos, 200)
+                    pos += 200
+
+                if count % 200 != 0:
+                    self.search.gather(pos, 200)
 
             return [self.buffer[i] for i in xrange(start, stop, step)]
 
@@ -484,11 +499,15 @@ class ResultProducts(object):
 
     def __iter__(self):
         step = 200
-        for i in xrange(0, self.search.count):
-            if self.buffer[i] is None:
+        i = 0
+        # 'for' will not work, because 'count' can change each gather call.
+        # for i in xrange(0, self.search.count):
+        while i < self.search.count:
+            if len(self.buffer) <= i:
                 self.search.gather(i, step)
 
             yield self.buffer[i]
+            i += 1
 
 
 class Search(object):
@@ -533,9 +552,12 @@ class Search(object):
                                                    filter=self.filter,
                                                    result=self.result)
 
-        self.easy.aboutyou.log.debug('result count %s', len(response['products']))
+        # the result count can change ANY request !!!
+        self.count = response['product_count']
 
-        for i, p in enumerate(response["products"]):
+        self.easy.aboutyou.log.debug('result count %s : %s', len(response['products']), response['product_count'])
+
+        for p in response["products"]:
             product = None
 
             if self.easy.cache is not None:
@@ -547,7 +569,7 @@ class Search(object):
                 if self.easy.cache is not None:
                     self.easy.cache[str(product.id)] = product
 
-            self.products.buffer[i+offset] = product
+            self.products.buffer.append(product)
 
 
 class BasketException(Exception):

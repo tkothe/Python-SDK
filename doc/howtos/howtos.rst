@@ -8,4 +8,3 @@ Howtos
    search
    django
    caching
-   tests

@@ -29,13 +29,13 @@ Change Log
     * PyPI integration.
     * YAML configuration files.
 
-- 0.2
+- 0.2:
     * Caching with Memcached and pylibmc.
-    * EasyCollins has function, *getSimpleColors*.
+    * EasyAboutYou has function, *getSimpleColors*.
     * Error handling fix.
 
-- 0.1
+- 0.1:
     * Products return now there url to the mary+paul shop.
     * Dirty caching without memcached.
     * EasyCollins products are no bulk requests.
-    * Extended documentation for EasyCollins.
+    * Extended documentation for EasyAboutYou.
