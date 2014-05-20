@@ -108,6 +108,7 @@ from . import Aboutyou, Constants, AboutYouException
 import bz2
 import json
 import logging
+import uuid
 
 
 logger = logging.getLogger('aboutyou')
@@ -194,10 +195,16 @@ class FacetGroup(object):
 
 
 class Image(EasyNode):
+    """
+    Represents an image.
+    """
     def __init__(self, easy, obj):
         super(Image, self).__init__(easy, obj)
 
     def url(self, width=None, height=None):
+        """
+        Returns the url to the image.
+        """
         url = self.easy.aboutyou.config.image_url.format(self.hash)
         sizes = []
 
@@ -264,22 +271,23 @@ class Variant(EasyNode):
     def __init__(self, easy, obj):
         super(Variant, self).__init__(easy, obj)
 
-        self.__images = [Image(easy, i) for i in obj["images"]]
-        self.__attributes = VariantAttributes(easy, obj["attributes"])
+        self._hash = obj['id']
+        self._images = [Image(easy, i) for i in obj["images"]]
+        self._attributes = VariantAttributes(easy, obj["attributes"])
 
     @property
     def images(self):
         """
         An array of :py:class:`aboutyou.easy.Image`.
         """
-        return self.__images
+        return self._images
 
     @property
     def attributes(self):
         """
         The attributes aka facets of this product variant.
         """
-        return self.__attributes
+        return self._attributes
 
     @property
     def live(self):
@@ -287,6 +295,30 @@ class Variant(EasyNode):
         The live data to this variant.
         """
         return self.easy.aboutyou.livevariant([self.id])
+
+    def costumize(self):
+        return CostumizedVariant(self)
+
+    def __hash__(self):
+        return self._hash
+
+
+class CostumizedVariant(Variant):
+    def __init__(self, variant):
+        # super(type(self), self).__init__(variant.easy, variant.obj)
+        self.obj = variant.obj
+        self.easy = variant.easy
+        self._images = variant._images
+        self._attributes = variant._attributes
+        # if we use uuid directly.
+        # we get a "OverflowError: Python int too large to convert to C long"
+        # when used with dictonarys.
+        self._hash = hash(uuid.uuid4())
+
+        self.additional_data = {'description': 'costumized'}
+
+    def __hash__(self):
+        return self._hash
 
 
 class Product(EasyNode):
@@ -395,6 +427,9 @@ class Product(EasyNode):
             self.obj.update(data["ids"][str(self.id)])
 
         return self.obj[name]
+
+    def __hash__(self):
+        return self.obj['id']
 
 
 class SearchException(Exception):
@@ -533,46 +568,93 @@ class Basket(object):
         self.easy = easy
         self.sessionid = sessionid
 
-        self.__variants = {}
+        self.variants = {}
+        self.basket_ids_by_variant = {}
 
-    def __getitem__(self, idx):
-        # self.easy
-        return self.__variants[idx]
+    def __getattr__(self, name):
+        return self.obj[name]
 
-    def __setitem__(self, idx, val):
-        self.__variants[idx] = val
+    def _check_obj(self):
+        withError = []
+        fine = []
 
-    def __delitem__(self, idx):
-        #self.easy.basketadd()
-        del self.__variants[idx]
+        for line in self.obj['order_lines']:
+            if 'error_message' in line:
+                withError.append(line)
+            else:
+                fine.append(line)
 
-    def keys(self):
-        return self.__variants.keys()
+        if len(withError) > 0:
+            msg = '\n'.join((i['error_message'] for i in withError))
+            self.easy.aboutyou.log.error(msg)
+            self.easy.aboutyou.log.error(json.dumps(self.obj, indent=4))
+            raise BasketException(msg, fine, withError)
 
-    def values(self):
-        return self.__variants.values()
+    def set(self, variant, count):
 
-    def items(self):
-        return self.__variants.items()
+        def push_ids(ids):
+            vid = variant.id
+            if isinstance(variant, CostumizedVariant):
+                additional = variant.additional_data
+                basketset = [(i, vid, additional) for i in ids]
+            else:
+                basketset = [(i, vid) for i in ids]
 
-    def order(self, success_url, cancel_url=None, error_url=None):
+            self.obj = self.easy.aboutyou.basket_set(self.sessionid, basketset)
+
+
+        if count < 1 and variant in self.basket_ids_by_variant:
+            self.obj = self.easy.aboutyou.basket_remove(self.sessionid, self.basket_ids_by_variant[variant])
+
+            del self.basket_ids_by_variant[variant]
+            del self.variants[variant]
+
+        else:
+            if variant in self.variants:
+                delta = count - self.variants[variant]
+
+                if delta > 0:
+                    ids = [uuid.uuid4().hex for unused in xrange(delta)]
+                    self.basket_ids_by_variant[variant] += ids
+
+                    push_ids(ids)
+
+                elif delta < 0:
+                    to_remove = self.basket_ids_by_variant[variant][:-delta]
+                    self.basket_ids_by_variant[variant] = self.basket_ids_by_variant[variant][-delta:]
+
+                    self.obj = self.easy.aboutyou.basket_remove(self.sessionid, to_remove)
+
+            else:
+                self.variants[variant] = count
+
+                ids = [uuid.uuid4().hex for unused in xrange(count)]
+                self.basket_ids_by_variant[variant] = ids
+
+                push_ids(ids)
+
+            self._check_obj()
+
+
+    def buy(self, success_url, cancel_url=None, error_url=None):
         """
         Begins to order this basket.
 
-        :param str sucess_url: this is a callback url if the order was successfully created.
+        :param str success_url: this is a callback url if the order was successfully created.
         :param str cancel_url: this is a callback url if the order was canceled.
         :param str error_url: this is a callback url if the order throwed exceptions.
         :returns: The url to the shop.
         """
-        variants = []
-
-        for variant, count in self.__variants.items():
-            pass
-
-        response = self.easy.aboutyou.basketset(self.sessionid, variants)
-
-        return self.easy.aboutyou.order(self.sessionid, sucess_url,
+        self.easy.aboutyou.log.debug('buy basket %s', self.sessionid)
+        return self.easy.aboutyou.order(self.sessionid, success_url,
                                        cancel_url, error_url)
+
+    def dispose(self):
+        self.easy.aboutyou.log.debug('dispose basket %s', self.sessionid)
+
+        self.easy.aboutyou.basket_dispose(self.sessionid)
+
+        del self.easy._baskets[self.sessionid]
 
 
 class EasyAboutYou(object):
@@ -594,7 +676,7 @@ class EasyAboutYou(object):
 
         self.__simple_colors = None
 
-        self.__baskets = {}
+        self._baskets = {}
 
         self.cache = None
 
@@ -676,12 +758,12 @@ class EasyAboutYou(object):
         :param sessionid: The session id the basket is associated with.
         :returns: :py:class:`aboutyou.easy.Basket`
         """
-        if sessionid in self.__baskets:
-            return self.__baskets[sessionid]
+        if sessionid in self._baskets:
+            return self._baskets[sessionid]
         else:
             b = Basket(self, sessionid)
 
-            self.__baskets[sessionid] = b
+            self._baskets[sessionid] = b
 
             return b
 

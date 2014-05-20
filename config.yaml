@@ -23,14 +23,14 @@
                 "class": "logging.handlers.TimedRotatingFileHandler"
                 "formatter": "simple"
                 "when": "midnight"
-                "filename": "collins.log"
+                "filename": "aboutyou.log"
             "graypy":
                 "level": "DEBUG"
                 "class": "graypy.GELFHandler"
                 "host": "localhost"
                 "port": 12201
         "loggers":
-            "collins.sdk":
+            "aboutyou":
                 "level": "DEBUG"
                 "handlers": ["rotating"]
         "root":

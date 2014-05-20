@@ -36,15 +36,15 @@ def testProductsById(easy):
     #     assert p.description_long is not None
     pass
 
-def testSearch(easy, session):
-    result = easy.search(session, filter={"categories":[19631, 19654]},
-                         result={'fields': ['variants']})
+# def testSearch(easy, session):
+#     result = easy.search(session, filter={"categories":[19631, 19654]},
+#                          result={'fields': ['variants']})
 
-    assert result.count > 0
+#     assert result.count > 0
 
-    for p in result.products:
-        for v in p.variants:
-            assert v.id is not None
+#     for p in result.products:
+#         for v in p.variants:
+#             assert v.id is not None
 
 
 def testSimpleColors(easy):
@@ -52,3 +52,34 @@ def testSimpleColors(easy):
 
     assert len(result) > 0
     assert isinstance(result[0], EasyNode)
+
+
+def testBasket(easy, session):
+    try:
+        basket = easy.basket(session)
+
+        product = easy.productsById([434091])[0]
+
+        variant = product.variants[0]
+
+        print variant.live
+
+        basket.set(variant, 1)
+
+        costum = variant.costumize()
+
+        # costum.additional_data['logo'] = 'Green Frog'
+
+        basket.set(costum, 2)
+
+        print basket.obj
+
+        assert len(basket.obj['order_lines']) == 3
+
+        assert basket.obj['order_lines'][0]['variant_id'] == variant.id
+
+        print basket.buy('http://maumau.de')
+    except Exception as e:
+        raise e
+    finally:
+        basket.dispose()

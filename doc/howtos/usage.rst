@@ -42,6 +42,11 @@ for production enviroumnet.
 A Real Life Setup
 +++++++++++++++++
 
+If plan to go in production, you want a little more controle over whats going on.
+Which leads to more configuration you do not want to have directly in your code.
+
+Here is an example of how to use the YAML configuration file.
+
 .. code-block:: python
     :linenos:
 
@@ -49,6 +54,38 @@ A Real Life Setup
     from aboutyou.easy import EasyAboutYou
 
     easy = EasyAboutYou(YAMLConfig('myconfig.yml'))
+
+    print easy.config.app_id
+    print easy.config.auto_fetch
+
+.. rubric:: myconfig.yml
+
+.. literalinclude:: ../../config.yaml
+        :language: yaml
+        :linenos:
+
+
+Extending the Config
+++++++++++++++++++++
+
+Maybe you want to read your configuration from another source.
+It is easy to archive, by extending the :py:class:`aboutyou.Config` class.
+
+.. code-block:: python
+    :linenos:
+
+    from aboutyou import Config
+    from pymongo import MongoClient
+
+    class MongoDBClass(Config):
+
+        def __init__(self, dburl='mongodb://localhost:27017/'):
+            self.client = MongoClient(dburl)
+            self.db = self.client['test-database']
+            super(type(self), self).__init__()
+
+        def __getattr__(self, name):
+            return self.db.config.find_one().get(name)
 
 
 Getting the Brand
@@ -85,24 +122,6 @@ If you want to get products directly by its id.
     except SearchException as e:
         print e.withError   # list of tuples (id, [errors]) for not found products
         print e.found       # list of found products
-
-
-Search for Colors in Categories
--------------------------------
-
-.. code-block:: python
-    :linenos:
-
-    result = easy.search(TEST_SESSION, filter={"categories":[19631, 19654],
-                                               "facets":{Constants.FACET_COLOR: [1,9]}
-                                                     })
-    with codecs.open("dump.txt", "w", encoding="utf8") as o:
-        for p in result.products:
-            o.write(u"{} {} {}\n".format(p.id, p.name, p.active))
-            for v in p.variants:
-                # o.write(u"{}".format(v.obj))
-                o.write(u"    {} {}\n".format(v.id, v.quantity))
-                o.write(u"        {}\n".format([ (f.facet_id, f.name) for f in v.attributes["color"]]))
 
 
 Category Tree

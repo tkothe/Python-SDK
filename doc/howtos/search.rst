@@ -33,3 +33,20 @@ with EasyAboutyou
 
     easy = EasyAboutYou(JSONConfig("my-config.json"))
 
+
+Search for Colors in Categories
+-------------------------------
+
+.. code-block:: python
+    :linenos:
+
+    result = easy.search(TEST_SESSION, filter={"categories":[19631, 19654],
+                                               "facets":{Constants.FACET_COLOR: [1,9]}
+                                                     })
+    with codecs.open("dump.txt", "w", encoding="utf8") as o:
+        for p in result.products:
+            o.write(u"{} {} {}\n".format(p.id, p.name, p.active))
+            for v in p.variants:
+                # o.write(u"{}".format(v.obj))
+                o.write(u"    {} {}\n".format(v.id, v.quantity))
+                o.write(u"        {}\n".format([ (f.facet_id, f.name) for f in v.attributes["color"]]))

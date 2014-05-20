@@ -343,6 +343,7 @@ class Aboutyou(object):
             result = json.loads(result, encoding="utf-8")[0][cmd]
 
             if "error_message" in result:
+                self.log.error(result["error_message"])
                 raise AboutYouException(result["error_message"])
 
             return result
@@ -401,15 +402,21 @@ class Aboutyou(object):
 
         return self.send("autocompletion", complete)
 
-    def basketset(self, sessionid, variants):
+    def basket_set(self, sessionid, variants):
         """
         :param str sessionid: identification of the basket -> user, user -> basket
-        :param list variants: is the array of variant ids
+        :param list variants: is the array of tuples. (<someid>, <variant id>) or (<someid>, <variant id>, <additional data>)
         :returns: The basket JSON.
+
+        .. note::
+
+        If you supply additional data to costumize a variant. You **have to** have
+        the field *description* present!
 
         .. code-block:: python
 
-            >>> aboutyou.basketset('someid', [('my4813890', 4813890),])
+            >>> data = [('my4813890', 4813890), ('my4813890', 4813890, {'description': 'costum stuff'})]
+            >>> aboutyou.basketset('someid', data)
 
         .. code-block:: json
 
@@ -474,15 +481,26 @@ class Aboutyou(object):
         """
         check_sessionid(sessionid)
 
+        def build(var):
+            length = len(var)
+
+            if length == 2:
+                return {'id':var[0], 'variant_id':var[1]}
+            elif length == 3:
+                # return {'id':var[0], 'variant_id':var[1]}
+                return {'id':var[0], 'variant_id':var[1], 'additional_data': var[2]}
+
+
         data = {
                 "session_id": sessionid,
-                "order_lines": [{'id':sid, 'variant_id':vid}
-                                    for sid, vid in variants]
+                "order_lines": [build(var) for var in variants]
             }
+
+        # self.log.debug(json.dumps(data, indent=4))
 
         return self.send("basket", data)
 
-    def basketget(self, sessionid):
+    def basket_get(self, sessionid):
         """
         This returns the current basket for a User / Session ID.
         The basket belongs to a specific app id and session id,
@@ -561,9 +579,11 @@ class Aboutyou(object):
 
         return self.send("basket", {"session_id": sessionid})
 
-    def basketremove(self, sessionid, variants):
+    def basket_remove(self, sessionid, variants):
         """
         Removes elements from the basket associated with the session id.
+
+        :param sessionid: The session associated with the basket.
 
         .. code-block:: python
 
@@ -632,9 +652,29 @@ class Aboutyou(object):
         """
         check_sessionid(sessionid)
 
-        return self.send("basket", {"session_id": sessionid,
-                                    "order_lines": [{"delete": str(vid)
-                                                        for vid in variants}]})
+        if len(variants) < 1:
+            raise AboutYouException('No ids submitted.')
+
+        data = {"session_id": sessionid,
+                "order_lines": [{"delete": str(vid)} for vid in variants]}
+
+        # self.log.debug(json.dumps(data, indent=4))
+
+        return self.send("basket", data)
+
+    def basket_dispose(self, sessionid):
+        """
+        Deletes all items in the basket.
+
+        :param sessionid: The session associated with the basket.
+        """
+        check_sessionid(sessionid)
+
+        data = self.basket_get(sessionid)
+
+        vids = [order['id'] for order in data['order_lines']]
+
+        self.basket_remove(sessionid, vids)
 
     def category(self, ids):
         """
@@ -825,7 +865,7 @@ class Aboutyou(object):
     #     """
     #     return self.send("get_order", {"order_id": orderid})
 
-    def order(self, sessionid, sucess_url,
+    def order(self, sessionid, success_url,
               cancel_url=None, error_url=None):
         """
         At this request you initiate a order to a basket.
@@ -833,7 +873,7 @@ class Aboutyou(object):
 
         :param str sessionid: identification of the basket -> user,
                               user -> basket (see basket_get, basket_add)
-        :param str sucess_url: this is a callback url if the order was
+        :param str success_url: this is a callback url if the order was
                                successfully created. (see checkout api)
         :param str cancel_url: this is a callback url if the order was
                                canceled. (see checkout api)
@@ -843,7 +883,7 @@ class Aboutyou(object):
         """
         check_sessionid(sessionid)
 
-        order = {"session_id": sessionid, "sucess_url": sucess_url}
+        order = {"session_id": sessionid, "success_url": success_url}
 
         if cancel_url is not None:
             order["cancel_url"] = cancel_url

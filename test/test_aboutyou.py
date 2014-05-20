@@ -15,17 +15,17 @@ def testAutocomplete(aboutyou, log):
 
 
 def testBasketset(aboutyou, session, log):
-    response = aboutyou.basketset(session, [['my4813890', 4813890]])
+    response = aboutyou.basket_set(session, [['my4813890', 4813890]])
     log.debug(json.dumps(response, indent=4))
 
 
 def testBasketget(aboutyou, session, log):
-    response = aboutyou.basketget(session)
+    response = aboutyou.basket_get(session)
     log.debug(json.dumps(response, indent=4))
 
 
 def testBasketremove(aboutyou, session, log):
-    response = aboutyou.basketremove(session, ['my4813890'])
+    response = aboutyou.basket_remove(session, ['my4813890'])
     log.debug(json.dumps(response, indent=4))
 
 
