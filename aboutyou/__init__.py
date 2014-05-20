@@ -72,11 +72,15 @@ class Constants(object):
     # FACET_CARE_SYMBOL = 247
     # FACET_CLOTHING_HATS_US = 231
 
-    FACETS = set([FACET_BRAND, FACET_CLOTHING_MEN_BELTS_CM, FACET_CLOTHING_MEN_DE, FACET_CLOTHING_MEN_INCH,
-                 FACET_CLOTHING_UNISEX_INCH, FACET_CLOTHING_UNISEX_INT, FACET_CLOTHING_UNISEX_ONESIZE,
-                 FACET_CLOTHING_WOMEN_BELTS_CM, FACET_CLOTHING_WOMEN_DE, FACET_CLOTHING_WOMEN_INCH, FACET_COLOR,
-                 FACET_CUPSIZE, FACET_DIMENSION3, FACET_GENDERAGE, FACET_LENGTH, FACET_SHOES_UNISEX_ADIDAS_EUR,
-                 FACET_SHOES_UNISEX_EUR, FACET_SIZE, FACET_SIZE_CODE, FACET_SIZE_RUN,
+    FACETS = set([FACET_BRAND, FACET_CLOTHING_MEN_BELTS_CM,
+                  FACET_CLOTHING_MEN_DE, FACET_CLOTHING_MEN_INCH,
+                  FACET_CLOTHING_UNISEX_INCH, FACET_CLOTHING_UNISEX_INT,
+                  FACET_CLOTHING_UNISEX_ONESIZE, FACET_CLOTHING_WOMEN_BELTS_CM,
+                  FACET_CLOTHING_WOMEN_DE, FACET_CLOTHING_WOMEN_INCH,
+                  FACET_COLOR, FACET_CUPSIZE, FACET_DIMENSION3, FACET_GENDERAGE,
+                  FACET_LENGTH, FACET_SHOES_UNISEX_ADIDAS_EUR,
+                  FACET_SHOES_UNISEX_EUR, FACET_SIZE, FACET_SIZE_CODE,
+                  FACET_SIZE_RUN,
                  ])
 
     SORT_CREATED = "created_date"
@@ -100,11 +104,14 @@ class Constants(object):
     PRODUCT_FIELD_DEFAULT_VARIANT = "default_variant"
     PRODUCT_FIELD_DEFAULT_IMAGE = "default_image"
     PRODUCT_FIELD_CATEGORIES = "categories"
-    PRODUCT_FIELDS = set([PRODUCT_FIELD_VARIANTS, PRODUCT_FIELD_DESCRIPTION_LONG,
-                        PRODUCT_FIELD_DESCRIPTION_SHORT, PRODUCT_FIELD_MIN_PRICE,
-                        PRODUCT_FIELD_MAX_PRICE, PRODUCT_FIELD_SALE,
-                        PRODUCT_FIELD_DEFAULT_VARIANT, PRODUCT_FIELD_DEFAULT_IMAGE,
-                        PRODUCT_FIELD_CATEGORIES,])
+    PRODUCT_FIELDS = set([PRODUCT_FIELD_VARIANTS,
+                          PRODUCT_FIELD_DESCRIPTION_LONG,
+                          PRODUCT_FIELD_DESCRIPTION_SHORT,
+                          PRODUCT_FIELD_MIN_PRICE,
+                          PRODUCT_FIELD_MAX_PRICE, PRODUCT_FIELD_SALE,
+                          PRODUCT_FIELD_DEFAULT_VARIANT,
+                          PRODUCT_FIELD_DEFAULT_IMAGE,
+                          PRODUCT_FIELD_CATEGORIES,])
 
 
 class Config(object):
@@ -126,19 +133,17 @@ class Config(object):
     :param cache: An array of Memcached servers.
     :param dict logging: A dictonary for logging.config.dictConfig.
     """
-    PARAMS = {
-                "entry_point_url": "http://ant-shop-api1.wavecloud.de/api",
-                "app_id": None,
-                "app_token": None,
-                "app_secret": None,
-                "agent": "AboutYou-Shop-SDK-Python",
-                "image_url": "http://cdn.mary-paul.de/file/{}",
-                "product_url": "http://www.aboutyou.de/{}",
-                "shop_url": "https://checkout.aboutyou.de/",
-                "auto_fetch": True,
-                "cache": None,
-                "logging": None
-            }
+    PARAMS = {"entry_point_url": "http://ant-shop-api1.wavecloud.de/api",
+              "app_id": None,
+              "app_token": None,
+              "app_secret": None,
+              "agent": "AboutYou-Shop-SDK-Python",
+              "image_url": "http://cdn.mary-paul.de/file/{}",
+              "product_url": "http://www.aboutyou.de/{}",
+              "shop_url": "https://checkout.aboutyou.de/",
+              "auto_fetch": True,
+              "cache": None,
+              "logging": None}
 
     def __init__(self, **kwargs):
         for key, value in Config.PARAMS.items():
@@ -204,7 +209,7 @@ try:
 
         def __getattr__(self, name):
             return self.data.get(name, None)
-except:
+except ImportError:
     # No YAML config :(
     pass
 
@@ -228,17 +233,12 @@ class JSONEnvironmentFallbackConfig(Config):
         with open(jsonfile) as cfgfile:
             self.data = json.load(cfgfile)
 
-        loc = locals()
         for key, value in kwargs.items():
             if key not in Config.PARAMS:
                 raise AboutYouException("unknown configuration key parameter")
 
             if key not in self.data:
-                if loc[key] is not None:
-                    self.data[key] = os.environ[loc[key]]
-                else:
-                    msg = 'config value "{}" not present'.format(key)
-                    raise AboutYouException(msg)
+                self.data[key] = os.environ[value]
 
         if "logging" in self.data and self.data["logging"] is not None:
             logging.config.dictConfig(self.data["logging"])
@@ -512,9 +512,9 @@ class Aboutyou(object):
 
 
         data = {
-                "session_id": sessionid,
-                "order_lines": [build(var) for var in variants]
-            }
+            "session_id": sessionid,
+            "order_lines": [build(var) for var in variants]
+        }
 
         # self.log.debug(json.dumps(data, indent=4))
 
@@ -793,7 +793,7 @@ class Aboutyou(object):
                                     "id": 16079,
                                     "sub_categories": [
                                         {
-                                            "name": "Fr\u00fchlingslooks",
+                                            "name": "Frühlingslooks",
                                             "parent": 16079,
                                             "sub_categories": [],
                                             "active": false,
@@ -1242,11 +1242,11 @@ class Aboutyou(object):
                 "products": [
                     {
                         "id": 297395,
-                        "name": "Fischer Skihose, \u00bbLimit\u00ab"
+                        "name": "Fischer Skihose, Limit"
                     },
                     {
                         "id": 300068,
-                        "name": "Armbanduhr, Esprit, \u00bbglamonza silver ES105432004\u00ab"
+                        "name": "Armbanduhr, Esprit, glamonza silver ES105432004"
                     }
                 ]
             }

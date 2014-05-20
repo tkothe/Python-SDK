@@ -107,22 +107,7 @@ Class Structures
 from . import Aboutyou, Constants, AboutYouException
 import bz2
 import json
-import logging
 import uuid
-
-
-logger = logging.getLogger('aboutyou')
-
-
-def safe(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            logger.exception('stuff')
-            raise e
-
-    return wrapper
 
 
 class EasyNode(object):
@@ -172,7 +157,7 @@ class Category(EasyNode):
 
 
 class FacetGroup(object):
-    def __init__(self, easy, fid, name, facets):
+    def __init__(self, fid, name, facets):
         self.id = fid
         self.name = name
         self.facets = facets
@@ -365,13 +350,13 @@ class Product(EasyNode):
             if catname not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update categories from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.id],
-                                                fields=[Constants.PRODUCT_FIELD_CATEGORIES])
+                                                   fields=[Constants.PRODUCT_FIELD_CATEGORIES])
                 self.obj.update(data["ids"][str(self.id)])
 
                 self.__update_cache()
 
             self.__categories = [[self.easy.categoryById(cid) for cid in path]
-                                for path in self.obj[catname]]
+                                  for path in self.obj[catname]]
 
         return self.__categories
 
@@ -385,7 +370,7 @@ class Product(EasyNode):
             if "variants" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update variants from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.id],
-                                                fields=[Constants.PRODUCT_FIELD_VARIANTS])
+                                                   fields=[Constants.PRODUCT_FIELD_VARIANTS])
                 self.obj.update(data["ids"][str(self.id)])
 
                 self.__update_cache()
@@ -405,7 +390,7 @@ class Product(EasyNode):
             if "default_image" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update default_image from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.obj['id']],
-                                                fields=[Constants.PRODUCT_FIELD_DEFAULT_IMAGE])
+                                                   fields=[Constants.PRODUCT_FIELD_DEFAULT_IMAGE])
                 self.obj.update(data["ids"][str(self.id)])
 
                 self.__update_cache()
@@ -420,7 +405,7 @@ class Product(EasyNode):
             if "default_variant" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update default_variant from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.obj['id']],
-                                                fields=[Constants.PRODUCT_FIELD_DEFAULT_VARIANT])
+                                                   fields=[Constants.PRODUCT_FIELD_DEFAULT_VARIANT])
                 self.obj.update(data["ids"][str(self.obj['id'])])
 
                 self.__update_cache()
@@ -463,10 +448,9 @@ class Product(EasyNode):
         if not name.startswith('__') and name not in self.obj and self.easy.config.auto_fetch:
             self.easy.aboutyou.log.debug('update %s from product %s', name, self.obj['id'])
             data = self.easy.aboutyou.products(ids=[self.obj['id']],
-                                            fields=[
-                                                    Constants.PRODUCT_FIELD_DESCRIPTION_SHORT,
-                                                    Constants.PRODUCT_FIELD_DESCRIPTION_LONG,
-                                                    Constants.PRODUCT_FIELD_SALE])
+                                               fields=[Constants.PRODUCT_FIELD_DESCRIPTION_SHORT,
+                                                       Constants.PRODUCT_FIELD_DESCRIPTION_LONG,
+                                                       Constants.PRODUCT_FIELD_SALE])
             self.obj.update(data["ids"][str(self.obj['id'])])
 
             self.__update_cache()
@@ -486,7 +470,7 @@ class SearchException(Exception):
     :param withError: The products with error.
     """
     def __init__(self, msg, found, withError):
-        super(type(self), self).__init__(msg)
+        super(SearchException, self).__init__(msg)
         self.found = found
         self.withError = withError
 
@@ -563,8 +547,8 @@ class Search(object):
             self.result["offset"] = 0
 
         self.obj = self.easy.aboutyou.productsearch(self.sessionid,
-                                                   filter=self.filter,
-                                                   result=self.result)
+                                                    filter=self.filter,
+                                                    result=self.result)
 
         self.count = self.obj["product_count"]
 
@@ -572,7 +556,7 @@ class Search(object):
 
         if "categories" in self.obj["facets"]:
             for el in self.obj["factes"]["categories"]:
-                cat = self.search.easy.categoryById(el["term"])
+                cat = self.easy.categoryById(el["term"])
                 self.categories[cat] = el["count"]
 
 
@@ -584,8 +568,8 @@ class Search(object):
                                      self.sessionid, self.filter, self.result)
 
         response = self.easy.aboutyou.productsearch(self.sessionid,
-                                                   filter=self.filter,
-                                                   result=self.result)
+                                                    filter=self.filter,
+                                                    result=self.result)
 
         # the result count can change ANY request !!!
         self.count = response['product_count']
@@ -609,7 +593,7 @@ class Search(object):
 
 class BasketException(Exception):
     def __init__(self, msg, fine, withError):
-        super(type(self), self).__init__(msg)
+        super(BasketException, self).__init__(msg)
 
         self.fine = fine
         self.withError = withError
@@ -623,6 +607,7 @@ class Basket(object):
     def __init__(self, easy, sessionid):
         self.easy = easy
         self.sessionid = sessionid
+        self.obj = None
 
         self.variants = {}
         self.basket_ids_by_variant = {}
@@ -703,7 +688,7 @@ class Basket(object):
         """
         self.easy.aboutyou.log.debug('buy basket %s', self.sessionid)
         return self.easy.aboutyou.order(self.sessionid, success_url,
-                                       cancel_url, error_url)
+                                        cancel_url, error_url)
 
     def dispose(self):
         self.easy.aboutyou.log.debug('dispose basket %s', self.sessionid)
@@ -765,7 +750,7 @@ class EasyAboutYou(object):
 
             if self.cache is not None:
                 self.cache.set('categorytree', bz2.compress(json.dumps(tree)),
-                                time=self.config.cache['timeout'])
+                               time=self.config.cache['timeout'])
 
         def build(n):
             c = Category(self, n)
@@ -799,15 +784,15 @@ class EasyAboutYou(object):
 
         self.__facet_map = {}
         for facet in response:
-            f = EasyNode(self, facet)
-            group = self.__facet_map.get(f.group_name)
+            fobj = EasyNode(self, facet)
+            group = self.__facet_map.get(fobj.group_name)
             if group is None:
-                group = FacetGroup(self, f.id, f.group_name, {})
+                group = FacetGroup(fobj.id, fobj.group_name, {})
                 self.__facet_map[group.name] = group
                 self.__facet_map[group.id] = group
                 self.__facet_groups.append(group)
 
-            group.facets[f.facet_id] = f
+            group.facets[fobj.facet_id] = fobj
 
 
     def basket(self, sessionid):
@@ -820,11 +805,11 @@ class EasyAboutYou(object):
         if sessionid in self._baskets:
             return self._baskets[sessionid]
         else:
-            b = Basket(self, sessionid)
+            basket = Basket(self, sessionid)
 
-            self._baskets[sessionid] = b
+            self._baskets[sessionid] = basket
 
-            return b
+            return basket
 
 
     def categories(self):
@@ -1017,8 +1002,8 @@ class EasyAboutYou(object):
             >>> products, categories = easy.autocomplete("sho")
         """
         result = self.aboutyou.autocomplete(searchword,
-                                           types=types,
-                                           limit=limit)
+                                            types=types,
+                                            limit=limit)
 
         products = []
         if types is None or Constants.TYPE_PRODUCTS in types:
@@ -1056,6 +1041,6 @@ class EasyAboutYou(object):
             categoriescast = None
 
         result = self.aboutyou.suggest(searchword,
-                                      categories=categoriescast,
-                                      limit=limit)
+                                       categories=categoriescast,
+                                       limit=limit)
         return result
