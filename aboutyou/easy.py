@@ -754,8 +754,10 @@ class EasyAboutYou(object):
 
         if self.cache is not None:
             tree = self.cache.get('categorytree')
-            tree = json.loads(bz2.decompress(tree))
-            self.aboutyou.log.info('cached category tree')
+
+            if tree:
+                tree = json.loads(bz2.decompress(tree))
+                self.aboutyou.log.info('cached category tree')
 
         if tree is None:
             self.aboutyou.log.info('get category tree from aboutyou')
