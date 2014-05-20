@@ -349,6 +349,11 @@ class Product(EasyNode):
         slug = self.name.strip().replace(" ", "-") + "-" + str(self.id)
         return self.easy.aboutyou.config.product_url.format(slug)
 
+    def __update_cache(self):
+        if self.easy.cache:
+            self.easy.cache.set(str(self.obj['id']), self.obj,
+                                self.easy.config.cache['timeout'])
+
     @property
     def categories(self):
         """
@@ -362,6 +367,8 @@ class Product(EasyNode):
                 data = self.easy.aboutyou.products(ids=[self.id],
                                                 fields=[Constants.PRODUCT_FIELD_CATEGORIES])
                 self.obj.update(data["ids"][str(self.id)])
+
+                self.__update_cache()
 
             self.__categories = [[self.easy.categoryById(cid) for cid in path]
                                 for path in self.obj[catname]]
@@ -381,6 +388,8 @@ class Product(EasyNode):
                                                 fields=[Constants.PRODUCT_FIELD_VARIANTS])
                 self.obj.update(data["ids"][str(self.id)])
 
+                self.__update_cache()
+
 
             self.__variants = [Variant(self.easy, v) for v in self.obj["variants"]]
 
@@ -399,6 +408,8 @@ class Product(EasyNode):
                                                 fields=[Constants.PRODUCT_FIELD_DEFAULT_IMAGE])
                 self.obj.update(data["ids"][str(self.id)])
 
+                self.__update_cache()
+
             self.__default_image = Image(self.easy, self.obj["default_image"])
 
         return self.__default_image
@@ -412,6 +423,8 @@ class Product(EasyNode):
                                                 fields=[Constants.PRODUCT_FIELD_DEFAULT_VARIANT])
                 self.obj.update(data["ids"][str(self.obj['id'])])
 
+                self.__update_cache()
+
             self.__default_variant = Variant(self.easy, self.obj["default_variant"])
 
         return self.__default_variant
@@ -420,14 +433,34 @@ class Product(EasyNode):
     def styles(self):
         if self.__styles is None:
             if "styles" not in self.obj and self.easy.config.auto_fetch:
-                self.easy.aboutyou.log.debug('update styles from product %s', self.obj['id'])
+                data = self.easy.aboutyou.log.debug('update styles from product %s', self.obj['id'])
 
                 self.obj.update(data["ids"][str(self.obj['id'])])
+
+                self.__update_cache()
+
+            styles = []
+
+            for pobj in self.obj['styles']:
+                if self.easy.cache:
+                    tmp = self.easy.cache.get(str(pobj['id']))
+
+                    if tmp is None:
+                        product = Product(self.easy, pobj)
+                        self.easy.cache.set(str(product.id), pobj, self.easy.config.cache['timeout'])
+                    else:
+                        product = Product(self.easy, tmp)
+                else:
+                    product = Product(self.easy, pobj)
+
+                styles.append(product)
+
+            self.__styles = styles
 
         return self.__styles
 
     def __getattr__(self, name):
-        if name not in self.obj and self.easy.config.auto_fetch:
+        if not name.startswith('__') and name not in self.obj and self.easy.config.auto_fetch:
             self.easy.aboutyou.log.debug('update %s from product %s', name, self.obj['id'])
             data = self.easy.aboutyou.products(ids=[self.obj['id']],
                                             fields=[
@@ -435,6 +468,8 @@ class Product(EasyNode):
                                                     Constants.PRODUCT_FIELD_DESCRIPTION_LONG,
                                                     Constants.PRODUCT_FIELD_SALE])
             self.obj.update(data["ids"][str(self.obj['id'])])
+
+            self.__update_cache()
 
         return self.obj[name]
 
@@ -745,9 +780,10 @@ class EasyAboutYou(object):
         if self.cache is not None:
             facets = self.cache.get('facettypes')
             response = self.cache.get('facets')
-            facets = json.loads(bz2.decompress(facets))
-            response = json.loads(bz2.decompress(response))
-            self.aboutyou.log.info('cached facets')
+            if facets:
+                facets = json.loads(bz2.decompress(facets))
+                response = json.loads(bz2.decompress(response))
+                self.aboutyou.log.info('cached facets')
 
         if facets is None:
             facets = self.aboutyou.facettypes()
@@ -909,22 +945,25 @@ class EasyAboutYou(object):
                 if p is None:
                     spid.append(sid)
                 else:
-                    products.append(p)
+                    products.append(Product(self, p))
         else:
             spid = [str(p) for p in pids]
 
         if len(spid) > 0:
             response = self.aboutyou.products(ids=pids, fields=list(fields))
+            new = []
 
             for pid, p in response["ids"].items():
                 if "error_message" in p:
                     withError.append((pid, p['error_message']))
                 else:
-                    products.append(Product(self, p))
+                    product = Product(self, p)
+                    new.append(product)
+                    products.append(product)
 
             if self.cache is not None:
                 for n in new:
-                    self.cache.set(str(n.id), n, self.config.cache['timeout'])
+                    self.cache.set(str(n.id), n.obj)#, self.config.cache['timeout'])
 
 
         if len(withError) > 0:
