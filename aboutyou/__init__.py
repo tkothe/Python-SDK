@@ -10,11 +10,11 @@ This module provieds two wrappers around the AboutYou-Shop-API.
   object herachie which caches results and query results if there are needed.
 
 """
-import time
 import json
 import logging
 import urllib2
-import os
+
+from .constants import TYPE
 
 
 ABOUTYOU_VERSION = "1.1"
@@ -181,7 +181,7 @@ class Aboutyou(object):
             complete["limit"] = limit
 
         if types is not None:
-            if len(set(types) - Constants.TYPES) > 0:
+            if len(set(types) - TYPE.ALL) > 0:
                 raise AboutYouException("unknown types")
 
             complete["types"] = types

@@ -12,6 +12,9 @@
 import base64
 import json
 import logging.config
+import os
+
+from . import AboutYouException
 
 
 class Config(object):

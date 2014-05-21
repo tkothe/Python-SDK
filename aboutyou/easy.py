@@ -105,7 +105,7 @@ Class Structures
 
 """
 from . import Aboutyou, AboutYouException
-from .constants import FACET, PRODUCT_FIELD
+from .constants import PRODUCT_FIELD, TYPE
 import bz2
 import json
 import uuid
@@ -1012,13 +1012,13 @@ class EasyAboutYou(object):
                                             limit=limit)
 
         products = []
-        if types is None or Constants.TYPE_PRODUCTS in types:
+        if types is None or TYPE.PRODUCTS in types:
             for p in result["products"]:
                 pobj = Product(self, p)
                 products.append(pobj)
 
         categories = []
-        if types is None or Constants.TYPE_CATEGORIES in types:
+        if types is None or TYPE.CATEGORIES in types:
             if self.__categorytree is None:
                 self.__build_categories()
 
