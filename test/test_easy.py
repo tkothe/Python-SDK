@@ -2,63 +2,81 @@
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 """
-from aboutyou.easy import EasyNode
+from aboutyou.easy import EasyNode, SearchException
 
 
-def testCategories(easy):
+def test_categories(easy):
     tree = easy.categories()
 
     assert len(tree) > 0
 
 
-def testCategoryByName(easy):
-    c = easy.categoryByName("Damen")
+def test_category_by_name(easy):
+    c = easy.category_by_name("Damen")
 
     assert c is not None
     assert c.name == "Damen"
 
 
-def testProductsById(easy):
-    # Boar, testing with fix product ids is BAD, because they change so rapidly!
-
-    # ids = [237188, 237116]
-    # products = easy.productsById(ids)
-
-    # assert len(products) == 2
-
-    # assert products[0].id == 227838
-    # assert products[0].id == 237116
-
-    # for p in products:
-    #     assert p.id in ids
-
-    #     assert p.description_short is not None
-    #     assert p.description_long is not None
-    pass
-
-# def testSearch(easy, session):
-#     result = easy.search(session, filter={"categories":[19631, 19654]},
-#                          result={'fields': ['variants']})
-
-#     assert result.count > 0
-
-#     for p in result.products:
-#         for v in p.variants:
-#             assert v.id is not None
+def test_category_by_id(easy):
+    c = easy.category_by_id(19615)
 
 
-def testSimpleColors(easy):
-    result = easy.getSimpleColors()
+def test_facet_groups(easy):
+    groups = easy.facet_groups()
+
+
+def test_facet_group_by_id(easy):
+    group = easy.facet_group_by_id('color')
+
+
+def test_products_by_id(easy):
+
+    ids = [237188, 237116]
+    try:
+        products = easy.products_by_id(ids)
+    except SearchException as e:
+        products = e.found
+
+    for p in products:
+        assert p.id in ids
+
+        assert p.categories is not None
+        assert p.description_short is not None
+        assert p.description_long is not None
+        assert p.default_variant is not None
+        assert p.default_image is not None
+        assert p.variants is not None
+        assert p.styles is not None
+
+
+def test_products_by_ean(easy):
+    products = easy.products_by_ean([370075138])
+
+
+def test_search(easy, session):
+    result = easy.search(session, filter={"categories":[19631, 19654]},
+                         result={'fields': ['variants']})
+
+    assert result.count > 0
+
+    for p in result.products[:10]:
+        for v in p.variants:
+            assert v.id is not None
+
+
+def test_simple_colors(easy):
+    result = easy.simple_colors()
 
     assert len(result) > 0
     assert isinstance(result[0], EasyNode)
 
 
-def testBasket(easy, session):
+def test_basket(easy, session):
     try:
         basket = easy.basket(session)
 
-        product = easy.productsById([434091])[0]
+        product = easy.products_by_id([434091])[0]
 
         variant = product.variants[0]
 
@@ -83,3 +101,11 @@ def testBasket(easy, session):
         raise e
     finally:
         basket.dispose()
+
+
+def test_autocomplete(easy):
+    easy.autocomplete('sho')
+
+
+def test_suggest(easy):
+    easy.suggest('sho')

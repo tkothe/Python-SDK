@@ -9,20 +9,10 @@ This module provieds two wrappers around the AboutYou-Shop-API.
 * Easyaboutyou, which is a more convient layer of abstraction of the API as an
   object herachie which caches results and query results if there are needed.
 
-
-.. autosummary::
-    :nosignatures:
-
-    Config
-    Aboutyou
-    YAMLConfig
-    JSONConfig
 """
 import time
-import base64
 import json
 import logging
-import logging.config
 import urllib2
 import os
 
@@ -41,210 +31,6 @@ AUTHORS = [
 class AboutYouException(Exception):
     """An exception in the aboutyou module."""
     pass
-
-
-class Constants(object):
-    """
-    Some contsants which are blatantly copied from the php-sdk.
-    """
-    FACET_BRAND = 0
-    FACET_CLOTHING_MEN_BELTS_CM = 190
-    FACET_CLOTHING_MEN_DE = 187
-    FACET_CLOTHING_MEN_INCH = 189
-    FACET_CLOTHING_UNISEX_INCH = 174
-    FACET_CLOTHING_UNISEX_INT = 173
-    FACET_CLOTHING_UNISEX_ONESIZE = 204
-    FACET_CLOTHING_WOMEN_BELTS_CM = 181
-    FACET_CLOTHING_WOMEN_DE = 175
-    FACET_CLOTHING_WOMEN_INCH = 180
-    FACET_COLOR = 1
-    FACET_CUPSIZE = 4
-    FACET_DIMENSION3 = 6
-    FACET_GENDERAGE = 3
-    FACET_LENGTH = 5
-    FACET_SHOES_UNISEX_ADIDAS_EUR = 195
-    FACET_SHOES_UNISEX_EUR = 194
-    FACET_SIZE = 2
-    FACET_SIZE_CODE = 206
-    FACET_SIZE_RUN = 172
-    # not in the PHP-SDK o.O ?
-    # FACET_CHANNEL = 211
-    # FACET_CARE_SYMBOL = 247
-    # FACET_CLOTHING_HATS_US = 231
-
-    FACETS = set([FACET_BRAND, FACET_CLOTHING_MEN_BELTS_CM,
-                  FACET_CLOTHING_MEN_DE, FACET_CLOTHING_MEN_INCH,
-                  FACET_CLOTHING_UNISEX_INCH, FACET_CLOTHING_UNISEX_INT,
-                  FACET_CLOTHING_UNISEX_ONESIZE, FACET_CLOTHING_WOMEN_BELTS_CM,
-                  FACET_CLOTHING_WOMEN_DE, FACET_CLOTHING_WOMEN_INCH,
-                  FACET_COLOR, FACET_CUPSIZE, FACET_DIMENSION3, FACET_GENDERAGE,
-                  FACET_LENGTH, FACET_SHOES_UNISEX_ADIDAS_EUR,
-                  FACET_SHOES_UNISEX_EUR, FACET_SIZE, FACET_SIZE_CODE,
-                  FACET_SIZE_RUN,
-                 ])
-
-    SORT_CREATED = "created_date"
-    SORT_MOST_VIEWED = "most_viewed"
-    SORT_PRICE = "price"
-    SORT_RELEVANCE = "relevance"
-    SORT_UPDATED = "updated_date"
-    SORTS = set([SORT_RELEVANCE, SORT_UPDATED, SORT_CREATED,
-                 SORT_MOST_VIEWED, SORT_PRICE])
-
-    TYPE_CATEGORIES = "categories"
-    TYPE_PRODUCTS = "products"
-    TYPES = set([TYPE_CATEGORIES, TYPE_PRODUCTS])
-
-    PRODUCT_FIELD_VARIANTS = "variants"
-    PRODUCT_FIELD_DESCRIPTION_LONG = "description_long"
-    PRODUCT_FIELD_DESCRIPTION_SHORT = "description_short"
-    PRODUCT_FIELD_MIN_PRICE = "min_price"
-    PRODUCT_FIELD_MAX_PRICE = "max_price"
-    PRODUCT_FIELD_SALE = "sale"
-    PRODUCT_FIELD_DEFAULT_VARIANT = "default_variant"
-    PRODUCT_FIELD_DEFAULT_IMAGE = "default_image"
-    PRODUCT_FIELD_CATEGORIES = "categories"
-    PRODUCT_FIELDS = set([PRODUCT_FIELD_VARIANTS,
-                          PRODUCT_FIELD_DESCRIPTION_LONG,
-                          PRODUCT_FIELD_DESCRIPTION_SHORT,
-                          PRODUCT_FIELD_MIN_PRICE,
-                          PRODUCT_FIELD_MAX_PRICE, PRODUCT_FIELD_SALE,
-                          PRODUCT_FIELD_DEFAULT_VARIANT,
-                          PRODUCT_FIELD_DEFAULT_IMAGE,
-                          PRODUCT_FIELD_CATEGORIES,])
-
-
-class Config(object):
-    """
-    The configuration of a aboutyou api connection.
-
-    A config class has to have the following readable attributes:
-
-    :param entry_point_url: The url for aboutyou.
-    :param app_id: The application id.
-    :param app_token: The password aka token for the corresponding application id.
-    :param app_secret: The secret of the appliction.
-    :param agent: The name of the browser agent to fake.
-    :param image_url: A string as template for the image urls.
-                        As example http://cdn.mary-paul.de/file/{}.
-    :param product_url: The template for a product.
-    :param shop_url: The url template for the shop.
-    :param auto_fetch: If set True, Easyaboutyou fetches automaticly missing fields.
-    :param cache: An array of Memcached servers.
-    :param dict logging: A dictonary for logging.config.dictConfig.
-    """
-    PARAMS = {"entry_point_url": "http://ant-shop-api1.wavecloud.de/api",
-              "app_id": None,
-              "app_token": None,
-              "app_secret": None,
-              "agent": "AboutYou-Shop-SDK-Python",
-              "image_url": "http://cdn.mary-paul.de/file/{}",
-              "product_url": "http://www.aboutyou.de/{}",
-              "shop_url": "https://checkout.aboutyou.de/",
-              "auto_fetch": True,
-              "cache": None,
-              "logging": None}
-
-    def __init__(self, **kwargs):
-        for key, value in Config.PARAMS.items():
-            setattr(self, key, value)
-
-        for key, value in kwargs.items():
-            if key in Config.PARAMS:
-                setattr(self, key, value)
-            else:
-                raise AboutYouException("unknown configuration key parameter")
-
-        if "logging" in kwargs:
-            logging.config.dictConfig(kwargs["logging"])
-
-    @property
-    def authorization(self):
-        """
-        Content for the authorization header.
-        """
-        data = "{}:{}".format(self.app_id, self.app_token)
-        encoded = base64.b64encode(data)
-        return "Basic " + encoded.decode("ascii")
-
-
-class JSONConfig(Config):
-    """
-    Uses a JSON file for configuration.
-
-    :param jsonfile: The path to the json configuration file.
-
-    .. literalinclude:: ../config.json
-        :language: json
-    """
-    def __init__(self, filename):
-        with open(filename) as cfgfile:
-            self.data = json.load(cfgfile)
-
-        if "logging" in self.data and self.data["logging"] is not None:
-            logging.config.dictConfig(self.data["logging"])
-
-    def __getattr__(self, name):
-        return self.data.get(name, None)
-
-
-try:
-    import yaml
-
-    class YAMLConfig(Config):
-        """
-        Uses a YAML file for configuration.
-
-        :param yamlfile: The path to the yaml configuration file.
-
-        .. literalinclude:: ../config.yaml
-            :language: yaml
-        """
-        def __init__(self, filename):
-            with open(filename) as cfgfile:
-                self.data = yaml.load(cfgfile)
-
-            if "logging" in self.data and self.data["logging"] is not None:
-                logging.config.dictConfig(self.data["logging"])
-
-        def __getattr__(self, name):
-            return self.data.get(name, None)
-except ImportError:
-    # No YAML config :(
-    pass
-
-
-class JSONEnvironmentFallbackConfig(Config):
-    """
-    This is the real hot shit.
-    If a config value is not found in the JSON config, the given environment
-    variable is used instead.
-
-    :param jsonfile: The path to the json configuration file.
-
-    .. code-block:: python
-
-        # if the field *authorization* is not present in the config file,
-        # then the environment variable *aboutyou_AUTH* will be used for the
-        # config variable authorization.
-        conf = JSONEnvironmentFallbackConfig('myconf.json', authorization='aboutyou_AUTH')
-    """
-    def __init__(self, jsonfile, **kwargs):
-        with open(jsonfile) as cfgfile:
-            self.data = json.load(cfgfile)
-
-        for key, value in kwargs.items():
-            if key not in Config.PARAMS:
-                raise AboutYouException("unknown configuration key parameter")
-
-            if key not in self.data:
-                self.data[key] = os.environ[value]
-
-        if "logging" in self.data and self.data["logging"] is not None:
-            logging.config.dictConfig(self.data["logging"])
-
-    def __getattr__(self, name):
-        return self.data[name]
 
 
 def check_sessionid(sessionid):
@@ -721,9 +507,10 @@ class Aboutyou(object):
 
         data = self.basket_get(sessionid)
 
-        vids = [order['id'] for order in data['order_lines']]
+        if len(data['order_lines']) > 0:
+            vids = [order['id'] for order in data['order_lines']]
 
-        self.basket_remove(sessionid, vids)
+            self.basket_remove(sessionid, vids)
 
     def category(self, ids):
         """

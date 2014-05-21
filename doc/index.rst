@@ -11,6 +11,8 @@ Welcome to aboutyou-shop-sdk's documentation!
 
    howtos/howtos
    aboutyou_objects
+   constants
+   config
    aboutyou
    easy
 

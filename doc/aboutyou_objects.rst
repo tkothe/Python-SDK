@@ -9,24 +9,22 @@ A simple overview for the JSON objects the collins backend works with.
 
     basket[label=<<table cellspacing="0" border="0" cellborder="1">
         <tr><td colspan="2">basket</td></tr>
-        <tr><td port="variant">product_variant</td><td></td></tr>
+        <tr><td port="variant">order_lines</td><td></td></tr>
         <tr><td port="products">products</td><td></td></tr>
-        <tr><td>total_variants</td><td></td></tr>
-        <tr><td>amount_variants</td><td></td></tr>
         <tr><td>total_price</td><td></td></tr>
         <tr><td>total_net</td><td></td></tr>
         <tr><td>total_vat</td><td></td></tr>
     </table>>];
 
-    basket_variant[label=<<table cellspacing="0" border="0" cellborder="1">
-        <tr><td colspan="2">basket_variant</td></tr>
-        <tr><td>unit_price</td><td></td></tr>
+    basket_order_line[label=<<table cellspacing="0" border="0" cellborder="1">
+        <tr><td colspan="2">order_line</td></tr>
         <tr><td>total_price</td><td></td></tr>
         <tr><td>total_net</td><td></td></tr>
         <tr><td>total_vat</td><td></td></tr>
-        <tr><td>amount</td><td></td></tr>
+        <tr><td>additional_data</td><td></td></tr>
         <tr><td port="product">product_id</td><td></td></tr>
-        <tr><td port="id">id</td><td></td></tr>
+        <tr><td port="variant">variant_id</td><td></td></tr>
+        <tr><td>id</td><td></td></tr>
         <tr><td>tax</td><td></td></tr>
     </table>>];
 
@@ -93,10 +91,10 @@ A simple overview for the JSON objects the collins backend works with.
     </table>>];
 
 
-    basket:variant:w -> basket_variant;
+    basket:variant:w -> basket_order_line;
     basket:products:w -> product;
-    basket_variant:id:w -> variant:id:w;
-    basket_variant:product:w -> product:id:w;
+    basket_order_line:variant:w -> variant:id:w;
+    basket_order_line:product:w -> product:id:w;
     product:category -> category;
     category:sub:w -> category;
     product:variant:w -> variant;

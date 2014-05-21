@@ -16,11 +16,11 @@ Class Structures
     easy[label=<<table cellspacing="0" border="0" cellborder="1">
         <tr><td colspan="2">EasyAboutYou</td></tr>
         <tr><td>categories()</td><td></td></tr>
-        <tr><td>categoryById()</td><td></td></tr>
-        <tr><td>categoryByName()</td><td></td></tr>
-        <tr><td>facetgroupById()</td><td></td></tr>
-        <tr><td>productsById()</td><td></td></tr>
-        <tr><td>productsByEAN()</td><td></td></tr>
+        <tr><td>category_by_id()</td><td></td></tr>
+        <tr><td>category_by_name()</td><td></td></tr>
+        <tr><td>facet_group_by_id()</td><td></td></tr>
+        <tr><td>products_by_id()</td><td></td></tr>
+        <tr><td>products_by_ean()</td><td></td></tr>
     </table>>];
 
     category[label=<<table cellspacing="0" border="0" cellborder="1">
@@ -104,7 +104,8 @@ Class Structures
     </table>>];
 
 """
-from . import Aboutyou, Constants, AboutYouException
+from . import Aboutyou, AboutYouException
+from .constants import FACET, PRODUCT_FIELD
 import bz2
 import json
 import uuid
@@ -221,7 +222,7 @@ class VariantAttributes(object):
 
         for name, value in obj.items():
             grpid = int(name[prefixlen:])
-            facets = easy.facetgroupById(grpid)
+            facets = easy.facet_group_by_id(grpid)
 
             collection = []
             for f in value:
@@ -350,13 +351,12 @@ class Product(EasyNode):
             if catname not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update categories from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.id],
-                                                   fields=[Constants.PRODUCT_FIELD_CATEGORIES])
+                                                   fields=[PRODUCT_FIELD.CATEGORIES])
                 self.obj.update(data["ids"][str(self.id)])
 
                 self.__update_cache()
 
-            self.__categories = [[self.easy.categoryById(cid) for cid in path]
-                                  for path in self.obj[catname]]
+            self.__categories = [[self.easy.category_by_id(cid) for cid in path] for path in self.obj[catname]]
 
         return self.__categories
 
@@ -370,7 +370,7 @@ class Product(EasyNode):
             if "variants" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update variants from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.id],
-                                                   fields=[Constants.PRODUCT_FIELD_VARIANTS])
+                                                   fields=[PRODUCT_FIELD.VARIANTS])
                 self.obj.update(data["ids"][str(self.id)])
 
                 self.__update_cache()
@@ -390,7 +390,7 @@ class Product(EasyNode):
             if "default_image" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update default_image from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.obj['id']],
-                                                   fields=[Constants.PRODUCT_FIELD_DEFAULT_IMAGE])
+                                                   fields=[PRODUCT_FIELD.DEFAULT_IMAGE])
                 self.obj.update(data["ids"][str(self.id)])
 
                 self.__update_cache()
@@ -405,7 +405,7 @@ class Product(EasyNode):
             if "default_variant" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update default_variant from product %s', self.obj['id'])
                 data = self.easy.aboutyou.products(ids=[self.obj['id']],
-                                                   fields=[Constants.PRODUCT_FIELD_DEFAULT_VARIANT])
+                                                   fields=[PRODUCT_FIELD.DEFAULT_VARIANT])
                 self.obj.update(data["ids"][str(self.obj['id'])])
 
                 self.__update_cache()
@@ -448,9 +448,9 @@ class Product(EasyNode):
         if not name.startswith('__') and name not in self.obj and self.easy.config.auto_fetch:
             self.easy.aboutyou.log.debug('update %s from product %s', name, self.obj['id'])
             data = self.easy.aboutyou.products(ids=[self.obj['id']],
-                                               fields=[Constants.PRODUCT_FIELD_DESCRIPTION_SHORT,
-                                                       Constants.PRODUCT_FIELD_DESCRIPTION_LONG,
-                                                       Constants.PRODUCT_FIELD_SALE])
+                                               fields=[PRODUCT_FIELD.DESCRIPTION_SHORT,
+                                                       PRODUCT_FIELD.DESCRIPTION_LONG,
+                                                       PRODUCT_FIELD.SALE])
             self.obj.update(data["ids"][str(self.obj['id'])])
 
             self.__update_cache()
@@ -463,7 +463,7 @@ class Product(EasyNode):
 
 class SearchException(Exception):
     """
-    An exception thrown by productsById.
+    An exception thrown by products_by_id.
 
     :param msg: An error message
     :param found: The products with error.
@@ -556,7 +556,7 @@ class Search(object):
 
         if "categories" in self.obj["facets"]:
             for el in self.obj["factes"]["categories"]:
-                cat = self.easy.categoryById(el["term"])
+                cat = self.easy.category_by_id(el["term"])
                 self.categories[cat] = el["count"]
 
 
@@ -632,7 +632,12 @@ class Basket(object):
             raise BasketException(msg, fine, withError)
 
     def set(self, variant, count):
+        """
+        Sets the *count* of the *variant* in the basket.
 
+        :param variant: :py:class:`aboutyou.easy.Variant` or :py:class:`aboutyou.easy.CostumVariant`
+        :param int count: The amount of the items. If set to 0 the item is removed.
+        """
         def push_ids(ids):
             vid = variant.id
             if isinstance(variant, CostumizedVariant):
@@ -691,6 +696,9 @@ class Basket(object):
                                         cancel_url, error_url)
 
     def dispose(self):
+        """
+        Removes all items from the basket and disassociates this basket with the session id.
+        """
         self.easy.aboutyou.log.debug('dispose basket %s', self.sessionid)
 
         self.easy.aboutyou.basket_dispose(self.sessionid)
@@ -824,7 +832,7 @@ class EasyAboutYou(object):
         return self.__categorytree
 
 
-    def categoryById(self, cid):
+    def category_by_id(self, cid):
         """
         Returns the category with the given id.
 
@@ -836,28 +844,7 @@ class EasyAboutYou(object):
 
         return self.__category_ids[cid]
 
-
-    def getSimpleColors(self):
-        """
-        Returns an array of facet colors which are a simple selection out
-        of the hugh possebilities.
-        """
-        if self.__facet_map is None:
-            self.__build_facets()
-
-        if self.__simple_colors is None:
-            self.aboutyou.log.info('build simple colors')
-
-            colors = self.facetgroupById('color')
-            self.__simple_colors = []
-            for fid in [570, 168, 67, 247, 48, 14, 18, 204, 30, 1, 579, 15, 12,
-                        11, 55, 580, 9, 333, 646]:
-                self.__simple_colors.append(colors[fid])
-
-        return self.__simple_colors
-
-
-    def categoryByName(self, name):
+    def category_by_name(self, name):
         """
         Returns the category with the given name.
 
@@ -872,8 +859,27 @@ class EasyAboutYou(object):
 
         return self.__category_names[name]
 
+    def simple_colors(self):
+        """
+        Returns an array of facet colors which are a simple selection out
+        of the hugh possebilities.
+        """
+        if self.__facet_map is None:
+            self.__build_facets()
 
-    def facetGroups(self):
+        if self.__simple_colors is None:
+            self.aboutyou.log.info('build simple colors')
+
+            colors = self.facet_group_by_id('color')
+            self.__simple_colors = []
+            for fid in [570, 168, 67, 247, 48, 14, 18, 204, 30, 1, 579, 15, 12,
+                        11, 55, 580, 9, 333, 646]:
+                self.__simple_colors.append(colors[fid])
+
+        return self.__simple_colors
+
+
+    def facet_groups(self):
         """
         :Retuns: A set of all known facet groups.
         """
@@ -883,7 +889,7 @@ class EasyAboutYou(object):
         return self.__facet_groups
 
 
-    def facetgroupById(self, facet_group):
+    def facet_group_by_id(self, facet_group):
         """
         Returns all facets of a group.
 
@@ -896,7 +902,7 @@ class EasyAboutYou(object):
         return self.__facet_map[facet_group]
 
 
-    def productsById(self, pids, fields=['sale', 'active', 'default_variant']):
+    def products_by_id(self, pids, fields=['sale', 'active', 'default_variant']):
         """
         Gets a products by its id.
 
@@ -913,7 +919,7 @@ class EasyAboutYou(object):
         .. code-block:: python
 
             try:
-                for p in easy.productsById([237188, 237116]):
+                for p in easy.products_by_id([237188, 237116]):
                     print p.name
             except SearchException as e:
                 print e.withError   # list of tuples (id, [errors]) for not found products
@@ -959,7 +965,7 @@ class EasyAboutYou(object):
         return products
 
 
-    def productsByEAN(self, eans):
+    def products_by_ean(self, eans):
         """
         Gets products by its ean code.
 
