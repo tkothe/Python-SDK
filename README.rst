@@ -19,6 +19,12 @@ Documentation
 
 Documentation is found at http://aboutyou-shop-sdk.readthedocs.org/en/latest/.
 
+If you want to build the documentation yourself.
+
+1. Checkout the git repo.
+2. Go to the *doc/* folder.
+3. make html
+
 
 Change Log
 ----------

@@ -9,8 +9,62 @@ import aboutyou
 BASE = os.path.dirname(__file__)
 
 
-def read(fname):
-    return open(os.path.join(BASE, fname)).read()
+README = """
+AboutYou-Shop-SDK
+=================
+
+| **Author:** Arne Simon [arne.simon@silce-dice.de]
+
+A Python implementation for the AboutYou shop API.
+
+
+Installation
+------------
+
+Install the package via PIP::
+
+    pip install aboutyou
+
+
+Quick Start
+-----------
+
+1. Modefiy one of the example config files.
+2. Use the following lines::
+
+  from aboutyou.config import YAMLConfig
+  from aboutyou.easy import EasyAboutYou
+
+  easy = EasyAboutYou(YAMLConfig('myconfig.yml'))
+  cagtegoryforest = easy.categories()
+
+
+Documentation
+-------------
+
+Documentation is found at http://aboutyou-shop-sdk.readthedocs.org/en/latest/.
+
+
+Change Log
+----------
+
+- 0.3:
+    * Additional docmentation.
+    * Auto fetch flag.
+    * PyPI integration.
+    * YAML configuration files.
+
+- 0.2:
+    * Caching with Memcached and pylibmc.
+    * EasyAboutYou has function, *getSimpleColors*.
+    * Error handling fix.
+
+- 0.1:
+    * Products return now there url to the mary+paul shop.
+    * Dirty caching without memcached.
+    * EasyCollins products are no bulk requests.
+    * Extended documentation for EasyAboutYou.
+"""
 
 
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
@@ -27,7 +81,7 @@ setup(
   version=aboutyou.VERSION,
   install_requires=reqs,
   description='A connection to the aboutyou.de shop.',
-  long_description=read('README.rst'),
+  long_description=README,
   author='Arne Simon',
   author_email='arne.simon@slice-dice.de',
   license='MIT',
