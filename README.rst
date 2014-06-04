@@ -20,10 +20,10 @@ Quick Start
 1. Modefiy one of the example config files.
 2. Use the following lines::
 
-    from aboutyou.config import YAMLConfig
+    from aboutyou.config import YAMLConfig, YAMLCredentials
     from aboutyou.easy import EasyAboutYou
 
-    easy = EasyAboutYou(YAMLConfig('myconfig.yml'))
+    easy = EasyAboutYou(YAMLConfig('myconfig.yml'), YAMLCredentials('mycredentials.yml'))
     cagtegoryforest = easy.categories()
 
 
