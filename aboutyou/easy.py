@@ -104,7 +104,7 @@ Class Structures
     </table>>];
 
 """
-from . import Aboutyou, AboutYouException
+from .api import Aboutyou, AboutYouException
 from .constants import PRODUCT_FIELD, TYPE
 import bz2
 import json
@@ -709,6 +709,11 @@ class Basket(object):
 class EasyAboutYou(object):
     """
     An abstraction layer around the thin aboutyou api.
+
+    .. note::
+
+        If caching is not set to *null* in the config file, EasyAboutYou will
+        cache Factes and the Category-Tree.
 
     :param config: A :py:class:`aboutyou.Config` instance.
     """

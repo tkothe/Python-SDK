@@ -74,7 +74,7 @@ It is easy to archive, by extending the :py:class:`aboutyou.Config` class.
 .. code-block:: python
     :linenos:
 
-    from aboutyou import Config
+    from aboutyou.config import Config
     from pymongo import MongoClient
 
     class MongoDBClass(Config):
@@ -111,7 +111,7 @@ If you want to get products directly by its id.
 .. code-block:: python
     :linenos:
 
-    from aboutyou import YAMLConfig
+    from aboutyou.config import YAMLConfig
     from aboutyou.easy import EasyAboutYou, SearchException
 
     easy = EasyAboutYou(YAMLConfig("myconfig.yaml"))
@@ -131,7 +131,7 @@ Category Tree
     :linenos:
 
     from aboutyou.easy import EasyAboutYou
-    from aboutyou import JSONConfig
+    from aboutyou.config import JSONConfig
 
     easy = EasyCollins(JSONConfig('myconfig.json'))
 
@@ -152,7 +152,7 @@ Using the Basket
 .. code-block:: python
     :linenos:
 
-    from aboutyou import YAMLConfig
+    from aboutyou.config import YAMLConfig
     from aboutyou.easy import EasyAboutYou
 
     easy = EasyAboutYou(YAMLConfig('myconf.yml'))

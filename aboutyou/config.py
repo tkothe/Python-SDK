@@ -14,7 +14,7 @@ import json
 import logging.config
 import os
 
-from . import AboutYouException
+from .api import AboutYouException
 
 
 class Config(object):
@@ -32,8 +32,12 @@ class Config(object):
                         As example http://cdn.mary-paul.de/file/{}.
     :param product_url: The template for a product.
     :param shop_url: The url template for the shop.
+    :param javascript_url: The URL to the Collins JavaScript file for helper functions
+                             to add product variants into the basket of Mary & Paul or auto-resizing
+                             the Iframe. This URL may be changed in future, so please use this method instead
+                             of hardcoding the URL into your HTML template.
     :param auto_fetch: If set True, Easyaboutyou fetches automaticly missing fields.
-    :param cache: An array of Memcached servers.
+    :param cache: An dict {'hosts': ['server:11202'], 'timeout': 600}.
     :param dict logging: A dictonary for logging.config.dictConfig.
     """
     PARAMS = {"entry_point_url": "http://ant-shop-api1.wavecloud.de/api",
@@ -69,6 +73,11 @@ class Config(object):
         data = "{}:{}".format(self.app_id, self.app_token)
         encoded = base64.b64encode(data)
         return "Basic " + encoded.decode("ascii")
+
+
+    @property
+    def javascript_tag(self):
+        return '<script type="text/javascript" src="' + self.javascript_url + '"></script>'
 
 
 class JSONConfig(Config):

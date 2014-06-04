@@ -4,7 +4,7 @@
 """
 import pytest
 
-from aboutyou import Aboutyou
+from aboutyou.api import Aboutyou
 from aboutyou.config import YAMLConfig
 from aboutyou.easy import EasyAboutYou
 

@@ -1,7 +1,7 @@
 aboutyou
 ========
 
-.. automodule:: aboutyou
+.. automodule:: aboutyou.api
     :members:
     :undoc-members:
     :show-inheritance:

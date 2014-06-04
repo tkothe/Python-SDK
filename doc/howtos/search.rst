@@ -12,7 +12,8 @@ with Aboutyou
 .. code-block:: python
     :linenos:
 
-    from aboutyou import JSONConfig, Aboutyou
+    from aboutyou.config import JSONConfig
+    from aboutyou.api import Aboutyou
 
     aboutyou = Aboutyou(JSONConfig("my-config.json"))
 
@@ -29,7 +30,7 @@ with EasyAboutyou
     :linenos:
 
     from aboutyou.easy import EasyAboutYou
-    from aboutyou import JSONConfig
+    from aboutyou.config import JSONConfig
 
     easy = EasyAboutYou(JSONConfig("my-config.json"))
 
@@ -41,7 +42,7 @@ Search for Colors in Categories
     :linenos:
 
     result = easy.search(TEST_SESSION, filter={"categories":[19631, 19654],
-                                               "facets":{Constants.FACET_COLOR: [1,9]}
+                                               "facets":{FACET.COLOR: [1,9]}
                                                      })
     with codecs.open("dump.txt", "w", encoding="utf8") as o:
         for p in result.products:

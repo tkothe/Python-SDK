@@ -14,6 +14,19 @@ Install the package via PIP::
     pip install aboutyou
 
 
+Quick Start
+-----------
+
+1. Modefiy one of the example config files.
+2. Use the following lines::
+
+    from aboutyou.config import YAMLConfig
+    from aboutyou.easy import EasyAboutYou
+
+    easy = EasyAboutYou(YAMLConfig('myconfig.yml'))
+    cagtegoryforest = easy.categories()
+
+
 Documentation
 -------------
 

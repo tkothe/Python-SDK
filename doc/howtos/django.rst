@@ -18,7 +18,7 @@ the entire application can access one instance.
     ABOUTYOU = None
 
     try:
-        from aboutyou import YAMLConfig
+        from aboutyou.config import YAMLConfig
         from aboutyou.easy import EasyAboutYou
 
         aboutyou_config = YAMLConfig('slicedice-config.yml')
@@ -38,7 +38,7 @@ Search Template Tag
     from django import template
     from django.conf import settings
 
-    from aboutyou import Constants
+    from aboutyou.constants import FACET
 
     import logging
 
@@ -65,7 +65,7 @@ Search Template Tag
 
             filters = {
                         "categories": [catgeoryid],
-                        "facets": {Constants.FACET_COLOR: [product.color]},
+                        "facets": {Constants.FACET.COLOR: [product.color]},
                     }
 
             result = {
