@@ -5,21 +5,22 @@
 import pytest
 
 from aboutyou.api import Aboutyou
-from aboutyou.config import YAMLConfig
+from aboutyou.config import YAMLConfig, YAMLCredentials
 from aboutyou.easy import EasyAboutYou
 
 
-config = YAMLConfig('slice-dice.yaml')
+config = YAMLConfig('config.yaml')
+credentials = YAMLCredentials('slice-dice.yaml')
 
 
 @pytest.fixture(scope='session')
 def aboutyou():
-    return Aboutyou(config)
+    return Aboutyou(config, credentials)
 
 
 @pytest.fixture(scope='session')
 def easy():
-    return EasyAboutYou(config)
+    return EasyAboutYou(config, credentials)
 
 
 @pytest.fixture

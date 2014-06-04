@@ -5,6 +5,9 @@
 .. autosummary::
     :nosignatures:
 
+    Credentials
+    YAMLCredentials
+    JSONCredentials
     Config
     YAMLConfig
     JSONConfig
@@ -17,6 +20,42 @@ import os
 from .api import AboutYouException
 
 
+class Credentials(object):
+    """
+    An interface for the app credentials.
+
+    :param appid: The id for the application.
+    :param app_token: The password aka token for the corresponding application id.
+    :param appsecret: The corresponding secret for the application id.
+    """
+    def __init__(self, app_id, app_secret, app_token):
+        self.app_id = app_id
+        self.app_secret = app_secret
+        self.app_token = app_token
+
+    @property
+    def authorization(self):
+        """
+        Content for the authorization header.
+        """
+        data = "{}:{}".format(self.app_id, self.app_token)
+        encoded = base64.b64encode(data)
+        return "Basic " + encoded.decode("ascii")
+
+
+class JSONCredentials(Credentials):
+        """
+        Uses a JSON file to get the app credentials.
+
+        :param filename: The path to the file.
+        """
+        def __init__(self, filename):
+            with open(filename) as src:
+                config = json.loads(src.read())
+
+                super(JSONCredentials, self).__init__(config['app_id'], config['app_secret'], config['app_token'])
+
+
 class Config(object):
     """
     The configuration of a aboutyou api connection.
@@ -24,9 +63,6 @@ class Config(object):
     A config class has to have the following readable attributes:
 
     :param entry_point_url: The url for aboutyou.
-    :param app_id: The application id.
-    :param app_token: The password aka token for the corresponding application id.
-    :param app_secret: The secret of the appliction.
     :param agent: The name of the browser agent to fake.
     :param image_url: A string as template for the image urls.
                         As example http://cdn.mary-paul.de/file/{}.
@@ -41,9 +77,6 @@ class Config(object):
     :param dict logging: A dictonary for logging.config.dictConfig.
     """
     PARAMS = {"entry_point_url": "http://ant-shop-api1.wavecloud.de/api",
-              "app_id": None,
-              "app_token": None,
-              "app_secret": None,
               "agent": "AboutYou-Shop-SDK-Python",
               "image_url": "http://cdn.mary-paul.de/file/{}",
               "product_url": "http://www.aboutyou.de/{}",
@@ -64,16 +97,6 @@ class Config(object):
 
         if "logging" in kwargs:
             logging.config.dictConfig(kwargs["logging"])
-
-    @property
-    def authorization(self):
-        """
-        Content for the authorization header.
-        """
-        data = "{}:{}".format(self.app_id, self.app_token)
-        encoded = base64.b64encode(data)
-        return "Basic " + encoded.decode("ascii")
-
 
     @property
     def javascript_tag(self):
@@ -121,8 +144,26 @@ try:
 
         def __getattr__(self, name):
             return self.data.get(name, None)
+
+
+    class YAMLCredentials(Credentials):
+        """
+        Uses a YAML file to get the app credentials.
+
+        :param filename: The path to the file.
+
+        .. literalinclude:: ../credentials.yml
+            :language: yaml
+
+        """
+        def __init__(self, filename):
+            with open(filename) as src:
+                config = yaml.load(src.read())
+
+                super(YAMLCredentials, self).__init__(config['app_id'], config['app_secret'], config['app_token'])
+
 except ImportError:
-    # No YAML config :(
+    # No YAML config adn credentials :(
     pass
 
 

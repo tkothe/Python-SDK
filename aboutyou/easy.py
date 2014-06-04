@@ -346,7 +346,7 @@ class Product(EasyNode):
         :returns: A list of :py:class:`aboutyou.easy.Category`.
         """
         if self.__categories is None:
-            catname = "categories.{}".format(self.easy.config.app_id)
+            catname = "categories.{}".format(self.easy.credentials.app_id)
 
             if catname not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update categories from product %s', self.obj['id'])
@@ -715,12 +715,14 @@ class EasyAboutYou(object):
         If caching is not set to *null* in the config file, EasyAboutYou will
         cache Factes and the Category-Tree.
 
-    :param config: A :py:class:`aboutyou.Config` instance.
+    :param config: A :py:class:`aboutyou.config.Config` instance.
+    :param credentials: A :py:class:`aboutyou.config.Credentials` instance.
     """
-    def __init__(self, config):
+    def __init__(self, config, credentials):
         self.config = config
+        self.credentials = credentials
 
-        self.aboutyou = Aboutyou(self.config)
+        self.aboutyou = Aboutyou(self.config, self.credentials)
         self.__categorytree = None
         self.__category_ids = {}
         self.__category_names = {}

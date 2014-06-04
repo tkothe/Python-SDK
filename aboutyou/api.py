@@ -20,7 +20,7 @@ from .constants import TYPE
 ABOUTYOU_VERSION = "1.1"
 """The version of the aboutyou api which is supported."""
 
-VERSION = "0.3.2"
+VERSION = "0.3.3"
 """Version of the python shop SDK."""
 
 AUTHORS = [
@@ -52,6 +52,7 @@ class Aboutyou(object):
     All functions return the JSON responses as Python List and Dictonarys.
 
     :param config: A Config instance.
+    :param credentials: The app credentials.
 
     .. rubric:: Example
 
@@ -98,10 +99,11 @@ class Aboutyou(object):
         }
     """
 
-    def __init__(self, config):
+    def __init__(self, config, credentials):
         self.config = config
+        self.credentials = credentials
 
-        logname = "aboutyou.{}".format(self.config.app_id)
+        logname = "aboutyou.{}".format(self.credentials.app_id)
         self.log = logging.getLogger(logname)
         self.log.debug("instantiated")
 
@@ -118,7 +120,7 @@ class Aboutyou(object):
         headers = {
             "Content-Type": "text/plain;charset=UTF-8",
             "User-Agent": self.config.agent,
-            "Authorization": self.config.authorization,
+            "Authorization": self.credentials.authorization,
         }
 
         try:
@@ -733,7 +735,7 @@ class Aboutyou(object):
 
         params = '?user_token={}&app_token={}&basketId={}&appId={}'
         params = params.format(response["user_token"], response["app_token"],
-                               sessionid, self.config.app_id)
+                               sessionid, self.credentials.app_id)
 
         return self.config.shop_url + params
 

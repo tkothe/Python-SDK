@@ -42,6 +42,10 @@ If you want to build the documentation yourself.
 Change Log
 ----------
 
+- 0.3.3
+    * Moved thin api wrapper in own api module.
+    * The app credentials are now seperated from the other configurations.
+
 - 0.3:
     * Additional docmentation.
     * Auto fetch flag.
