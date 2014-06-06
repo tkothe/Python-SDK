@@ -1,0 +1,55 @@
+[
+    {
+        "category": {
+            "1": {
+                "active": true,
+                "position": 1,
+                "name": "Main Cat 1",
+                "parent": null,
+                "id": 1
+            },
+                "11": {
+                    "active": false,
+                    "position": 1,
+                    "name": "Sub Cat 11",
+                    "parent": 1,
+                    "id": 11
+                },
+                "12": {
+                    "active": true,
+                    "position": 2,
+                    "name": "Sub Cat 12",
+                    "parent": 1,
+                    "id": 12
+                },
+                    "121": {
+                        "active": true,
+                        "position": 2,
+                        "name": "Sub sub Cat 121",
+                        "parent": 12,
+                        "id": 121
+                    },
+            "2": {
+                "active": false,
+                "position": 2,
+                "name": "Main Cat 2",
+                "parent": null,
+                "id": 2
+            },
+                "21": {
+                    "active": true,
+                    "position": 3,
+                    "name": "Sub Cat 21",
+                    "parent": 2,
+                    "id": 21
+                },
+            "3": {
+                "active": false,
+                "position": 3,
+                "name": "Main Cat 3",
+                "parent": null,
+                "id": 3
+            }
+        }
+    }
+]

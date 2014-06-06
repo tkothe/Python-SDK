@@ -788,8 +788,8 @@ class EasyAboutYou(object):
                 self.aboutyou.log.info('cached facets')
 
         if facets is None:
-            facets = self.aboutyou.facettypes()
-            response = self.aboutyou.facets(facets)["facet"]
+            # facets = self.aboutyou.facettypes()
+            response = self.aboutyou.facets([])["facet"]
 
             if self.cache is not None:
                 self.cache.set('facettypes', bz2.compress(json.dumps(facets)),

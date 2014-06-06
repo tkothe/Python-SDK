@@ -1,6 +1,6 @@
 flake8
 pylint
-Fabric
 Sphinx
 pytest
+pytest-cov
 pytest-pythonpath

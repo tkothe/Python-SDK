@@ -16,6 +16,7 @@ import base64
 import json
 import logging.config
 import os
+import sys
 
 from .api import AboutYouException
 
@@ -39,7 +40,12 @@ class Credentials(object):
         Content for the authorization header.
         """
         data = "{}:{}".format(self.app_id, self.app_token)
-        encoded = base64.b64encode(data)
+
+        if sys.version[0] == '2':
+            encoded = base64.b64encode(data)
+        else:
+            encoded = base64.b64encode(bytes(data, "ascii"))
+
         return "Basic " + encoded.decode("ascii")
 
 
@@ -81,6 +87,7 @@ class Config(object):
               "image_url": "http://cdn.mary-paul.de/file/{}",
               "product_url": "http://www.aboutyou.de/{}",
               "shop_url": "https://checkout.aboutyou.de/",
+              "javascript_url": "//devcenter.mary-paul.de/apps/js/api.js",
               "auto_fetch": True,
               "cache": None,
               "logging": None}

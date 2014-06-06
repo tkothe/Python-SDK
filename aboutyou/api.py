@@ -12,7 +12,12 @@ This module provieds two wrappers around the AboutYou-Shop-API.
 """
 import json
 import logging
-import urllib2
+import sys
+
+if sys.version[0] == '2':
+    import urllib2
+else:
+    import urllib.request
 
 from .constants import TYPE
 
@@ -107,6 +112,25 @@ class Aboutyou(object):
         self.log = logging.getLogger(logname)
         self.log.debug("instantiated")
 
+    def request(self, params):
+        headers = {
+            "Content-Type": "text/plain;charset=UTF-8",
+            "User-Agent": self.config.agent,
+            "Authorization": self.credentials.authorization,
+        }
+
+        if sys.version[0] == '2':
+            req = urllib2.Request(self.config.entry_point_url, params, headers)
+            response = urllib2.urlopen(req)
+
+            return response.read()
+        else:
+            req = urllib.request.Request(self.config.entry_point_url, bytes(params, 'utf-8'), headers)
+            response = urllib.request.urlopen(req)
+
+            return str(response.read(), 'utf-8')
+
+
     def send(self, cmd, obj):
         """
         Sends a Pyhton structure of dict's and list's as raw JSON to aboutyou and
@@ -116,18 +140,9 @@ class Aboutyou(object):
         :param obj: A python dict object which contains the request parameters.
         :returns: A JSON structure as python dicts and lists.
         """
-        params = json.dumps([{cmd: obj}])
-        headers = {
-            "Content-Type": "text/plain;charset=UTF-8",
-            "User-Agent": self.config.agent,
-            "Authorization": self.credentials.authorization,
-        }
-
         try:
-            req = urllib2.Request(self.config.entry_point_url, params, headers)
-            response = urllib2.urlopen(req)
-
-            result = response.read()
+            params = json.dumps([{cmd: obj}])
+            result = self.request(params)
             result = json.loads(result, encoding="utf-8")[0][cmd]
 
             if "error_message" in result:
@@ -136,13 +151,9 @@ class Aboutyou(object):
 
             return result
 
-        except urllib2.HTTPError as err:
-            message = "{} {} {}".format(err.code, err.msg, err.read())
-            self.log.exception(message)
-            raise AboutYouException(message)
-        except urllib2.URLError as err:
+        except Exception:
             self.log.exception('')
-            raise AboutYouException(err.reason)
+            raise
 
     def autocomplete(self, searchword, limit=None, types=None):
         """
@@ -514,6 +525,37 @@ class Aboutyou(object):
 
             self.basket_remove(sessionid, vids)
 
+    def child_apps(self):
+        """
+        .. code-block:: python
+
+            >>> aboutyou.child_apps()
+
+        .. code-block:: json
+
+            {
+                "6": {
+                    "logo_url": "http://www.trachtenmode2013.de/img/tm_logo.jpg",
+                    "name": "Heidis Trachten",
+                    "url": "//www.trachtenmode2013.de",
+                    "privacy_statement_url": "http://www.trachtenmode2013.de/file/Datenschutz.pdf",
+                    "tos_url": "http://www.1-2-fashion.de/assets/af5035b1/file/AGB.pdf",
+                    "id": 6
+                },
+                "7": {
+                    "logo_url": "http://static.fitsperfect.de/E-Mail/fp_header_600x250.png",
+                    "name": "Fitsperfect",
+                    "url": "http://fitsperfect.de/",
+                    "privacy_statement_url": "http://fitsperfect.de/privacy",
+                    "tos_url": "http://fitsperfect.de/tos",
+                    "id": 7
+                }
+            }
+        """
+        data = self.send('child_apps', None)
+
+        return data['child_apps']
+
     def category(self, ids):
         """
         You are able to retrieve single categories.
@@ -621,7 +663,7 @@ class Aboutyou(object):
 
         .. code-block:: python
 
-            >>> aboutyou.facets([Constants.FACET_CUPSIZE])
+            >>> aboutyou.facets([FACET.CUPSIZE])
 
         .. code-block:: json
 
@@ -693,15 +735,39 @@ class Aboutyou(object):
 
         return self.send("facet_types", {})
 
-    # def getorder(self, orderid):
-    #     """Through this query you could get a order which was created
-    #         for/through your app. This is limited to a configured
-    #         timeframe and to your app.
+    def get_order(self, orderid):
+        """
+        Through this query you could get a order which was created
+        for/through your app. This is limited to a configured
+        timeframe and to your app.
 
-    #     :param int orderid: this is the order id to get info about
-    #     :returns: Order JSON
-    #     """
-    #     return self.send("get_order", {"order_id": orderid})
+        :param int orderid: This is the order id to get info about.
+
+        .. code-block:: json
+
+            {
+                "total_price": 17687,
+                "total_net": 14864,
+                "total_vat": 2823,
+                "product_variant": [
+                    {
+                        "total_price": 4099,
+                        "product_id": 162259,
+                        "tax": 19,
+                        "unit_price": 4099,
+                        "amount": 1,
+                        "total_vat": 654,
+                        "id": 4199744
+                    },
+                ]
+                "amount_variants": 5,
+                "total_variants": 5,
+                "products": {
+                    "162259": { }
+                }
+            }
+        """
+        return self.send("get_order", {"order_id": orderid})
 
     def order(self, sessionid, success_url,
               cancel_url=None, error_url=None):
@@ -745,7 +811,7 @@ class Aboutyou(object):
         This is as "live" as possible.
         And could differ vs. a "product search" or "product" query.
 
-        :param list ids: array of product variant id
+        :param list ids: Anarray of minimum one up to two hundred product variant ids.
 
         .. code-block:: python
 

@@ -42,6 +42,9 @@ If you want to build the documentation yourself.
 Change Log
 ----------
 
+- 0.3.4
+    * Is now Python 3 compatible.
+
 - 0.3.3
     * Moved thin api wrapper in own api module.
     * The app credentials are now seperated from the other configurations.

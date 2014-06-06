@@ -2,6 +2,8 @@
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 """
+import json
+import os
 import pytest
 
 from aboutyou.api import Aboutyou
@@ -13,14 +15,43 @@ config = YAMLConfig('config.yaml')
 credentials = YAMLCredentials('slice-dice.yaml')
 
 
-@pytest.fixture(scope='session')
+def read(filename):
+    with open(os.path.join('test', 'data', filename)) as src:
+        return src.read()
+
+
+@pytest.fixture
+def mock(monkeypatch):
+    def wrapper(filename):
+        def request(self, params):
+            return read(filename)
+
+        monkeypatch.setattr("aboutyou.api.Aboutyou.request", request)
+
+        with open(os.path.join('test', 'data', filename)) as src:
+            return json.load(src)
+
+    return wrapper
+
+
+@pytest.fixture
 def aboutyou():
     return Aboutyou(config, credentials)
 
 
-@pytest.fixture(scope='session')
-def easy():
-    return EasyAboutYou(config, credentials)
+@pytest.fixture
+def easy(monkeypatch):
+    client = EasyAboutYou(config, credentials)
+
+    monkeypatch.setattr("aboutyou.api.Aboutyou.request", lambda self, params: read('category-tree.json'))
+
+    client.categories()
+
+    monkeypatch.setattr("aboutyou.api.Aboutyou.request", lambda self, params: read('facets-all.json'))
+
+    client.facet_groups()
+
+    return client
 
 
 @pytest.fixture

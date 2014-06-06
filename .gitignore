@@ -1,6 +1,7 @@
 *.sublime*
 *.log*
 *.pyc
+.coverage
 dump.*
 slice-dice.yaml
 110slicedice-config.json
