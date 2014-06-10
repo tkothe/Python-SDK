@@ -18,7 +18,9 @@ import logging.config
 import os
 import sys
 
-from .api import AboutYouException
+
+class ConfigException(Exception):
+    pass
 
 
 class Credentials(object):
@@ -100,7 +102,7 @@ class Config(object):
             if key in Config.PARAMS:
                 setattr(self, key, value)
             else:
-                raise AboutYouException("unknown configuration key parameter")
+                raise ConfigException("unknown configuration key parameter")
 
         if "logging" in kwargs:
             logging.config.dictConfig(kwargs["logging"])
@@ -116,7 +118,7 @@ class JSONConfig(Config):
 
     :param jsonfile: The path to the json configuration file.
 
-    .. literalinclude:: ../config.json
+    .. literalinclude:: ../examples/config.json
         :language: json
     """
     def __init__(self, filename):
@@ -139,7 +141,7 @@ try:
 
         :param yamlfile: The path to the yaml configuration file.
 
-        .. literalinclude:: ../config.yaml
+        .. literalinclude:: ../examples/config.yaml
             :language: yaml
         """
         def __init__(self, filename):
@@ -159,7 +161,7 @@ try:
 
         :param filename: The path to the file.
 
-        .. literalinclude:: ../credentials.yml
+        .. literalinclude:: ../examples/credentials.yml
             :language: yaml
 
         """

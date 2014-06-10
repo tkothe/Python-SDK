@@ -37,7 +37,7 @@ def simelarity(conf):
 
 
 def test_yaml_config():
-    conf = YAMLConfig('config.yaml')
+    conf = YAMLConfig('examples/config.yaml')
 
     assert conf.javascript_tag
 
@@ -45,14 +45,14 @@ def test_yaml_config():
 
 
 def test_json_config():
-    conf = JSONConfig('config.json')
+    conf = JSONConfig('examples/config.json')
 
     assert conf.javascript_tag
     simelarity(conf)
 
 
 def test_json_env_config():
-    conf = JSONEnvironmentFallbackConfig('config.json')
+    conf = JSONEnvironmentFallbackConfig('examples/config.json')
 
     assert conf.javascript_tag
     simelarity(conf)

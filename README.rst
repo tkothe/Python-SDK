@@ -13,6 +13,12 @@ Install the package via PIP::
 
     pip install aboutyou
 
+Or checkout the most recent version::
+
+    git clone https://bitbucket.org/slicedice/aboutyou-shop-sdk-python.git
+    cd aboutyou-shop-sdk-python
+    python setup.py install
+
 
 Quick Start
 -----------
@@ -20,11 +26,11 @@ Quick Start
 1. Modefiy one of the example config files.
 2. Use the following lines::
 
-    from aboutyou.config import YAMLConfig, YAMLCredentials
-    from aboutyou.easy import EasyAboutYou
+    from aboutyou.config import YAMLCredentials
+    from aboutyou.shop import ShopApi
 
-    easy = EasyAboutYou(YAMLConfig('myconfig.yml'), YAMLCredentials('mycredentials.yml'))
-    cagtegoryforest = easy.categories()
+    shop = ShopApi(YAMLCredentials('mycredentials.yml'))
+    cagtegoryforest = shop.categories()
 
 
 Documentation
@@ -42,8 +48,9 @@ If you want to build the documentation yourself.
 Change Log
 ----------
 
-- 0.3.4
+- 0.4
     * Is now Python 3 compatible.
+    * Test cases with mocking.
 
 - 0.3.3
     * Moved thin api wrapper in own api module.

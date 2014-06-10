@@ -32,9 +32,10 @@ setup(
   license='MIT',
   url='https://bitbucket.org/slicedice/aboutyou-shop-sdk-python/overview',
   download_url='https://bitbucket.org/slicedice/aboutyou-shop-sdk-python/downloads',
-  keywords=['aboutyou', 'shop', 'collins'],
+  keywords=['aboutyou', 'shop', 'collins', 'api'],
   classifiers=[
     'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3.4',
     'Topic :: Internet',
     'Topic :: Office/Business',
   ]

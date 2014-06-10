@@ -24,15 +24,16 @@ Simple Setup
 ++++++++++++
 
 You just want the API working and have no special needs.
-Then use the :py:class:`aboutyou.Config` class direktly.
+Then use the :py:class:`aboutyou.config.Credentials` class direktly.
 
 .. code-block:: python
     :linenos:
 
-    from aboutyou import Config, Aboutyou
+    from aboutyou.config import Credentials
+    from aboutyou.api import Aboutyou
 
-    config = Config(app_id=101, app_token="<yourtoken>")
-    client = Aboutyou(config)
+    credentials = Credentials(app_id=101, app_token="<yourtoken>")
+    client = Aboutyou(credentials)
 
     tree = client.categorytree()
 
@@ -50,19 +51,25 @@ Here is an example of how to use the YAML configuration file.
 .. code-block:: python
     :linenos:
 
-    from aboutyou import YAMLConfig
-    from aboutyou.easy import EasyAboutYou
+    from aboutyou.config import YAMLConfig, YAMLCredentials
+    from aboutyou.api import Aboutyou
 
-    easy = EasyAboutYou(YAMLConfig('myconfig.yml'))
+    client = Aboutyou(YAMLCredentials('mycredentials.yml'), YAMLConfig('myconfig.yml'))
 
-    print easy.config.app_id
-    print easy.config.auto_fetch
+    print client.credentials.app_id
+    print client.config.auto_fetch
+
+.. rubric:: mycredentials.yml
+
+.. literalinclude:: ../../examples/credentials.yml
+    :language: yaml
+    :linenos:
 
 .. rubric:: myconfig.yml
 
-.. literalinclude:: ../../config.yaml
-        :language: yaml
-        :linenos:
+.. literalinclude:: ../../examples/config.yaml
+    :language: yaml
+    :linenos:
 
 
 Extending the Config
@@ -94,7 +101,7 @@ Getting the Brand
 .. code-block:: python
     :linenos:
 
-    p = easy.producstById([239982])[0]
+    p = easy.products_by_id([239982])[0]
 
     print p.name
 
@@ -111,13 +118,13 @@ If you want to get products directly by its id.
 .. code-block:: python
     :linenos:
 
-    from aboutyou.config import YAMLConfig
-    from aboutyou.easy import EasyAboutYou, SearchException
+    from aboutyou.config import YAMLCredentials
+    from aboutyou.shop import ShopApi, SearchException
 
-    easy = EasyAboutYou(YAMLConfig("myconfig.yaml"))
+    client = ShopApi(YAMLCredentials("mycredentials.yml"))
 
     try:
-        for p in easy.productsById([237188, 237116]):
+        for p in easy.products_by_id([237188, 237116]):
             print p.name
     except SearchException as e:
         print e.withError   # list of tuples (id, [errors]) for not found products
@@ -130,10 +137,10 @@ Category Tree
 .. code-block:: python
     :linenos:
 
-    from aboutyou.easy import EasyAboutYou
+    from aboutyou.shop import ShopApi
     from aboutyou.config import JSONConfig
 
-    easy = EasyCollins(JSONConfig('myconfig.json'))
+    easy = ShopApi(JSONConfig('myconfig.json'))
 
     # all categories of the first level
     for c in easy.categories():
@@ -153,9 +160,9 @@ Using the Basket
     :linenos:
 
     from aboutyou.config import YAMLConfig
-    from aboutyou.easy import EasyAboutYou
+    from aboutyou.shop import ShopApi
 
-    easy = EasyAboutYou(YAMLConfig('myconf.yml'))
+    easy = ShopApi(YAMLConfig('myconf.yml'))
 
     basket = easy.basket(session)
 

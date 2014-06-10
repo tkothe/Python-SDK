@@ -25,13 +25,13 @@ def test_suggest(aboutyou, mock):
 class TestBasket:
 
     def test_set(self, aboutyou, session, mock):
-        data = mock('basket.json')
+        data = mock('basket/basket.json')
         result = aboutyou.basket_set(session, [['id1', 4719964],])
 
         assert result == data[0]['basket']
 
     def test_invalid(self, aboutyou, session, mock):
-        data = mock('basket-set-with-int-id.json')
+        data = mock('basket/basket-set-with-int-id.json')
 
         with raises(AboutYouException):
             result = aboutyou.basket_set(session, [[4719964, 4719964],])
@@ -39,17 +39,17 @@ class TestBasket:
             assert result == data[0]['basket']
 
     def test_get(self, aboutyou, session, mock):
-        data = mock('basket.json')
+        data = mock('basket/basket.json')
         result = aboutyou.basket_get(session)
 
         assert result == data[0]['basket']
 
     def test_remove(self, aboutyou, session, mock):
-        data = mock('basket.json')
+        data = mock('basket/basket.json')
         result = aboutyou.basket_remove(session, ['my4813890'])
 
     def test_dispose(self, aboutyou, session, mock):
-        data = mock('basket.json')
+        data = mock('basket/basket.json')
         aboutyou.basket_dispose(session)
 
     def test_get_order(self, aboutyou, mock):

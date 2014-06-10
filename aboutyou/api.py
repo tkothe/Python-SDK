@@ -20,6 +20,7 @@ else:
     import urllib.request
 
 from .constants import TYPE
+from .config import Config
 
 
 ABOUTYOU_VERSION = "1.1"
@@ -104,9 +105,9 @@ class Aboutyou(object):
         }
     """
 
-    def __init__(self, config, credentials):
-        self.config = config
+    def __init__(self, credentials, config=Config()):
         self.credentials = credentials
+        self.config = config
 
         logname = "aboutyou.{}".format(self.credentials.app_id)
         self.log = logging.getLogger(logname)
@@ -129,7 +130,6 @@ class Aboutyou(object):
             response = urllib.request.urlopen(req)
 
             return str(response.read(), 'utf-8')
-
 
     def send(self, cmd, obj):
         """

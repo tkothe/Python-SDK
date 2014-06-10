@@ -8,10 +8,10 @@ import pytest
 
 from aboutyou.api import Aboutyou
 from aboutyou.config import YAMLConfig, YAMLCredentials
-from aboutyou.easy import EasyAboutYou
+from aboutyou.shop import ShopApi
 
 
-config = YAMLConfig('config.yaml')
+config = YAMLConfig('examples/config.yaml')
 credentials = YAMLCredentials('slice-dice.yaml')
 
 
@@ -36,12 +36,12 @@ def mock(monkeypatch):
 
 @pytest.fixture
 def aboutyou():
-    return Aboutyou(config, credentials)
+    return Aboutyou(credentials, config)
 
 
 @pytest.fixture
-def easy(monkeypatch):
-    client = EasyAboutYou(config, credentials)
+def shop(monkeypatch):
+    client = ShopApi(credentials, config)
 
     monkeypatch.setattr("aboutyou.api.Aboutyou.request", lambda self, params: read('category-tree.json'))
 

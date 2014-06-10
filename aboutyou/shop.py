@@ -2,7 +2,7 @@
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 
-EasyAboutYou is the attempt to make aboutyou a little bit more userfriendly
+ShopApi is the attempt to make aboutyou a little bit more userfriendly
 and hides much of the direct calls to the aboutyou API.
 
 
@@ -14,7 +14,7 @@ Class Structures
     node[shape=none];
 
     easy[label=<<table cellspacing="0" border="0" cellborder="1">
-        <tr><td colspan="2">EasyAboutYou</td></tr>
+        <tr><td colspan="2">ShopApi</td></tr>
         <tr><td>categories()</td><td></td></tr>
         <tr><td>category_by_id()</td><td></td></tr>
         <tr><td>category_by_name()</td><td></td></tr>
@@ -105,13 +105,14 @@ Class Structures
 
 """
 from .api import Aboutyou, AboutYouException
+from .config import Config
 from .constants import PRODUCT_FIELD, TYPE
 import bz2
 import json
 import uuid
 
 
-class EasyNode(object):
+class Node(object):
     """A simple wrapper around a dict object."""
 
     def __init__(self, easy, obj):
@@ -128,13 +129,21 @@ class EasyNode(object):
         return self.obj[idx]
 
 
-class Category(EasyNode):
+class Category(Node):
+    """
+    The representation of a category in the category tree.
+    """
     def __init__(self, easy, obj):
         super(Category, self).__init__(easy, obj)
 
         self.sub_categories = []
 
     def treeiter(self):
+        """
+        Walks the whole tree beginning from this node.
+
+        :return: A tuple (level, :py:class:`aboutyou.easy.Category`).
+        """
         def browse(level, node):
             yield level, node
 
@@ -180,7 +189,7 @@ class FacetGroup(object):
         return self.name
 
 
-class Image(EasyNode):
+class Image(Node):
     """
     Represents an image.
     """
@@ -229,7 +238,7 @@ class VariantAttributes(object):
                 g = facets.facets.get(f, None)
 
                 if g is None:
-                    g = EasyNode(easy, {'id': facets.id,
+                    g = Node(easy, {'id': facets.id,
                                         'name': 'unknown_{}'.format(f),
                                         'value': 'unknown_{}'.format(f),
                                         'facet_id': f})
@@ -250,7 +259,7 @@ class VariantAttributes(object):
             return []
 
 
-class Variant(EasyNode):
+class Variant(Node):
     """
     A variant of a Product.
     """
@@ -282,6 +291,11 @@ class Variant(EasyNode):
         return self.easy.aboutyou.livevariant([self.id])
 
     def costumize(self):
+        """
+        Returns a costumizeable instance of this variant.
+
+        :return: :py:class:`aboutyou.easy.CostumizedVariant`
+        """
         return CostumizedVariant(self)
 
     def __hash__(self):
@@ -295,6 +309,7 @@ class CostumizedVariant(Variant):
         self.easy = variant.easy
         self._images = variant._images
         self._attributes = variant._attributes
+
         # if we use uuid directly.
         # we get a "OverflowError: Python int too large to convert to C long"
         # when used with dictonarys.
@@ -306,7 +321,7 @@ class CostumizedVariant(Variant):
         return self._hash
 
 
-class Product(EasyNode):
+class Product(Node):
     """
     A product with its variants.
 
@@ -401,6 +416,11 @@ class Product(EasyNode):
 
     @property
     def default_variant(self):
+        """
+        The default variant of this product.
+
+        :returns: :py:class:`aboutyou.easy.Variant`
+        """
         if self.__default_variant is None:
             if "default_variant" not in self.obj and self.easy.config.auto_fetch:
                 self.easy.aboutyou.log.debug('update default_variant from product %s', self.obj['id'])
@@ -416,6 +436,9 @@ class Product(EasyNode):
 
     @property
     def styles(self):
+        """
+        The styles of this product.
+        """
         if self.__styles is None:
             if "styles" not in self.obj and self.easy.config.auto_fetch:
                 data = self.easy.aboutyou.log.debug('update styles from product %s', self.obj['id'])
@@ -601,7 +624,7 @@ class BasketException(Exception):
 
 class Basket(object):
     """
-    :param easy: The EasyAboutYou instance.
+    :param easy: The ShopApi instance.
     :param sessionid: The session id the basket is associated with.
     """
     def __init__(self, easy, sessionid):
@@ -692,8 +715,7 @@ class Basket(object):
         :returns: The url to the shop.
         """
         self.easy.aboutyou.log.debug('buy basket %s', self.sessionid)
-        return self.easy.aboutyou.order(self.sessionid, success_url,
-                                        cancel_url, error_url)
+        return self.easy.aboutyou.order(self.sessionid, success_url, cancel_url, error_url)
 
     def dispose(self):
         """
@@ -706,23 +728,23 @@ class Basket(object):
         del self.easy._baskets[self.sessionid]
 
 
-class EasyAboutYou(object):
+class ShopApi(object):
     """
     An abstraction layer around the thin aboutyou api.
 
     .. note::
 
-        If caching is not set to *null* in the config file, EasyAboutYou will
+        If caching is not set to *null* in the config file, ShopApi will
         cache Factes and the Category-Tree.
 
     :param config: A :py:class:`aboutyou.config.Config` instance.
     :param credentials: A :py:class:`aboutyou.config.Credentials` instance.
     """
-    def __init__(self, config, credentials):
+    def __init__(self, credentials, config=Config()):
         self.config = config
         self.credentials = credentials
-
         self.aboutyou = Aboutyou(self.config, self.credentials)
+
         self.__categorytree = None
         self.__category_ids = {}
         self.__category_names = {}
@@ -799,7 +821,7 @@ class EasyAboutYou(object):
 
         self.__facet_map = {}
         for facet in response:
-            fobj = EasyNode(self, facet)
+            fobj = Node(self, facet)
             group = self.__facet_map.get(fobj.group_name)
             if group is None:
                 group = FacetGroup(fobj.id, fobj.group_name, {})
@@ -888,7 +910,7 @@ class EasyAboutYou(object):
 
     def facet_groups(self):
         """
-        :Retuns: A set of all known facet groups.
+        :retuns: A set of all known facet groups.
         """
         if self.__facet_map is None:
             self.__build_facets()

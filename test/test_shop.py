@@ -4,12 +4,12 @@
 """
 from aboutyou.api import AboutYouException
 from aboutyou.constants import FACET
-from aboutyou.easy import EasyNode, SearchException
+from aboutyou.shop import Node, SearchException
 from pytest import raises
 
 
-def test_categories(easy):
-    tree = easy.categories()
+def test_categories(shop):
+    tree = shop.categories()
 
     assert len(tree) > 0
 
@@ -18,38 +18,38 @@ def test_categories(easy):
     assert len(categorie.sub_categories) > 0
 
 
-def test_category_by_name(easy):
+def test_category_by_name(shop):
     name = 'Subcategory 2.1'
-    cat = easy.category_by_name(name)
+    cat = shop.category_by_name(name)
 
     assert cat is not None
     assert cat.name == name
 
 
-def test_category_by_id(easy):
-    cat = easy.category_by_id(200)
+def test_category_by_id(shop):
+    cat = shop.category_by_id(200)
 
     assert cat.id == 200
     assert cat.name == 'Main Category 2'
 
 
-def test_facet_groups(easy):
-    groups = easy.facet_groups()
+def test_facet_groups(shop):
+    groups = shop.facet_groups()
 
     assert len(groups) > 0
 
 
-def test_facet_group_by_id(easy):
-    group = easy.facet_group_by_id('color')
+def test_facet_group_by_id(shop):
+    group = shop.facet_group_by_id('color')
 
     assert group.id == FACET.COLOR
 
 
-def test_products_by_id(easy, mock):
+def test_products_by_id(shop, mock):
     mock('products-full.json')
 
     ids = [123, 456]
-    products = easy.products_by_id(ids)
+    products = shop.products_by_id(ids)
 
     p = products[1]
 
@@ -64,12 +64,12 @@ def test_products_by_id(easy, mock):
     assert p.styles is not None
 
 
-# def test_products_by_ean(easy):
-#     products = easy.products_by_ean([370075138])
+# def test_products_by_ean(shop):
+#     products = shop.products_by_ean([370075138])
 
 
-# def test_search(easy, session):
-#     result = easy.search(session, filter={"categories":[19631, 19654]},
+# def test_search(shop, session):
+#     result = shop.search(session, filter={"categories":[19631, 19654]},
 #                          result={'fields': ['variants']})
 
 #     assert result.count > 0
@@ -79,37 +79,52 @@ def test_products_by_id(easy, mock):
 #             assert v.id is not None
 
 
-def test_simple_colors(easy):
-    result = easy.simple_colors()
+def test_simple_colors(shop):
+    result = shop.simple_colors()
 
     assert len(result) > 0
-    assert isinstance(result[0], EasyNode)
+    assert isinstance(result[0], Node)
 
 
 class TestBasket:
-    def test_add(self, easy, session, mock):
-        basket = easy.basket(session)
+    def test_add(self, shop, session, mock):
+        basket = shop.basket(session)
 
         mock('products-full.json')
 
-        product = easy.products_by_id([123, 456])[1]
+        product = shop.products_by_id([123, 456])[1]
 
         variant = product.variants[0]
 
-        mock('basket.json')
+        mock('basket/basket.json')
 
         basket.set(variant, 1)
 
-    def test_remove(self, easy, session, mock):
-        basket = easy.basket(session)
+    def test_remove(self, shop, session, mock):
+        basket = shop.basket(session)
 
         pass
 
-# def test_basket(easy, session):
-#     try:
-#         basket = easy.basket(session)
+    def test_costumize(self, shop, session, mock):
+        basket = shop.basket(session)
 
-#         product = easy.products_by_id([434091])[0]
+        mock('products-full.json')
+
+        product = shop.products_by_id([123, 456])[1]
+
+        variant = product.variants[0]
+
+        assert variant.id == 5145543
+
+        costum = variant.costumize()
+
+        costum.additional_data['description'] = ''
+
+# def test_basket(shop, session):
+#     try:
+#         basket = shop.basket(session)
+
+#         product = shop.products_by_id([434091])[0]
 
 #         variant = product.variants[0]
 
@@ -136,13 +151,13 @@ class TestBasket:
 #         basket.dispose()
 
 
-def test_autocomplete(easy, mock):
+def test_autocomplete(shop, mock):
     data = mock('autocomplete-sho.json')
 
     with raises(AboutYouException):
-        products, categories = easy.autocomplete('sho')
+        products, categories = shop.autocomplete('sho')
 
 
-def test_suggest(easy, mock):
+def test_suggest(shop, mock):
     data = mock('suggest.json')
-    easy.suggest('sho')
+    shop.suggest('sho')
