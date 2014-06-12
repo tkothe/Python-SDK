@@ -1,7 +1,8 @@
 AboutYou-Shop-SDK
 =================
 
-| **Author:** Arne Simon [arne.simon@silce-dice.de]
+**Author:** Arne Simon [arne.simon@silce-dice.de]
+
 
 A Python implementation for the AboutYou shop API.
 
@@ -11,28 +12,30 @@ Installation
 
 Install the package via PIP::
 
-    pip install aboutyou
+    $ pip install aboutyou
 
 Or checkout the most recent version::
 
-    git clone https://bitbucket.org/slicedice/aboutyou-shop-sdk-python.git
-    cd aboutyou-shop-sdk-python
-    python setup.py install
+    $ git clone https://bitbucket.org/slicedice/aboutyou-shop-sdk-python.git
+    $ cd aboutyou-shop-sdk-python
+    $ python setup.py install
 
 
 Quick Start
 -----------
 
-1. Register for an account at the `AboutYou Devcenter<https://developer.aboutyou.de/>`_ and create a new app.
+1. Register for an account at the [AboutYou Devcenter](https://developer.aboutyou.de/) and create a new app.
    You will be given credentials to utilize the About You API.
 2. Modefiy one of the example credential files.
-3. Use the following lines::
+3. Use the following lines
 
-    from aboutyou.config import YAMLCredentials
-    from aboutyou.shop import ShopApi
+~~~
+from aboutyou.config import YAMLCredentials
+from aboutyou.shop import ShopApi
 
-    shop = ShopApi(YAMLCredentials('mycredentials.yml'))
-    cagtegory_forest = shop.categories()
+shop = ShopApi(YAMLCredentials('mycredentials.yml'))
+cagtegory_forest = shop.categories()
+~~~
 
 
 Documentation
@@ -54,8 +57,6 @@ Change Log
     * Is now Python 3 compatible.
     * Test cases with mocking.
     * Added Auth module.
-
-- 0.3.3
     * Moved thin api wrapper in own api module.
     * The app credentials are now seperated from the other configurations.
 
