@@ -7,7 +7,7 @@ Setup
 -----
 
 It is a good practice to put an instance of :py:class:`aboutyou.Aboutyou` or
-:py:class:`aboutyou.easy.EasyAboutYou` in the *settings.py* of django, so
+:py:class:`aboutyou.shop.ShopApi` in the *settings.py* of django, so
 the entire application can access one instance.
 
 **settings.py**
@@ -18,11 +18,10 @@ the entire application can access one instance.
     ABOUTYOU = None
 
     try:
-        from aboutyou.config import YAMLConfig
-        from aboutyou.easy import EasyAboutYou
+        from aboutyou.config import YAMLCredential
+        from aboutyou.shop import ShopApi
 
-        aboutyou_config = YAMLConfig('slicedice-config.yml')
-        ABOUTYOU = EasyAboutYou(aboutyou_config)
+        ABOUTYOU = ShopApi(YAMLCredential('myconfig.yml'))
     except:
         logger.exception('No AboutYou API!!!')
 
@@ -65,7 +64,7 @@ Search Template Tag
 
             filters = {
                         "categories": [catgeoryid],
-                        "facets": {Constants.FACET.COLOR: [product.color]},
+                        "facets": {FACET.COLOR: [product.color]},
                     }
 
             result = {
@@ -85,7 +84,7 @@ Search Template Tag
 
 .. note::
 
-    The function *buildproduct* builds a dict from the :py:class:`aboutyou.easy.Product`
+    The function *buildproduct* builds a dict from the :py:class:`aboutyou.shop.Product`
     instance, because accessing functions in Django Template-Tags can be rather
     tricky. Thats why we choose a prepared *dict* here.
 

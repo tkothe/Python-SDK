@@ -1,7 +1,7 @@
-aboutyou.easy
-=============
+aboutyou.api
+============
 
-.. automodule:: aboutyou.easy
+.. automodule:: aboutyou.api
     :members:
     :undoc-members:
     :show-inheritance:

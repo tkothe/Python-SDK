@@ -3,7 +3,7 @@
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 """
 from aboutyou.constants import FACET
-from aboutyou.api import AboutYouException
+from aboutyou.api import ApiException
 
 import json
 from pytest import raises
@@ -33,7 +33,7 @@ class TestBasket:
     def test_invalid(self, aboutyou, session, mock):
         data = mock('basket/basket-set-with-int-id.json')
 
-        with raises(AboutYouException):
+        with raises(ApiException):
             result = aboutyou.basket_set(session, [[4719964, 4719964],])
 
             assert result == data[0]['basket']
@@ -70,11 +70,27 @@ def test_category(aboutyou, mock):
     assert result['16138'] == data[0]['category']['16138']
 
 
+def test_category_out_of_bound(aboutyou):
+    with raises(ApiException):
+        aboutyou.category([])
+
+    with raises(ApiException):
+        aboutyou.category([16138]*202)
+
+
 def test_categorytree(aboutyou, mock):
     data = mock('category-tree.json')
     result = aboutyou.categorytree()
 
     assert result == data[0]['category_tree']
+
+
+def test_categorytree_out_of_bound(aboutyou):
+    with raises(ApiException):
+        aboutyou.categorytree(max_depth=-2)
+
+    with raises(ApiException):
+        aboutyou.categorytree(max_depth=11)
 
 
 def test_facets(aboutyou, mock):
@@ -84,6 +100,17 @@ def test_facets(aboutyou, mock):
     assert result == data[0]['facets']
 
 
+def test_factes_out_of_bound(aboutyou):
+    with raises(ApiException):
+        aboutyou.facets([FACET.BRAND], limit=0)
+
+    with raises(ApiException):
+        aboutyou.facets([FACET.BRAND], limit=201)
+
+    with raises(ApiException):
+        aboutyou.facets([FACET.BRAND], offset=-1)
+
+
 def test_facettypes(aboutyou, mock):
     data = mock('facet-types.json')
     result = aboutyou.facettypes()
@@ -91,8 +118,20 @@ def test_facettypes(aboutyou, mock):
     assert result == data[0]['facet_types']
 
 
-# def test_livevariant(aboutyou, log):
-#     response = aboutyou.livevariant([4813890])
+def test_livevariant(aboutyou, mock):
+    data = mock('products/livevariant.json')
+    response = aboutyou.livevariant([5652922])
+
+    assert response == data[0]['live_variant']
+
+
+def test_livevariant_out_of_bound(aboutyou):
+    with raises(ApiException):
+        aboutyou.livevariant([])
+
+    with raises(ApiException):
+        aboutyou.livevariant([5652922]*201)
+
 
 def test_child_apps(aboutyou, mock):
     data = mock('child-apps.json')
@@ -102,17 +141,33 @@ def test_child_apps(aboutyou, mock):
 
 
 def test_products(aboutyou, mock):
-    data = mock('products.json')
-    result = aboutyou.products([123, 456])
+    data = mock('products/products.json')
+    result = aboutyou.products([123, 456], fields=['variants'])
 
     assert result == data[0]['products']
 
 
+def test_products_out_of_range(aboutyou):
+    with raises(ApiException):
+        aboutyou.products([])
+
+    with raises(ApiException):
+        aboutyou.products([123]*201)
+
+
 def test_producteans(aboutyou, mock):
-    data = mock('result/products_eans.json')
-    result = aboutyou.producteans([8806159322381])
+    data = mock('products/products_eans.json')
+    result = aboutyou.producteans([8806159322381], fields=['variants'])
 
     assert result == data[0]['products_eans']['eans']
+
+
+def test_producteans_ot_of_range(aboutyou):
+    with raises(ApiException):
+        aboutyou.producteans([])
+
+    with raises(ApiException):
+        aboutyou.producteans([8806159322381]*201)
 
 
 def test_productsearch(aboutyou, session, mock):

@@ -2,8 +2,8 @@
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 
-ShopApi is the attempt to make aboutyou a little bit more userfriendly
-and hides much of the direct calls to the aboutyou API.
+ShopApi is the attempt to make Api a little bit more userfriendly
+and hides much of the direct calls to the Api API.
 
 
 Class Structures
@@ -13,7 +13,7 @@ Class Structures
 
     node[shape=none];
 
-    easy[label=<<table cellspacing="0" border="0" cellborder="1">
+    shop[label=<<table cellspacing="0" border="0" cellborder="1">
         <tr><td colspan="2">ShopApi</td></tr>
         <tr><td>categories()</td><td></td></tr>
         <tr><td>category_by_id()</td><td></td></tr>
@@ -104,7 +104,7 @@ Class Structures
     </table>>];
 
 """
-from .api import Aboutyou, AboutYouException
+from .api import Api, ApiException
 from .config import Config
 from .constants import PRODUCT_FIELD, TYPE
 import bz2
@@ -115,12 +115,12 @@ import uuid
 class Node(object):
     """A simple wrapper around a dict object."""
 
-    def __init__(self, easy, obj):
-        self.easy = easy
+    def __init__(self, shop, obj):
+        self.shop = shop
         self.obj = obj
 
         if "error_message" in obj or "error_code" in obj:
-            raise AboutYouException("{} {}".format(obj["error_code"], obj["error_message"]))
+            raise ApiException("{} {}".format(obj["error_code"], obj["error_message"]))
 
     def __getattr__(self, name):
         return self.obj[name]
@@ -133,8 +133,8 @@ class Category(Node):
     """
     The representation of a category in the category tree.
     """
-    def __init__(self, easy, obj):
-        super(Category, self).__init__(easy, obj)
+    def __init__(self, shop, obj):
+        super(Category, self).__init__(shop, obj)
 
         self.sub_categories = []
 
@@ -142,7 +142,7 @@ class Category(Node):
         """
         Walks the whole tree beginning from this node.
 
-        :return: A tuple (level, :py:class:`aboutyou.easy.Category`).
+        :return: A tuple (level, :py:class:`aboutyou.shop.Category`).
         """
         def browse(level, node):
             yield level, node
@@ -193,14 +193,14 @@ class Image(Node):
     """
     Represents an image.
     """
-    def __init__(self, easy, obj):
-        super(Image, self).__init__(easy, obj)
+    def __init__(self, shop, obj):
+        super(Image, self).__init__(shop, obj)
 
     def url(self, width=None, height=None):
         """
         Returns the url to the image.
         """
-        url = self.easy.aboutyou.config.image_url.format(self.hash)
+        url = self.shop.api.config.image_url.format(self.hash)
         sizes = []
 
         if width:
@@ -215,30 +215,30 @@ class Image(Node):
         return url
 
     def __str__(self):
-        return self.easy.aboutyou.config.image_url.format(self.hash)
+        return self.shop.api.config.image_url.format(self.hash)
 
     def __unicode__(self):
-        return self.easy.aboutyou.config.image_url.format(self.hash)
+        return self.shop.api.config.image_url.format(self.hash)
 
 
 class VariantAttributes(object):
-    def __init__(self, easy, obj):
+    def __init__(self, shop, obj):
         self.obj = obj
-        self.easy = easy
+        self.shop = shop
 
         prefixlen = len("attributes_")
         self.__data = {}
 
         for name, value in obj.items():
             grpid = int(name[prefixlen:])
-            facets = easy.facet_group_by_id(grpid)
+            facets = shop.facet_group_by_id(grpid)
 
             collection = []
             for f in value:
                 g = facets.facets.get(f, None)
 
                 if g is None:
-                    g = Node(easy, {'id': facets.id,
+                    g = Node(shop, {'id': facets.id,
                                         'name': 'unknown_{}'.format(f),
                                         'value': 'unknown_{}'.format(f),
                                         'facet_id': f})
@@ -263,17 +263,17 @@ class Variant(Node):
     """
     A variant of a Product.
     """
-    def __init__(self, easy, obj):
-        super(Variant, self).__init__(easy, obj)
+    def __init__(self, shop, obj):
+        super(Variant, self).__init__(shop, obj)
 
         self._hash = obj['id']
-        self._images = [Image(easy, i) for i in obj["images"]]
-        self._attributes = VariantAttributes(easy, obj["attributes"])
+        self._images = [Image(shop, i) for i in obj["images"]]
+        self._attributes = VariantAttributes(shop, obj["attributes"])
 
     @property
     def images(self):
         """
-        An array of :py:class:`aboutyou.easy.Image`.
+        An array of :py:class:`aboutyou.shop.Image`.
         """
         return self._images
 
@@ -288,13 +288,13 @@ class Variant(Node):
         """
         The live data to this variant.
         """
-        return self.easy.aboutyou.livevariant([self.id])
+        return self.shop.api.livevariant([self.id])
 
     def costumize(self):
         """
         Returns a costumizeable instance of this variant.
 
-        :return: :py:class:`aboutyou.easy.CostumizedVariant`
+        :return: :py:class:`aboutyou.shop.CostumizedVariant`
         """
         return CostumizedVariant(self)
 
@@ -304,9 +304,9 @@ class Variant(Node):
 
 class CostumizedVariant(Variant):
     def __init__(self, variant):
-        # super(type(self), self).__init__(variant.easy, variant.obj)
+        # super(type(self), self).__init__(variant.shop, variant.obj)
         self.obj = variant.obj
-        self.easy = variant.easy
+        self.shop = variant.shop
         self._images = variant._images
         self._attributes = variant._attributes
 
@@ -332,8 +332,8 @@ class Product(Node):
         is not present, for example the variants, then the variants will be
         automaticly request.
     """
-    def __init__(self, easy, obj):
-        super(Product, self).__init__(easy, obj)
+    def __init__(self, shop, obj):
+        super(Product, self).__init__(shop, obj)
 
         self.__variants = None
         self.__categories = None
@@ -348,50 +348,50 @@ class Product(Node):
         Returns the url to the product in the shop.
         """
         slug = self.name.strip().replace(" ", "-") + "-" + str(self.id)
-        return self.easy.aboutyou.config.product_url.format(slug)
+        return self.shop.api.config.product_url.format(slug)
 
     def __update_cache(self):
-        if self.easy.cache:
-            self.easy.cache.set(str(self.obj['id']), self.obj,
-                                self.easy.config.cache['timeout'])
+        if self.shop.cache:
+            self.shop.cache.set(str(self.obj['id']), self.obj,
+                                self.shop.config.cache['timeout'])
 
     @property
     def categories(self):
         """
-        :returns: A list of :py:class:`aboutyou.easy.Category`.
+        :returns: A list of :py:class:`aboutyou.shop.Category`.
         """
         if self.__categories is None:
-            catname = "categories.{}".format(self.easy.credentials.app_id)
+            catname = "categories.{}".format(self.shop.credentials.app_id)
 
-            if catname not in self.obj and self.easy.config.auto_fetch:
-                self.easy.aboutyou.log.debug('update categories from product %s', self.obj['id'])
-                data = self.easy.aboutyou.products(ids=[self.id],
+            if catname not in self.obj and self.shop.config.auto_fetch:
+                self.shop.api.log.debug('update categories from product %s', self.obj['id'])
+                data = self.shop.api.products(ids=[self.id],
                                                    fields=[PRODUCT_FIELD.CATEGORIES])
                 self.obj.update(data["ids"][str(self.id)])
 
                 self.__update_cache()
 
-            self.__categories = [[self.easy.category_by_id(cid) for cid in path] for path in self.obj[catname]]
+            self.__categories = [[self.shop.category_by_id(cid) for cid in path] for path in self.obj[catname]]
 
         return self.__categories
 
     @property
     def variants(self):
         """
-        :returns: A list of :py:class:`aboutyou.easy.Variant`.
+        :returns: A list of :py:class:`aboutyou.shop.Variant`.
         """
         if self.__variants is None:
 
-            if "variants" not in self.obj and self.easy.config.auto_fetch:
-                self.easy.aboutyou.log.debug('update variants from product %s', self.obj['id'])
-                data = self.easy.aboutyou.products(ids=[self.id],
+            if "variants" not in self.obj and self.shop.config.auto_fetch:
+                self.shop.api.log.debug('update variants from product %s', self.obj['id'])
+                data = self.shop.api.products(ids=[self.id],
                                                    fields=[PRODUCT_FIELD.VARIANTS])
                 self.obj.update(data["ids"][str(self.id)])
 
                 self.__update_cache()
 
 
-            self.__variants = [Variant(self.easy, v) for v in self.obj["variants"]]
+            self.__variants = [Variant(self.shop, v) for v in self.obj["variants"]]
 
         return self.__variants
 
@@ -399,18 +399,18 @@ class Product(Node):
     def default_image(self):
         """
         The default image of this product.
-        :returns: :py:class:`aboutyou.easy.Image`
+        :returns: :py:class:`aboutyou.shop.Image`
         """
         if self.__default_image is None:
-            if "default_image" not in self.obj and self.easy.config.auto_fetch:
-                self.easy.aboutyou.log.debug('update default_image from product %s', self.obj['id'])
-                data = self.easy.aboutyou.products(ids=[self.obj['id']],
+            if "default_image" not in self.obj and self.shop.config.auto_fetch:
+                self.shop.api.log.debug('update default_image from product %s', self.obj['id'])
+                data = self.shop.api.products(ids=[self.obj['id']],
                                                    fields=[PRODUCT_FIELD.DEFAULT_IMAGE])
                 self.obj.update(data["ids"][str(self.id)])
 
                 self.__update_cache()
 
-            self.__default_image = Image(self.easy, self.obj["default_image"])
+            self.__default_image = Image(self.shop, self.obj["default_image"])
 
         return self.__default_image
 
@@ -419,18 +419,18 @@ class Product(Node):
         """
         The default variant of this product.
 
-        :returns: :py:class:`aboutyou.easy.Variant`
+        :returns: :py:class:`aboutyou.shop.Variant`
         """
         if self.__default_variant is None:
-            if "default_variant" not in self.obj and self.easy.config.auto_fetch:
-                self.easy.aboutyou.log.debug('update default_variant from product %s', self.obj['id'])
-                data = self.easy.aboutyou.products(ids=[self.obj['id']],
+            if "default_variant" not in self.obj and self.shop.config.auto_fetch:
+                self.shop.api.log.debug('update default_variant from product %s', self.obj['id'])
+                data = self.shop.api.products(ids=[self.obj['id']],
                                                    fields=[PRODUCT_FIELD.DEFAULT_VARIANT])
                 self.obj.update(data["ids"][str(self.obj['id'])])
 
                 self.__update_cache()
 
-            self.__default_variant = Variant(self.easy, self.obj["default_variant"])
+            self.__default_variant = Variant(self.shop, self.obj["default_variant"])
 
         return self.__default_variant
 
@@ -440,8 +440,8 @@ class Product(Node):
         The styles of this product.
         """
         if self.__styles is None:
-            if "styles" not in self.obj and self.easy.config.auto_fetch:
-                data = self.easy.aboutyou.log.debug('update styles from product %s', self.obj['id'])
+            if "styles" not in self.obj and self.shop.config.auto_fetch:
+                data = self.shop.api.log.debug('update styles from product %s', self.obj['id'])
 
                 self.obj.update(data["ids"][str(self.obj['id'])])
 
@@ -450,16 +450,16 @@ class Product(Node):
             styles = []
 
             for pobj in self.obj['styles']:
-                if self.easy.cache:
-                    tmp = self.easy.cache.get(str(pobj['id']))
+                if self.shop.cache:
+                    tmp = self.shop.cache.get(str(pobj['id']))
 
                     if tmp is None:
-                        product = Product(self.easy, pobj)
-                        self.easy.cache.set(str(product.id), pobj, self.easy.config.cache['timeout'])
+                        product = Product(self.shop, pobj)
+                        self.shop.cache.set(str(product.id), pobj, self.shop.config.cache['timeout'])
                     else:
-                        product = Product(self.easy, tmp)
+                        product = Product(self.shop, tmp)
                 else:
-                    product = Product(self.easy, pobj)
+                    product = Product(self.shop, pobj)
 
                 styles.append(product)
 
@@ -468,9 +468,9 @@ class Product(Node):
         return self.__styles
 
     def __getattr__(self, name):
-        if not name.startswith('__') and name not in self.obj and self.easy.config.auto_fetch:
-            self.easy.aboutyou.log.debug('update %s from product %s', name, self.obj['id'])
-            data = self.easy.aboutyou.products(ids=[self.obj['id']],
+        if not name.startswith('__') and name not in self.obj and self.shop.config.auto_fetch:
+            self.shop.api.log.debug('update %s from product %s', name, self.obj['id'])
+            data = self.shop.api.products(ids=[self.obj['id']],
                                                fields=[PRODUCT_FIELD.DESCRIPTION_SHORT,
                                                        PRODUCT_FIELD.DESCRIPTION_LONG,
                                                        PRODUCT_FIELD.SALE])
@@ -556,8 +556,8 @@ class Search(object):
     """
     Representing an initiated search.
     """
-    def __init__(self, easy, sessionid, filter=None, result=None):
-        self.easy = easy
+    def __init__(self, shop, sessionid, filter=None, result=None):
+        self.shop = shop
         self.sessionid = sessionid
         self.filter = filter
         self.categories = {}
@@ -569,7 +569,7 @@ class Search(object):
             self.result["limit"] = 0
             self.result["offset"] = 0
 
-        self.obj = self.easy.aboutyou.productsearch(self.sessionid,
+        self.obj = self.shop.api.productsearch(self.sessionid,
                                                     filter=self.filter,
                                                     result=self.result)
 
@@ -579,7 +579,7 @@ class Search(object):
 
         if "categories" in self.obj["facets"]:
             for el in self.obj["factes"]["categories"]:
-                cat = self.easy.category_by_id(el["term"])
+                cat = self.shop.category_by_id(el["term"])
                 self.categories[cat] = el["count"]
 
 
@@ -587,29 +587,29 @@ class Search(object):
         self.result['offset'] = offset
         self.result['limit'] = limit
 
-        self.easy.aboutyou.log.debug('gather %s %s %s',
+        self.shop.api.log.debug('gather %s %s %s',
                                      self.sessionid, self.filter, self.result)
 
-        response = self.easy.aboutyou.productsearch(self.sessionid,
+        response = self.shop.api.productsearch(self.sessionid,
                                                     filter=self.filter,
                                                     result=self.result)
 
         # the result count can change ANY request !!!
         self.count = response['product_count']
 
-        self.easy.aboutyou.log.debug('result count %s : %s', len(response['products']), response['product_count'])
+        self.shop.api.log.debug('result count %s : %s', len(response['products']), response['product_count'])
 
         for p in response["products"]:
             product = None
 
-            if self.easy.cache is not None:
-                product = self.easy.cache.get(str(p["id"]))
+            if self.shop.cache is not None:
+                product = self.shop.cache.get(str(p["id"]))
 
             if product is None:
-                product = Product(self.easy, p)
+                product = Product(self.shop, p)
 
-                if self.easy.cache is not None:
-                    self.easy.cache[str(product.id)] = product
+                if self.shop.cache is not None:
+                    self.shop.cache[str(product.id)] = product
 
             self.products.buffer.append(product)
 
@@ -624,11 +624,11 @@ class BasketException(Exception):
 
 class Basket(object):
     """
-    :param easy: The ShopApi instance.
+    :param shop: The ShopApi instance.
     :param sessionid: The session id the basket is associated with.
     """
-    def __init__(self, easy, sessionid):
-        self.easy = easy
+    def __init__(self, shop, sessionid):
+        self.shop = shop
         self.sessionid = sessionid
         self.obj = None
 
@@ -650,15 +650,15 @@ class Basket(object):
 
         if len(withError) > 0:
             msg = '\n'.join((i['error_message'] for i in withError))
-            self.easy.aboutyou.log.error(msg)
-            self.easy.aboutyou.log.error(json.dumps(self.obj, indent=4))
+            self.shop.api.log.error(msg)
+            self.shop.api.log.error(json.dumps(self.obj, indent=4))
             raise BasketException(msg, fine, withError)
 
     def set(self, variant, count):
         """
         Sets the *count* of the *variant* in the basket.
 
-        :param variant: :py:class:`aboutyou.easy.Variant` or :py:class:`aboutyou.easy.CostumVariant`
+        :param variant: :py:class:`aboutyou.shop.Variant` or :py:class:`aboutyou.shop.CostumVariant`
         :param int count: The amount of the items. If set to 0 the item is removed.
         """
         def push_ids(ids):
@@ -669,11 +669,11 @@ class Basket(object):
             else:
                 basketset = [(i, vid) for i in ids]
 
-            self.obj = self.easy.aboutyou.basket_set(self.sessionid, basketset)
+            self.obj = self.shop.api.basket_set(self.sessionid, basketset)
 
 
         if count < 1 and variant in self.basket_ids_by_variant:
-            self.obj = self.easy.aboutyou.basket_remove(self.sessionid, self.basket_ids_by_variant[variant])
+            self.obj = self.shop.api.basket_remove(self.sessionid, self.basket_ids_by_variant[variant])
 
             del self.basket_ids_by_variant[variant]
             del self.variants[variant]
@@ -692,7 +692,7 @@ class Basket(object):
                     to_remove = self.basket_ids_by_variant[variant][:-delta]
                     self.basket_ids_by_variant[variant] = self.basket_ids_by_variant[variant][-delta:]
 
-                    self.obj = self.easy.aboutyou.basket_remove(self.sessionid, to_remove)
+                    self.obj = self.shop.api.basket_remove(self.sessionid, to_remove)
 
             else:
                 self.variants[variant] = count
@@ -714,23 +714,23 @@ class Basket(object):
         :param str error_url: this is a callback url if the order throwed exceptions.
         :returns: The url to the shop.
         """
-        self.easy.aboutyou.log.debug('buy basket %s', self.sessionid)
-        return self.easy.aboutyou.order(self.sessionid, success_url, cancel_url, error_url)
+        self.shop.api.log.debug('buy basket %s', self.sessionid)
+        return self.shop.api.order(self.sessionid, success_url, cancel_url, error_url)
 
     def dispose(self):
         """
         Removes all items from the basket and disassociates this basket with the session id.
         """
-        self.easy.aboutyou.log.debug('dispose basket %s', self.sessionid)
+        self.shop.api.log.debug('dispose basket %s', self.sessionid)
 
-        self.easy.aboutyou.basket_dispose(self.sessionid)
+        self.shop.api.basket_dispose(self.sessionid)
 
-        del self.easy._baskets[self.sessionid]
+        del self.shop._baskets[self.sessionid]
 
 
 class ShopApi(object):
     """
-    An abstraction layer around the thin aboutyou api.
+    An abstraction layer around the thin Api api.
 
     .. note::
 
@@ -741,9 +741,9 @@ class ShopApi(object):
     :param credentials: A :py:class:`aboutyou.config.Credentials` instance.
     """
     def __init__(self, credentials, config=Config()):
-        self.config = config
         self.credentials = credentials
-        self.aboutyou = Aboutyou(self.config, self.credentials)
+        self.config = config
+        self.api = Api(self.credentials, self.config)
 
         self.__categorytree = None
         self.__category_ids = {}
@@ -766,10 +766,10 @@ class ShopApi(object):
                                             binary=True,
                                             behaviors={"tcp_nodelay": True, "ketama": True})
                 self.cache.get('TEST_TOKEN')
-                self.aboutyou.log.info('use memcached via pylibmc')
+                self.api.log.info('use memcached via pylibmc')
             except:
                 self.cache = None
-                self.aboutyou.log.exception('')
+                self.api.log.exception('')
 
     def __build_categories(self):
         tree = None
@@ -779,11 +779,11 @@ class ShopApi(object):
 
             if tree:
                 tree = json.loads(bz2.decompress(tree))
-                self.aboutyou.log.info('cached category tree')
+                self.api.log.info('cached category tree')
 
         if tree is None:
-            self.aboutyou.log.info('get category tree from aboutyou')
-            tree = self.aboutyou.categorytree()
+            self.api.log.info('get category tree from Api')
+            tree = self.api.categorytree()
 
             if self.cache is not None:
                 self.cache.set('categorytree', bz2.compress(json.dumps(tree)),
@@ -807,11 +807,11 @@ class ShopApi(object):
             if facets:
                 facets = json.loads(bz2.decompress(facets))
                 response = json.loads(bz2.decompress(response))
-                self.aboutyou.log.info('cached facets')
+                self.api.log.info('cached facets')
 
         if facets is None:
-            # facets = self.aboutyou.facettypes()
-            response = self.aboutyou.facets([])["facet"]
+            # facets = self.api.facettypes()
+            response = self.api.facets([])["facet"]
 
             if self.cache is not None:
                 self.cache.set('facettypes', bz2.compress(json.dumps(facets)),
@@ -837,7 +837,7 @@ class ShopApi(object):
         Returns a basket for the session id.
 
         :param sessionid: The session id the basket is associated with.
-        :returns: :py:class:`aboutyou.easy.Basket`
+        :returns: :py:class:`aboutyou.shop.Basket`
         """
         if sessionid in self._baskets:
             return self._baskets[sessionid]
@@ -853,7 +853,7 @@ class ShopApi(object):
         """
         Returns the category tree.
 
-        :returns: A list of :py:class:`aboutyou.easy.Category`.
+        :returns: A list of :py:class:`aboutyou.shop.Category`.
         """
         if self.__categorytree is None:
             self.__build_categories()
@@ -866,7 +866,7 @@ class ShopApi(object):
         Returns the category with the given id.
 
         :param cid: The id of the category to get.
-        :returns: A :py:class:`aboutyou.easy.Category` instance.
+        :returns: A :py:class:`aboutyou.shop.Category` instance.
         """
         if self.__categorytree is None:
             self.__build_categories()
@@ -881,7 +881,7 @@ class ShopApi(object):
                     The last inserted category will be returned.
 
         :param str name: The name of the category.
-        :returns: A :py:class:`aboutyou.easy.Category` instance.
+        :returns: A :py:class:`aboutyou.shop.Category` instance.
         """
         if self.__categorytree is None:
             self.__build_categories()
@@ -897,7 +897,7 @@ class ShopApi(object):
             self.__build_facets()
 
         if self.__simple_colors is None:
-            self.aboutyou.log.info('build simple colors')
+            self.api.log.info('build simple colors')
 
             colors = self.facet_group_by_id('color')
             self.__simple_colors = []
@@ -923,7 +923,7 @@ class ShopApi(object):
         Returns all facets of a group.
 
         :param facet_group: The id or name of the facet group.
-        :returns: A :py:class:`aboutyou.easy.FacetGroup` instance.
+        :returns: A :py:class:`aboutyou.shop.FacetGroup` instance.
         """
         if self.__facet_map is None:
             self.__build_facets()
@@ -940,15 +940,15 @@ class ShopApi(object):
             which contains a list of all found and all not found products.
 
         :param list pids: A list of product ids.
-        :returns: A list of :py:class:`aboutyou.easy.Product` instance.
-        :throws: :py:class:`aboutyou.easy.SearchException`
+        :returns: A list of :py:class:`aboutyou.shop.Product` instance.
+        :throws: :py:class:`aboutyou.shop.SearchException`
 
         .. rubric:: Example
 
         .. code-block:: python
 
             try:
-                for p in easy.products_by_id([237188, 237116]):
+                for p in shop.products_by_id([237188, 237116]):
                     print p.name
             except SearchException as e:
                 print e.withError   # list of tuples (id, [errors]) for not found products
@@ -972,7 +972,7 @@ class ShopApi(object):
             spid = [str(p) for p in pids]
 
         if len(spid) > 0:
-            response = self.aboutyou.products(ids=pids, fields=list(fields))
+            response = self.api.products(ids=pids, fields=list(fields))
             new = []
 
             for pid, p in response["ids"].items():
@@ -999,21 +999,21 @@ class ShopApi(object):
         Gets products by its ean code.
 
         :param int ean: Product ean.
-        :returns: A :py:class:`aboutyou.easy.Product` instance.
+        :returns: A :py:class:`aboutyou.shop.Product` instance.
         """
-        response = self.aboutyou.producteans(eans=eans)
+        response = self.api.producteans(eans=eans)
 
         return [Product(self, p) for p in response]
 
 
     def search(self, sessionid, filter=None, result=None):
         """
-        Creates a new :py:class:`aboutyou.easy.Search` instance.
+        Creates a new :py:class:`aboutyou.shop.Search` instance.
 
-        .. note:: See :py:func:`aboutyou.aboutyou.productsearch`.
+        .. note:: See :py:func:`Api.Api.productsearch`.
 
         :param sessionid: The user session id.
-        :returns: A :py:class:`aboutyou.easy.Search` instance.
+        :returns: A :py:class:`aboutyou.shop.Search` instance.
         """
         return Search(self, sessionid, filter, result)
 
@@ -1034,9 +1034,9 @@ class ShopApi(object):
 
         .. code-block:: python
 
-            >>> products, categories = easy.autocomplete("sho")
+            >>> products, categories = shop.autocomplete("sho")
         """
-        result = self.aboutyou.autocomplete(searchword,
+        result = self.api.autocomplete(searchword,
                                             types=types,
                                             limit=limit)
 
@@ -1057,7 +1057,7 @@ class ShopApi(object):
                 if scid in self.__category_ids:
                     categories.append(self.__category_ids)
                 else:
-                    raise AboutYouException("unknown category {}".format(scid))
+                    raise ApiException("unknown category {}".format(scid))
 
         return products, categories
 
@@ -1066,7 +1066,7 @@ class ShopApi(object):
         Suggest additional words to the provided searchword.
 
         :param str searchword: A search string to suggest items for.
-        :param list categories: A list of :py:class:`aboutyou.easy.Category`.
+        :param list categories: A list of :py:class:`aboutyou.shop.Category`.
         :param int limit: The maximum amount of results.
         :returns: A list of strings.
         """
@@ -1075,7 +1075,7 @@ class ShopApi(object):
         else:
             categoriescast = None
 
-        result = self.aboutyou.suggest(searchword,
+        result = self.api.suggest(searchword,
                                        categories=categoriescast,
                                        limit=limit)
         return result

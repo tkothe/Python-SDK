@@ -1,14 +1,6 @@
 #-*- encoding: utf-8 -*-
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
-
-This module provieds two wrappers around the AboutYou-Shop-API.
-
-* A thin python wrapper which takes Python dict's and list's and returns the
-  result as the same.
-* Easyaboutyou, which is a more convient layer of abstraction of the API as an
-  object herachie which caches results and query results if there are needed.
-
 """
 import json
 import logging
@@ -23,10 +15,10 @@ from .constants import TYPE
 from .config import Config
 
 
-ABOUTYOU_VERSION = "1.1"
-"""The version of the aboutyou api which is supported."""
+Api_VERSION = "1.1"
+"""The version of the Api api which is supported."""
 
-VERSION = "0.3.3"
+VERSION = "0.4"
 """Version of the python shop SDK."""
 
 AUTHORS = [
@@ -34,8 +26,8 @@ AUTHORS = [
 ]
 
 
-class AboutYouException(Exception):
-    """An exception in the aboutyou module."""
+class ApiException(Exception):
+    """An exception in the Api api."""
     pass
 
 
@@ -43,29 +35,29 @@ def check_sessionid(sessionid):
     """
     .. note::
         We copied it from the php-sdk.
-        aboutyou seems to want, to have the session-id with a minimum length of
+        Api seems to want, to have the session-id with a minimum length of
         five characters. This is not tested or validated.
     """
     if len(sessionid) < 5:
-        raise AboutYouException("The session id must have at least 5 characters")
+        raise ApiException("The session id must have at least 5 characters")
 
 
-class Aboutyou(object):
+class Api(object):
     """
-    An interface to the aboutyou API.
+    An interface to the Api API.
 
-    This is thin warper around the aboutyou API.
+    This is thin warper around the Api API.
     All functions return the JSON responses as Python List and Dictonarys.
 
-    :param config: A Config instance.
     :param credentials: The app credentials.
+    :param config: default Config, A Config instance.
 
     .. rubric:: Example
 
     .. code-block:: python
 
-        >>> from aboutyou import Aboutyou, Constants, YAMLConfig
-        >>> c =  Aboutyou(YAMLConfig("myconfig.yml"))
+        >>> from Api import Api, Constants, YAMLCredentials
+        >>> c =  Api(YAMLCredentials("mycredentials.yml"))
         >>> c.facets([Constants.FACET_CUPSIZE])
 
     .. code-block:: json
@@ -109,7 +101,7 @@ class Aboutyou(object):
         self.credentials = credentials
         self.config = config
 
-        logname = "aboutyou.{}".format(self.credentials.app_id)
+        logname = "api.{}".format(self.credentials.app_id)
         self.log = logging.getLogger(logname)
         self.log.debug("instantiated")
 
@@ -139,6 +131,7 @@ class Aboutyou(object):
         :param cmd: The name of the command.
         :param obj: A python dict object which contains the request parameters.
         :returns: A JSON structure as python dicts and lists.
+        :raises ApiException: If there is a general error in the message.
         """
         try:
             params = json.dumps([{cmd: obj}])
@@ -147,7 +140,7 @@ class Aboutyou(object):
 
             if "error_message" in result:
                 self.log.error(result["error_message"])
-                raise AboutYouException(result["error_message"])
+                raise ApiException(result["error_message"])
 
             return result
 
@@ -159,13 +152,14 @@ class Aboutyou(object):
         """
         :param str searchword: The abbriviation.
         :param list types: against which types should be autocompleted.
-                            The oprions are :py:class:`aboutyou.Constants.TYPES`
+                            The oprions are :py:class:`aboutyou.constants.TYPES`
         :param int limit: the amount of items returned per selected type
         :returns: A dict with "products" and/or "categories".
 
         .. code-block:: python
 
-            >>> aboutyou.autocomplete("sho", types=[Constants.TYPE_PRODUCTS])
+            >>> from aboutyou.constants import TYPE
+            >>> api.autocomplete("sho", types=[TYPE.PRODUCTS])
 
         .. code-block:: json
 
@@ -189,13 +183,13 @@ class Aboutyou(object):
 
         if limit is not None:
             if limit < 1 or limit > 200:
-                raise AboutYouException("limit out of range")
+                raise ApiException("limit out of range")
 
             complete["limit"] = limit
 
         if types is not None:
             if len(set(types) - TYPE.ALL) > 0:
-                raise AboutYouException("unknown types")
+                raise ApiException("unknown types")
 
             complete["types"] = types
 
@@ -215,7 +209,7 @@ class Aboutyou(object):
         .. code-block:: python
 
             >>> data = [('my4813890', 4813890), ('my4813890', 4813890, {'description': 'costum stuff'})]
-            >>> aboutyou.basket_set('someid', data)
+            >>> api.basket_set('someid', data)
 
         .. code-block:: json
 
@@ -309,7 +303,6 @@ class Aboutyou(object):
                 # return {'id':var[0], 'variant_id':var[1]}
                 return {'id':var[0], 'variant_id':var[1], 'additional_data': var[2]}
 
-
         data = {
             "session_id": sessionid,
             "order_lines": [build(var) for var in variants]
@@ -325,12 +318,11 @@ class Aboutyou(object):
         The basket belongs to a specific app id and session id,
         another app can have the same session id.
 
-        :param str sessionid: identification of the basket -> user,
-                              user -> basket
+        :param str sessionid: identification of the basket -> user, user -> basket
 
         .. code-block:: python
 
-            >>> aboutyou.basket_get('someid')
+            >>> api.basket_get('someid')
 
         .. code-block:: json
 
@@ -425,7 +417,7 @@ class Aboutyou(object):
 
         .. code-block:: python
 
-            >>> aboutyou.basket_remove('someid', ['my4813890'])
+            >>> api.basket_remove('someid', ['my4813890'])
 
         .. code-block:: json
 
@@ -501,7 +493,7 @@ class Aboutyou(object):
         check_sessionid(sessionid)
 
         if len(variants) < 1:
-            raise AboutYouException('No ids submitted.')
+            raise ApiException('No ids submitted.')
 
         data = {"session_id": sessionid,
                 "order_lines": [{"delete": str(vid)} for vid in variants]}
@@ -529,7 +521,7 @@ class Aboutyou(object):
         """
         .. code-block:: python
 
-            >>> aboutyou.child_apps()
+            >>> Api.child_apps()
 
         .. code-block:: json
 
@@ -561,10 +553,11 @@ class Aboutyou(object):
         You are able to retrieve single categories.
 
         :param list ids: List of category ids.
+        :raises ApiException: If the length of the id list is not between 1 and 200.
 
         .. code-block:: python
 
-            >>> aboutyou.category([16077])
+            >>> api.category([16077])
 
         .. code-block:: json
 
@@ -581,10 +574,10 @@ class Aboutyou(object):
         idscount = len(ids)
 
         if idscount < 1:
-            raise AboutYouException("to few ids")
+            raise ApiException("to few ids")
 
         if idscount > 200:
-            raise AboutYouException("to many ids, maximum is 200")
+            raise ApiException("to many ids, maximum is 200")
 
         return self.send("category", {"ids": ids})
 
@@ -594,10 +587,11 @@ class Aboutyou(object):
         specified max depth for your app id.
 
         :param int max_depth: max depth of your category tree counted from root
+        :raises ApiException: If max_depth is not between -1 and 10.
 
         .. code-block:: python
 
-            >>> aboutyou.categorytree()
+            >>> api.categorytree()
 
         .. code-block:: json
 
@@ -643,10 +637,10 @@ class Aboutyou(object):
             cmd = {}
         else:
             if max_depth < -1:
-                raise AboutYouException("max_depth to small")
+                raise ApiException("max_depth to small")
 
             if max_depth > 10:
-                raise AboutYouException("max_depth to big")
+                raise ApiException("max_depth to big")
 
             cmd = {"max_depth": max_depth}
 
@@ -660,10 +654,12 @@ class Aboutyou(object):
                                 group ids which belong to me
         :param int limit: limit the per page items
         :param int offset: offset for paging through the items
+        :raises ApiException: If limit is not between 1 and 200.
+        :raises ApiException: If offset is smaller 0.
 
         .. code-block:: python
 
-            >>> aboutyou.facets([FACET.CUPSIZE])
+            >>> Api.facets([FACET.CUPSIZE])
 
         .. code-block:: json
 
@@ -705,7 +701,10 @@ class Aboutyou(object):
 
         if limit is not None:
             if limit < 1:
-                raise AboutYouException("limit is to small")
+                raise ApiException("limit is to small")
+
+            if limit > 200:
+                raise ApiException('limit is to big')
 
             facets["limit"] = limit
 
@@ -714,7 +713,7 @@ class Aboutyou(object):
 
         if offset is not None:
             if offset < 0:
-                raise AboutYouException('offset out of range')
+                raise ApiException('offset out of range')
 
             facets["offset"] = offset
 
@@ -726,7 +725,7 @@ class Aboutyou(object):
 
         .. code-block:: python
 
-            >>> aboutyou.facettypes()
+            >>> api.facettypes()
 
         .. code-block:: json
 
@@ -812,10 +811,11 @@ class Aboutyou(object):
         And could differ vs. a "product search" or "product" query.
 
         :param list ids: Anarray of minimum one up to two hundred product variant ids.
+        :raises ApiException: If the id count is not between 1 and 200.
 
         .. code-block:: python
 
-            >>> aboutyou.livevariant([4760437])
+            >>> api.livevariant([4760437])
 
         .. code-block:: json
 
@@ -831,10 +831,10 @@ class Aboutyou(object):
         idscount = len(ids)
 
         if idscount < 1:
-            raise AboutYouException("too few ids")
+            raise ApiException("too few ids")
 
         if idscount > 200:
-            raise AboutYouException("too many ids")
+            raise ApiException("too many ids")
 
         return self.send("live_variant", {"ids": ids})
 
@@ -845,6 +845,7 @@ class Aboutyou(object):
 
         :param list ids: array of product id
         :param list fields: list of field names
+        :raises ApiException: If the id count is not between 1 and 200.
 
         .. rubric:: Possible Field Options
 
@@ -869,7 +870,7 @@ class Aboutyou(object):
 
         .. code-block:: python
 
-            >>> aboutyou.products(ids=[227838, 287677], fields=["variants"])
+            >>> api.products(ids=[227838, 287677], fields=["variants"])
 
         .. code-block:: json
 
@@ -918,10 +919,10 @@ class Aboutyou(object):
         count = len(ids)
 
         if count < 1:
-            raise AboutYouException("too few ids")
+            raise ApiException("too few ids")
 
         if count > 200:
-            raise AboutYouException("too many ids")
+            raise ApiException("too many ids")
 
         products["ids"] = ids
 
@@ -942,12 +943,12 @@ class Aboutyou(object):
         count = len(eans)
 
         if count < 1:
-            raise AboutYouException("too few eans")
+            raise ApiException("too few eans")
 
         if count > 200:
-            raise AboutYouException("too many eans")
+            raise ApiException("too many eans")
 
-        # aboutyou wants eans as strings
+        # Api wants eans as strings
         products["eans"] = [str(e) for e in eans]
 
         if fields is not None:
@@ -1049,7 +1050,7 @@ class Aboutyou(object):
 
         .. code-block:: python
 
-            >>> aboutyou.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
+            >>> api.productsearch(TEST_SESSION_ID, filter={"categories":[16354]})
 
         .. code-block:: json
 
@@ -1069,7 +1070,7 @@ class Aboutyou(object):
 
             >>> filter={"sale":True}
             >>> result={"sale":True, "limit":2}
-            >>> aboutyou.productsearch("sessionid", filter=filter, result=result)
+            >>> api.productsearch("sessionid", filter=filter, result=result)
 
         .. code-block:: json
 
@@ -1128,6 +1129,7 @@ class Aboutyou(object):
         :param list categories: array of category ids
         :param int limit: amount of items to suggest
         :returns: A list of strings.
+        :raises ApiException: If limit is not between 1 and 200.
         """
         suggest = {"searchword": searchword}
 
@@ -1136,7 +1138,7 @@ class Aboutyou(object):
 
         if limit is not None:
             if limit < 1 or limit > 200:
-                raise AboutYouException('The limit has to between 1 and 200.')
+                raise ApiException('The limit has to between 1 and 200.')
 
             suggest["limit"] = limit
 

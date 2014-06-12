@@ -6,7 +6,8 @@ import json
 import os
 import pytest
 
-from aboutyou.api import Aboutyou
+from aboutyou.api import Api
+from aboutyou.auth import Auth
 from aboutyou.config import YAMLConfig, YAMLCredentials
 from aboutyou.shop import ShopApi
 
@@ -26,7 +27,7 @@ def mock(monkeypatch):
         def request(self, params):
             return read(filename)
 
-        monkeypatch.setattr("aboutyou.api.Aboutyou.request", request)
+        monkeypatch.setattr("aboutyou.api.Api.request", request)
 
         with open(os.path.join('test', 'data', filename)) as src:
             return json.load(src)
@@ -35,19 +36,24 @@ def mock(monkeypatch):
 
 
 @pytest.fixture
+def auth():
+    return Auth(credentials, config)
+
+
+@pytest.fixture
 def aboutyou():
-    return Aboutyou(credentials, config)
+    return Api(credentials, config)
 
 
 @pytest.fixture
 def shop(monkeypatch):
     client = ShopApi(credentials, config)
 
-    monkeypatch.setattr("aboutyou.api.Aboutyou.request", lambda self, params: read('category-tree.json'))
+    monkeypatch.setattr("aboutyou.api.Api.request", lambda self, params: read('category-tree.json'))
 
     client.categories()
 
-    monkeypatch.setattr("aboutyou.api.Aboutyou.request", lambda self, params: read('facets-all.json'))
+    monkeypatch.setattr("aboutyou.api.Api.request", lambda self, params: read('facets-all.json'))
 
     client.facet_groups()
 

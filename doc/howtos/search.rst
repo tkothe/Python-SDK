@@ -12,10 +12,10 @@ with Aboutyou
 .. code-block:: python
     :linenos:
 
-    from aboutyou.config import JSONConfig
+    from aboutyou.config import YAMLCredential
     from aboutyou.api import Aboutyou
 
-    aboutyou = Aboutyou(JSONConfig("my-config.json"))
+    aboutyou = Aboutyou(YAMLCredential("my-config.json"))
 
     # get all products in categorie 16354 back
     response = aboutyou.productsearch("testsession", filter={"categories":[16354]})
@@ -23,16 +23,16 @@ with Aboutyou
     print response["product_count"]
 
 
-with EasyAboutyou
+with ShopApi
 -----------------
 
 .. code-block:: python
     :linenos:
 
-    from aboutyou.easy import EasyAboutYou
+    from aboutyou.easy import ShopApi
     from aboutyou.config import JSONConfig
 
-    easy = EasyAboutYou(JSONConfig("my-config.json"))
+    easy = ShopApi(JSONConfig("my-config.json"))
 
 
 Search for Colors in Categories

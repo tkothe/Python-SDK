@@ -1,5 +1,5 @@
-Config
-======
+aboutyou.config
+===============
 
 .. automodule:: aboutyou.config
     :members:

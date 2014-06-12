@@ -23,14 +23,14 @@ Or checkout the most recent version::
 Quick Start
 -----------
 
-1. Modefiy one of the example config files.
+1. Modefiy one of the example credential files.
 2. Use the following lines::
 
     from aboutyou.config import YAMLCredentials
     from aboutyou.shop import ShopApi
 
     shop = ShopApi(YAMLCredentials('mycredentials.yml'))
-    cagtegoryforest = shop.categories()
+    cagtegory_forest = shop.categories()
 
 
 Documentation
@@ -51,6 +51,7 @@ Change Log
 - 0.4
     * Is now Python 3 compatible.
     * Test cases with mocking.
+    * Added Auth module.
 
 - 0.3.3
     * Moved thin api wrapper in own api module.

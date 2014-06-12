@@ -1,7 +1,7 @@
-aboutyou
-========
+aboutyou.shop
+=============
 
-.. automodule:: aboutyou.api
+.. automodule:: aboutyou.shop
     :members:
     :undoc-members:
     :show-inheritance:

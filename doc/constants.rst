@@ -1,5 +1,5 @@
-Constants
-=========
+aboutyou.constants
+==================
 
 .. automodule:: aboutyou.constants
     :members:

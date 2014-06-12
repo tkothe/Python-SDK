@@ -2,7 +2,7 @@
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
 """
-from aboutyou.api import AboutYouException
+from aboutyou.api import ApiException
 from aboutyou.constants import FACET
 from aboutyou.shop import Node, SearchException
 from pytest import raises
@@ -46,7 +46,7 @@ def test_facet_group_by_id(shop):
 
 
 def test_products_by_id(shop, mock):
-    mock('products-full.json')
+    mock('products/products-full.json')
 
     ids = [123, 456]
     products = shop.products_by_id(ids)
@@ -90,7 +90,7 @@ class TestBasket:
     def test_add(self, shop, session, mock):
         basket = shop.basket(session)
 
-        mock('products-full.json')
+        mock('products/products-full.json')
 
         product = shop.products_by_id([123, 456])[1]
 
@@ -108,7 +108,7 @@ class TestBasket:
     def test_costumize(self, shop, session, mock):
         basket = shop.basket(session)
 
-        mock('products-full.json')
+        mock('products/products-full.json')
 
         product = shop.products_by_id([123, 456])[1]
 
@@ -154,7 +154,7 @@ class TestBasket:
 def test_autocomplete(shop, mock):
     data = mock('autocomplete-sho.json')
 
-    with raises(AboutYouException):
+    with raises(ApiException):
         products, categories = shop.autocomplete('sho')
 
 

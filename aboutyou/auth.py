@@ -1,221 +1,90 @@
 #-*- encoding: utf-8 -*-
 """
 :Author:    Arne Simon [arne.simon@slice-dice.de]
-
-This module contains the OAuth2 implementation for the Collins-API.
 """
-import base64
-import hashlib
-import hmac
-import json
-import os
-import urllib
-import urllib2
-import uuid
+import requests
 
 
-class AuthException(Exception): pass
-
-
-signing_methods = {
-    'HS256': lambda msg, key: hmac.new(key, msg, hashlib.sha256).digest(),
-    'HS384': lambda msg, key: hmac.new(key, msg, hashlib.sha384).digest(),
-    'HS512': lambda msg, key: hmac.new(key, msg, hashlib.sha512).digest(),
-    'RS256': lambda msg, key: key.sign(hashlib.sha256(msg).digest(), 'sha256'),
-    'RS384': lambda msg, key: key.sign(hashlib.sha384(msg).digest(), 'sha384'),
-    'RS512': lambda msg, key: key.sign(hashlib.sha512(msg).digest(), 'sha512'),
-    'none': lambda msg, key: '',
-}
-
-
-def base64url_decode(input):
-    input += '=' * (4 - (len(input) % 4))
-    return base64.urlsafe_b64decode(input)
-
-
-def base64url_encode(input):
-    return base64.urlsafe_b64encode(input).replace('=', '')
-
-
-def encode(payload, key, algorithm='HS256'):
-    segments = []
-    header = {"typ": "JWT", "alg": algorithm}
-
-    segments.append(base64url_encode(json.dumps(header)))
-    segments.append(base64url_encode(json.dumps(payload)))
-    signing_input = '.'.join(segments)
-
-    try:
-        if isinstance(key, unicode):
-            key = key.encode('utf-8')
-        signature = signing_methods[algorithm](signing_input, key)
-    except KeyError:
-        raise NotImplementedError("Algorithm not supported")
-
-    segments.append(base64url_encode(signature))
-    return '.'.join(segments)
+class AuthException(Exception):
+    pass
 
 
 class Auth(object):
     """
-    A wrapper for the OAuth authentication used by Collins.
+    This class wraps the Api user authorization interface.
 
-    :param config: A :py:class:`collins.Config` instance.
-    :param scope: Scope.
-    :param popup: Popup.
+    :param credentials: The app credentials.
+    :param config: The app configuration.
     """
-    def __init__(self, config, scope, popup):
+    def __init__(self, credentials, config):
+        self.credentials = credentials
         self.config = config
-        self.scope = scope
-        self.popup = popup
-        self.accessToken = None
-        self.grantCode = None
-        self.states = {}
 
-    def __buildStateUrlValue(self):
-        return base64.b64encode(json.dumps(self.states))
-
-    def __parseStateUrlValue(self, value):
-        return json.loads(base64.b64decode(value))
-
-    def __sign(self, payload):
-        salt = os.urandom(16) # 16 bytes of randomnes
-        payload["salt"] = base64.b64encode(salt)
-
-        sign = encode(payload, self.config.app_secret, 'HS256')
-
-        return sign
-
-    def parseRedirectResponse(self, request):
-        # the sdk requires state was given for auth request..
-        if self.states['csrf']:
-            states = self.__parseStateUrlValue(request['state']);
-            if 'csrf' in states and self.states['csrf'] == states['csrf']:
-
-                # version a) if set directly by authserver
-                if 'code' in request:
-                    self.grantCode = request['code']
-                    self.accessToken = None
-                    return 'success'
-
-                # varsion b TODO unused) if "wrapped" by checkout
-                if 'result' in request:
-
-                    if request['result'] == 'success':
-                        self.grantCode = request['code']
-                        self.accessToken = None
-                        return request['result']
-                    else:
-                        if request['result'] == 'cancel':
-                            return request['result']
-                        else:
-                            return False
-
-        return False
-
-    def getLoginUrl(self):
+    def login_url(self, redirect):
         """
-        Returns this the url which provieds a user login.
-        """
-        # http://stackoverflow.com/questions/1293741/why-is-md5ing-a-uuid-not-a-good-idea
-        uniqid = uuid.uuid4()
-        self.states["csrf"] = hashlib.md5(uniqid.hex).hexdigest()
+        Generates the login url.
 
-        payload = {"app_id": self.config.app_id,
-                    "info": "python_auth_sdk_{}".format(self.config.app_id),
-                    "redirect_uri": self.config.redirectUri,
-                    "scope": self.scope,
-                    "popup": self.popup,
-                    "state": self.__buildStateUrlValue(),
-                    "flow": "auth"}
+        :param appid: The app id for which context the user will should generate an access token.
+        :param redirect: An url to which the browser will be redirected after login.
+        :param shop_url: *Optional* The url to the login.
 
-        sign = self.__sign(payload)
-
-        return self.config.loginUrl + "?app_id=" + self.config.app_id + "&asr=" + sign
-
-    def logout(self):
-        """
         .. note::
 
-            Copied from the PHP version. I do not really know what this for.
-
+            Besure that the redirect url is registered in the devcenter!
         """
-        self.grantCode = None
-        self.accessToken = None
-        self.states.clear()
-        self.userAuthResult = None
+        url = self.config.shop_url + "?client_id="
+        url += str(self.credentials.app_id) + "&redirect_uri="
+        url += redirect + "&response_type=token&scope=firstname id lastname email"
 
-    def getToken(self):
+        return url
+
+
+    def get_me(access_token):
         """
-        Return access_token from storage or fetch from auth-server.
+        Returns the user information to the corresponding Api access token.
 
-        Most of the time its easier to use @see api()
-
-        :return: AuthResult
+        :param access_token: The access token retreived from the login.
+        :raises ApiAuthException: If the reuqests results in an error.
         """
-        if self.accessToken is not None:
-            return self.accessToken
-        elif self.grantCode:
-            params = {
-                'client_id': self.config.app_id,
-                'grant_type': 'authorization_code',
-                'redirect_uri': self.config.redirectUri,
-                'code': self.grantCode
-            }
+        response = requests.get("https://oauth.collins.kg/oauth/api/me",
+                                headers={u"Authorization": "Bearer {}".format(access_token)},
+                                verify=False)
 
-            headers = {
-                "Content-Type": "text/plain;charset=UTF-8",
-                "User-Agent": self.config.agent,
-                "Authorization": self.config.authorization,
-            }
-
-            url = self.config.resourceUrl + '/oauth/token?'
-            url += urllib.urlencode(params)
-
-            req = urllib2.Request(url, None, headers)
-            response = urllib2.urlopen(req)
-
-            status = response.getcode()
-            if status == 200:
-                result = response.read()
-                self.accessToken = json.loads(result)
-                self.grantCode = None
-                return self.accessToken
-            else:
-                raise AuthException("could not fetch token, because auf HTTP: {}".format(status))
+        if response.status_code == 200:
+            return response.json()
         else:
-            raise AuthException('not logged in')
+            raise AuthException(response.content)
 
-    def api(self, resourcePath, method='get', params={}):
+
+    def get_access_token(email, password, redirect):
         """
-        Does an authentificated api call.
+        A dirty hack to get an access token right away.
 
-        :param str resourcePath: This is the url part of the resource requested.
-        :param str method: The request method 'get'|'post'.
-        :param dict params: Parameter which will be send with the API call.
-        :returns: Stuff o.O
+        This function fakes an webbrowser and a user which logins
+        on the Api website.
+
+        :param email: The email of an user.
+        :param password: The corresponding password.
+        :param redirect: The redirect url to use.
+        :returns: <access_token>, <token_type>
+        :raises ApiAuthException: If an request error occours.
         """
-        tokenResult = self.getToken()
+        session = requests.Session()
+        response = session.get(login_url(self.credentials.app_id, redirect))
 
-        headers = {
-                "Content-Type": "text/plain;charset=UTF-8",
-                "User-Agent": self.config.agent,
-                "Authorization": 'Bearer {}'.format(tokenResult),
-        }
+        if response.status_code != 200:
+            raise AuthException(response.content)
 
-        if method == 'get':
-            url = '{}/api{}?{}'.format(self.resourceUrl,
-                                       resourcePath, urllib.urlencode(params))
-            req = urllib2.Request(url, headers=headers)
+        url = 'https://checkout.Api.de/login'
+        data = {'LoginForm[email]': email, 'LoginForm[password]': password}
+        params = {'avstdef': 2, 'client_id': 110, 'redirect_uri': redirect,
+                    'scope': 'firstname+id+lastname+email', 'response_type': 'token'}
+        response = session.post(url, data=data, params=params)
+
+        if response.status_code == 200:
+            data = response.url.split('#')[1]
+            values = dict((x.split('=') for x in data.split('&')))
+
+            return values['access_token'], values['token_type']
         else:
-            url = '{}/api{}'.format(self.resourceUrl)
-            req = urllib2.Request(url, data=params, headers=headers)
-
-        response = urllib2.urlopen(req)
-
-        status = response.getcode()
-
-        if status == 200:
-            return response.read()
-        else:
-            raise AuthException(response.read())
+            raise AuthException(response.content)

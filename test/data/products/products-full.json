@@ -9,10 +9,10 @@
                     "sale": false,
                     "categories.110": [
                         [
-                            100
+                            200, 220
                         ],
                         [
-                            200, 220
+                            100
                         ]
                     ],
                     "attributes_merged": {
@@ -21,7 +21,6 @@
                     "brand_id": 269,
                     "description_long": "description long 1",
                     "active": false,
-                    "variants": [],
                     "description_short": "description short 1",
                     "id": 123
                 },

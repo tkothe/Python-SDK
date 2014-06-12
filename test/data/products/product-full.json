@@ -1,36 +1,4 @@
-[
-    {
-        "products": {
-            "pageHash": "8c327049-f97e-4ddc-949c-78568705f279",
-            "ids": {
-                "123": {
-                    "styles": [],
-                    "name": "Sandalette, Rieker",
-                    "sale": false,
-                    "categories.98": [
-                        [
-                            19080, 123
-                        ],
-                        [
-                            19096
-                        ],
-                        [
-                            19084
-                        ],
-                        [
-                            19097
-                        ]
-                    ],
-                    "attributes_merged": {
-                        "attributes_0": 269
-                    },
-                    "brand_id": 269,
-                    "description_long": "description long 1",
-                    "active": false,
-                    "description_short": "description short 1",
-                    "id": 123
-                },
-                "456": {
+{
                     "styles": [],
                     "active": true,
                     "name": "sweatshirt with logo",
@@ -118,7 +86,7 @@
                         "id": 5145543,
                         "quantity": 5
                     },
-                    "min_price": 3980,
+                    "min_price": 3990,
                     "default_image": {
                         "hash": "882ff9a8365b6e1b46773992b189e4dc",
                         "name": "Antevorte-2_TOT0072001_1default_image40_21.jpg",
@@ -130,7 +98,7 @@
                         "mime": "image/jpeg",
                         "size": 1874956
                     },
-                    "categories.98": [
+                    "categories.110": [
                         [
                             19080
                         ],
@@ -192,7 +160,113 @@
                                 ]
                             },
                             "retail_price": 3995,
-                            "id": 5145543,
+                            "id": 51455431,
+                            "quantity": 5
+                        },
+                        {
+                            "ean": "4054618356895",
+                            "default": false,
+                            "price": 3990,
+                            "old_price": 0,
+                            "images": [
+                                {
+                                    "hash": "882ff9a8365b6e1b46773992b189e4dc",
+                                    "name": "Antevorte-2_TOT0072001_140_21.jpg",
+                                    "image": {
+                                        "width": 1400,
+                                        "height": 2000
+                                    },
+                                    "ext": ".jpg",
+                                    "mime": "image/jpeg",
+                                    "size": 1874956
+                                },
+                                {
+                                    "hash": "2b0ee425a369b8feab3d1515a7bffaec",
+                                    "name": "Antevorte-2_TOT0072001_140_22.jpg",
+                                    "image": {
+                                        "width": 1400,
+                                        "height": 2000
+                                    },
+                                    "ext": ".jpg",
+                                    "mime": "image/jpeg",
+                                    "size": 1909980
+                                }
+                            ],
+                            "attributes": {
+                                "attributes_172": [
+                                    1967
+                                ],
+                                "attributes_173": [
+                                    2075
+                                ],
+                                "attributes_206": [
+                                    2382,2392
+                                ],
+                                "attributes_211": [
+                                    2749
+                                ],
+                                "attributes_0": [
+                                    264
+                                ],
+                                "attributes_1": [
+                                    12
+                                ]
+                            },
+                            "retail_price": 3995,
+                            "id": 51455432,
+                            "quantity": 5
+                        },
+                        {
+                            "ean": "4054618356895",
+                            "default": false,
+                            "price": 3990,
+                            "old_price": 0,
+                            "images": [
+                                {
+                                    "hash": "882ff9a8365b6e1b46773992b189e4dc",
+                                    "name": "Antevorte-2_TOT0072001_140_21.jpg",
+                                    "image": {
+                                        "width": 1400,
+                                        "height": 2000
+                                    },
+                                    "ext": ".jpg",
+                                    "mime": "image/jpeg",
+                                    "size": 1874956
+                                },
+                                {
+                                    "hash": "2b0ee425a369b8feab3d1515a7bffaec",
+                                    "name": "Antevorte-2_TOT0072001_140_22.jpg",
+                                    "image": {
+                                        "width": 1400,
+                                        "height": 2000
+                                    },
+                                    "ext": ".jpg",
+                                    "mime": "image/jpeg",
+                                    "size": 1909980
+                                }
+                            ],
+                            "attributes": {
+                                "attributes_172": [
+                                    1967
+                                ],
+                                "attributes_173": [
+                                    2112
+                                ],
+                                "attributes_206": [
+                                    2382
+                                ],
+                                "attributes_211": [
+                                    2749
+                                ],
+                                "attributes_0": [
+                                    264
+                                ],
+                                "attributes_1": [
+                                    12
+                                ]
+                            },
+                            "retail_price": 3995,
+                            "id": 51455433,
                             "quantity": 5
                         },
                         {
@@ -413,7 +487,3 @@
                     "id": 456,
                     "style_key": "m05_TOT0072"
                 }
-            }
-        }
-    }
-]

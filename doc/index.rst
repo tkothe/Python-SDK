@@ -10,11 +10,12 @@ Welcome to aboutyou-shop-sdk's documentation!
    :maxdepth: 2
 
    howtos/howtos
+   difference
    aboutyou_objects
-   constants
-   config
    aboutyou
-   easy
+   config
+   constants
+   shop
 
 
 
