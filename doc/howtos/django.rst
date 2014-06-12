@@ -6,7 +6,7 @@ Some examples how to use the SDK with Django.
 Setup
 -----
 
-It is a good practice to put an instance of :py:class:`aboutyou.Aboutyou` or
+It is a good practice to put an instance of :py:class:`aboutyou.api.Api` or
 :py:class:`aboutyou.shop.ShopApi` in the *settings.py* of django, so
 the entire application can access one instance.
 
@@ -20,8 +20,11 @@ the entire application can access one instance.
     try:
         from aboutyou.config import YAMLCredential
         from aboutyou.shop import ShopApi
+        from aboutyou.auth import Auth
 
-        ABOUTYOU = ShopApi(YAMLCredential('myconfig.yml'))
+        credentials = YAMLCredential('myconfig.yml')
+        ABOUTYOU = ShopApi(credentials)
+        ABOUTYOU_AUTH = Auth(credentials)
     except:
         logger.exception('No AboutYou API!!!')
 

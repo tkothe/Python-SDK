@@ -10,4 +10,3 @@ In the aboutyou package are two Collins API implementations.
    Category trees and facets are cached, the dicts are wrapped in objects and know there relation.
    The down part is, that this features comes a the cost of speed.
 
-

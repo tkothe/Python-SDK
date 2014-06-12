@@ -66,11 +66,11 @@ class JSONCredentials(Credentials):
 
 class Config(object):
     """
-    The configuration of a aboutyou api connection.
+    The configuration of a Api api connection.
 
     A config class has to have the following readable attributes:
 
-    :param entry_point_url: The url for aboutyou.
+    :param entry_point_url: The url for Api.
     :param agent: The name of the browser agent to fake.
     :param image_url: A string as template for the image urls.
                         As example http://cdn.mary-paul.de/file/{}.
@@ -80,12 +80,12 @@ class Config(object):
                              to add product variants into the basket of Mary & Paul or auto-resizing
                              the Iframe. This URL may be changed in future, so please use this method instead
                              of hardcoding the URL into your HTML template.
-    :param auto_fetch: If set True, Easyaboutyou fetches automaticly missing fields.
+    :param auto_fetch: If set True, EasyApi fetches automaticly missing fields.
     :param cache: An dict {'hosts': ['server:11202'], 'timeout': 600}.
     :param dict logging: A dictonary for logging.config.dictConfig.
     """
     PARAMS = {"entry_point_url": "http://ant-shop-api1.wavecloud.de/api",
-              "agent": "AboutYou-Shop-SDK-Python",
+              "agent": "Aboutyou-Shop-SDK-Python",
               "image_url": "http://cdn.mary-paul.de/file/{}",
               "product_url": "http://www.aboutyou.de/{}",
               "shop_url": "https://checkout.aboutyou.de/",
@@ -187,9 +187,9 @@ class JSONEnvironmentFallbackConfig(Config):
     .. code-block:: python
 
         # if the field *authorization* is not present in the config file,
-        # then the environment variable *aboutyou_AUTH* will be used for the
+        # then the environment variable *Api_AUTH* will be used for the
         # config variable authorization.
-        conf = JSONEnvironmentFallbackConfig('myconf.json', authorization='aboutyou_AUTH')
+        conf = JSONEnvironmentFallbackConfig('myconf.json', authorization='Api_AUTH')
     """
     def __init__(self, jsonfile, **kwargs):
         with open(jsonfile) as cfgfile:
@@ -197,7 +197,7 @@ class JSONEnvironmentFallbackConfig(Config):
 
         for key, value in kwargs.items():
             if key not in Config.PARAMS:
-                raise AboutYouException("unknown configuration key parameter")
+                raise ApiException("unknown configuration key parameter")
 
             if key not in self.data:
                 self.data[key] = os.environ[value]

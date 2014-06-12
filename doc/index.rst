@@ -12,7 +12,8 @@ Welcome to aboutyou-shop-sdk's documentation!
    howtos/howtos
    difference
    aboutyou_objects
-   aboutyou
+   api
+   auth
    config
    constants
    shop

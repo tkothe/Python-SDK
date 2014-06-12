@@ -5,7 +5,6 @@
 from django.conf import settings
 from django.contrib.auth.backends import ModelBackend
 from users.models import User
-from aboutyou.auth import get_me
 import logging
 
 
@@ -23,7 +22,7 @@ class AboutYouBackend(ModelBackend):
     def authenticate(self, aboutyou_token=None):
         if aboutyou_token is not None:
 
-            response = get_me(aboutyou_token)
+            response = settings.ABOUTYOU_AUTH.get_me(aboutyou_token)
 
             if response.status_code == 200:
                 user = None

@@ -56,9 +56,11 @@ class Api(object):
 
     .. code-block:: python
 
-        >>> from Api import Api, Constants, YAMLCredentials
+        >>> from aboutyou.api import Api
+        >>> from aboutyou.config import YAMLCredentials
+        >>> from aboutyou.constants import FACET
         >>> c =  Api(YAMLCredentials("mycredentials.yml"))
-        >>> c.facets([Constants.FACET_CUPSIZE])
+        >>> c.facets([FACET.CUPSIZE])
 
     .. code-block:: json
 
@@ -804,7 +806,7 @@ class Api(object):
 
         return self.config.shop_url + params
 
-    def livevariant(self, ids):
+    def live_variant(self, ids):
         """
         This does return the live information about the product variant.
         This is as "live" as possible.
@@ -931,11 +933,12 @@ class Api(object):
 
         return self.send("products", products)
 
-    def producteans(self, eans, fields=None):
+    def product_eans(self, eans, fields=None):
         """
         Returns products by eans.
 
         :param list eans: An array of eans.
+        :param list fields: An array of product fields.
         :returns: Array of products.
         """
         products = {}
@@ -956,7 +959,7 @@ class Api(object):
 
         return self.send("products_eans", products)["eans"]
 
-    def productsearch(self, sessionid, filter=None, result=None):
+    def product_search(self, sessionid, filter=None, result=None):
         """
         This is the main query for retrieving products for your app.
         Lists of products will be returned which are filtered.
@@ -977,7 +980,7 @@ class Api(object):
                set see "Facet types"
 
         .. note::
-            To get facet types see :py:class:`aboutyou.Constants`
+            To get facet types see :py:class:`aboutyou.constants.FACET`
 
         :param str sessionid: the session_id of the frontend customer
         :param dict filter: object of filter information, these filters do

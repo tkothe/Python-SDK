@@ -120,17 +120,17 @@ def test_facettypes(aboutyou, mock):
 
 def test_livevariant(aboutyou, mock):
     data = mock('products/livevariant.json')
-    response = aboutyou.livevariant([5652922])
+    response = aboutyou.live_variant([5652922])
 
     assert response == data[0]['live_variant']
 
 
 def test_livevariant_out_of_bound(aboutyou):
     with raises(ApiException):
-        aboutyou.livevariant([])
+        aboutyou.live_variant([])
 
     with raises(ApiException):
-        aboutyou.livevariant([5652922]*201)
+        aboutyou.live_variant([5652922]*201)
 
 
 def test_child_apps(aboutyou, mock):
@@ -157,21 +157,21 @@ def test_products_out_of_range(aboutyou):
 
 def test_producteans(aboutyou, mock):
     data = mock('products/products_eans.json')
-    result = aboutyou.producteans([8806159322381], fields=['variants'])
+    result = aboutyou.product_eans([8806159322381], fields=['variants'])
 
     assert result == data[0]['products_eans']['eans']
 
 
 def test_producteans_ot_of_range(aboutyou):
     with raises(ApiException):
-        aboutyou.producteans([])
+        aboutyou.product_eans([])
 
     with raises(ApiException):
-        aboutyou.producteans([8806159322381]*201)
+        aboutyou.product_eans([8806159322381]*201)
 
 
 def test_productsearch(aboutyou, session, mock):
     data = mock('search/product_search.json')
-    result = aboutyou.productsearch(session)
+    result = aboutyou.product_search(session)
 
     assert result == data[0]['product_search']

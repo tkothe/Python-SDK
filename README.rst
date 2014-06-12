@@ -23,8 +23,10 @@ Or checkout the most recent version::
 Quick Start
 -----------
 
-1. Modefiy one of the example credential files.
-2. Use the following lines::
+1. Register for an account at the `AboutYou Devcenter<https://developer.aboutyou.de/>`_ and create a new app.
+   You will be given credentials to utilize the About You API.
+2. Modefiy one of the example credential files.
+3. Use the following lines::
 
     from aboutyou.config import YAMLCredentials
     from aboutyou.shop import ShopApi

@@ -330,7 +330,7 @@ class Product(Node):
         The Product class is an extensive user of the auto_fetch feature.
         If enabled in the configuration, when accessing a field which data
         is not present, for example the variants, then the variants will be
-        automaticly request.
+        automaticly requested.
     """
     def __init__(self, shop, obj):
         super(Product, self).__init__(shop, obj)
@@ -484,20 +484,6 @@ class Product(Node):
         return self.obj['id']
 
 
-class SearchException(Exception):
-    """
-    An exception thrown by products_by_id.
-
-    :param msg: An error message
-    :param found: The products with error.
-    :param withError: The products with error.
-    """
-    def __init__(self, msg, found, withError):
-        super(SearchException, self).__init__(msg)
-        self.found = found
-        self.withError = withError
-
-
 class ResultProducts(object):
     def __init__(self, search):
         self.search = search
@@ -569,9 +555,7 @@ class Search(object):
             self.result["limit"] = 0
             self.result["offset"] = 0
 
-        self.obj = self.shop.api.productsearch(self.sessionid,
-                                                    filter=self.filter,
-                                                    result=self.result)
+        self.obj = self.shop.api.product_search(self.sessionid, filter=self.filter, result=self.result)
 
         self.count = self.obj["product_count"]
 
@@ -587,12 +571,9 @@ class Search(object):
         self.result['offset'] = offset
         self.result['limit'] = limit
 
-        self.shop.api.log.debug('gather %s %s %s',
-                                     self.sessionid, self.filter, self.result)
+        self.shop.api.log.debug('gather %s %s %s', self.sessionid, self.filter, self.result)
 
-        response = self.shop.api.productsearch(self.sessionid,
-                                                    filter=self.filter,
-                                                    result=self.result)
+        response = self.shop.api.product_search(self.sessionid, filter=self.filter, result=self.result)
 
         # the result count can change ANY request !!!
         self.count = response['product_count']
@@ -660,6 +641,7 @@ class Basket(object):
 
         :param variant: :py:class:`aboutyou.shop.Variant` or :py:class:`aboutyou.shop.CostumVariant`
         :param int count: The amount of the items. If set to 0 the item is removed.
+        :raises BasketException: If there is an error in the basket.
         """
         def push_ids(ids):
             vid = variant.id
@@ -705,7 +687,7 @@ class Basket(object):
             self._check_obj()
 
 
-    def buy(self, success_url, cancel_url=None, error_url=None):
+    def order(self, success_url, cancel_url=None, error_url=None):
         """
         Begins to order this basket.
 
@@ -737,8 +719,8 @@ class ShopApi(object):
         If caching is not set to *null* in the config file, ShopApi will
         cache Factes and the Category-Tree.
 
-    :param config: A :py:class:`aboutyou.config.Config` instance.
     :param credentials: A :py:class:`aboutyou.config.Credentials` instance.
+    :param config: A :py:class:`aboutyou.config.Config` instance.
     """
     def __init__(self, credentials, config=Config()):
         self.credentials = credentials
@@ -941,22 +923,19 @@ class ShopApi(object):
 
         :param list pids: A list of product ids.
         :returns: A list of :py:class:`aboutyou.shop.Product` instance.
-        :throws: :py:class:`aboutyou.shop.SearchException`
 
         .. rubric:: Example
 
         .. code-block:: python
 
-            try:
-                for p in shop.products_by_id([237188, 237116]):
-                    print p.name
-            except SearchException as e:
-                print e.withError   # list of tuples (id, [errors]) for not found products
-                print e.found       # list of found products
+            products, with_error = shop.products_by_id([237188, 237116])
+
+            for p in shop.products_by_id([237188, 237116]):
+                print p.name
         """
         spid = []
-        products = []
-        withError = []
+        products = {}
+        withError = {}
 
         # get products from cache or mark unknown products
         if self.cache is not None:
@@ -967,7 +946,8 @@ class ShopApi(object):
                 if p is None:
                     spid.append(sid)
                 else:
-                    products.append(Product(self, p))
+                    pro = Product(self, p)
+                    products[pro.id] = pro
         else:
             spid = [str(p) for p in pids]
 
@@ -977,31 +957,27 @@ class ShopApi(object):
 
             for pid, p in response["ids"].items():
                 if "error_message" in p:
-                    withError.append((pid, p['error_message']))
+                    withError[pid] = p['error_message']
                 else:
                     product = Product(self, p)
                     new.append(product)
-                    products.append(product)
+                    products[product.id] = product
 
             if self.cache is not None:
                 for n in new:
                     self.cache.set(str(n.id), n.obj)#, self.config.cache['timeout'])
 
+        return products, withError
 
-        if len(withError) > 0:
-            raise SearchException('not all products were found', products, withError)
-
-        return products
-
-
-    def products_by_ean(self, eans):
+    def products_by_ean(self, eans, fields=None):
         """
         Gets products by its ean code.
 
-        :param int ean: Product ean.
+        :param list eans: A list of eans.
+        :param list fields: An array of product fields.
         :returns: A :py:class:`aboutyou.shop.Product` instance.
         """
-        response = self.api.producteans(eans=eans)
+        response = self.api.product_eans(eans=eans)
 
         return [Product(self, p) for p in response]
 

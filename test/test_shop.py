@@ -4,7 +4,7 @@
 """
 from aboutyou.api import ApiException
 from aboutyou.constants import FACET
-from aboutyou.shop import Node, SearchException
+from aboutyou.shop import Node
 from pytest import raises
 
 
@@ -49,9 +49,9 @@ def test_products_by_id(shop, mock):
     mock('products/products-full.json')
 
     ids = [123, 456]
-    products = shop.products_by_id(ids)
+    products, with_errors = shop.products_by_id(ids)
 
-    p = products[1]
+    p = products[456]
 
     assert p.id in ids
 
@@ -64,19 +64,22 @@ def test_products_by_id(shop, mock):
     assert p.styles is not None
 
 
-# def test_products_by_ean(shop):
-#     products = shop.products_by_ean([370075138])
+def test_products_by_ean(shop, mock):
+    mock('products/products_eans.json')
+
+    products = shop.products_by_ean([8806159322381], fields=['variants'])
 
 
-# def test_search(shop, session):
-#     result = shop.search(session, filter={"categories":[19631, 19654]},
-#                          result={'fields': ['variants']})
+def test_search(shop, session, mock):
+    mock('search/product_search.json')
 
-#     assert result.count > 0
+    result = shop.search(session, filter={"categories":[100, 200]})
 
-#     for p in result.products[:10]:
-#         for v in p.variants:
-#             assert v.id is not None
+    assert result.count == 1234
+
+    p1, p2 = result.products[:2]
+
+    assert p1.id == 123
 
 
 def test_simple_colors(shop):
@@ -92,7 +95,9 @@ class TestBasket:
 
         mock('products/products-full.json')
 
-        product = shop.products_by_id([123, 456])[1]
+        products, with_error = shop.products_by_id([123, 456])
+
+        product = products[456]
 
         variant = product.variants[0]
 
@@ -103,14 +108,15 @@ class TestBasket:
     def test_remove(self, shop, session, mock):
         basket = shop.basket(session)
 
-        pass
 
     def test_costumize(self, shop, session, mock):
         basket = shop.basket(session)
 
         mock('products/products-full.json')
 
-        product = shop.products_by_id([123, 456])[1]
+        products, with_error = shop.products_by_id([123, 456])
+
+        product = products[456]
 
         variant = product.variants[0]
 
@@ -144,7 +150,7 @@ class TestBasket:
 
 #         assert basket.obj['order_lines'][0]['variant_id'] == variant.id
 
-#         print basket.buy('http://maumau.de')
+#         print basket.order('http://maumau.de')
 #     except Exception as e:
 #         raise e
 #     finally:

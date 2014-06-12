@@ -4,6 +4,8 @@
 """
 import requests
 
+from .config import Config
+
 
 class AuthException(Exception):
     pass
@@ -16,7 +18,7 @@ class Auth(object):
     :param credentials: The app credentials.
     :param config: The app configuration.
     """
-    def __init__(self, credentials, config):
+    def __init__(self, credentials, config=Config()):
         self.credentials = credentials
         self.config = config
 
@@ -44,7 +46,7 @@ class Auth(object):
         Returns the user information to the corresponding Api access token.
 
         :param access_token: The access token retreived from the login.
-        :raises ApiAuthException: If the reuqests results in an error.
+        :raises AuthException: If the reuqests results in an error.
         """
         response = requests.get("https://oauth.collins.kg/oauth/api/me",
                                 headers={u"Authorization": "Bearer {}".format(access_token)},
@@ -67,7 +69,7 @@ class Auth(object):
         :param password: The corresponding password.
         :param redirect: The redirect url to use.
         :returns: <access_token>, <token_type>
-        :raises ApiAuthException: If an request error occours.
+        :raises AuthException: If an request error occours.
         """
         session = requests.Session()
         response = session.get(login_url(self.credentials.app_id, redirect))
@@ -75,7 +77,7 @@ class Auth(object):
         if response.status_code != 200:
             raise AuthException(response.content)
 
-        url = 'https://checkout.aboutyou.de/login'
+        url = self.config.shop_url + '/login'
         data = {'LoginForm[email]': email, 'LoginForm[password]': password}
         params = {'avstdef': 2, 'client_id': 110, 'redirect_uri': redirect,
                     'scope': 'firstname+id+lastname+email', 'response_type': 'token'}

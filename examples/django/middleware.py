@@ -5,7 +5,9 @@
 from django.contrib.auth import authenticate, login
 import logging
 
+
 logger = logging.getLogger("aboutyou.middleware")
+
 
 class AboutYouMiddleware(object):
     """
