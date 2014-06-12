@@ -75,7 +75,7 @@ class Auth(object):
         if response.status_code != 200:
             raise AuthException(response.content)
 
-        url = 'https://checkout.Api.de/login'
+        url = 'https://checkout.aboutyou.de/login'
         data = {'LoginForm[email]': email, 'LoginForm[password]': password}
         params = {'avstdef': 2, 'client_id': 110, 'redirect_uri': redirect,
                     'scope': 'firstname+id+lastname+email', 'response_type': 'token'}
