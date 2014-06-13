@@ -87,7 +87,7 @@ class Config(object):
     :param dict logging: A dictonary for logging.config.dictConfig.
     """
     PARAMS = {"stage_url": "http://ant-core-staging-s-api1.wavecloud.de/api",
-              "live_url": "http://ant-shop-api1.wavecloud.de/api",
+              "live_url": "https://shop-api.aboutyou.de/api",
               "agent": "Aboutyou-Shop-SDK-Python",
               "image_url": "http://cdn.mary-paul.de/file/{}",
               "product_url": "http://www.aboutyou.de/{}",
