@@ -53,7 +53,7 @@ If you want to build the documentation yourself.
 Change Log
 ----------
 
-- 0.4
+- 0.9
     * Is now Python 3 compatible.
     * Test cases with mocking.
     * Added Auth module.

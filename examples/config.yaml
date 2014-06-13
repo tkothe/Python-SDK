@@ -1,17 +1,15 @@
-# staging url
-# "entry_point_url": "http://ant-core-staging-s-api1.wavecloud.de/api"
-# live url
-"entry_point_url": "http://ant-shop-api1.wavecloud.de/api"
-"agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36"
-"image_url": "http://cdn.mary-paul.de/file/{}"
-"product_url": "http://www.aboutyou.de/{}"
-"shop_url": "https://checkout.aboutyou.de/"
-"javascript_url": "//devcenter.mary-paul.de/apps/js/api.js"
-"auto_fetch": True
-"cache":
+stage_url: "http://ant-core-staging-s-api1.wavecloud.de/api"
+live_url: "http://ant-shop-api1.wavecloud.de/api"
+agent: "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36"
+image_url: "http://cdn.mary-paul.de/file/{}"
+product_url: "http://www.aboutyou.de/{}"
+shop_url: "https://checkout.aboutyou.de/"
+javascript_url: "http://devcenter.dev/appjs/{}.js"
+auto_fetch: True
+cache:
         "hosts": ["127.0.0.1:11211"]
         "timeout": 86400
-"logging":
+logging:
         "version": 1
         "disable_existing_loggers": false
         "formatters":

@@ -30,11 +30,13 @@ class Credentials(object):
     :param appid: The id for the application.
     :param app_token: The password aka token for the corresponding application id.
     :param appsecret: The corresponding secret for the application id.
+    :param endpoint: Which API endpoint to use. ['live', 'stage']
     """
-    def __init__(self, app_id, app_secret, app_token):
+    def __init__(self, app_id, app_secret, app_token, endpoint='stage'):
         self.app_id = app_id
         self.app_secret = app_secret
         self.app_token = app_token
+        self.endpoint = endpoint
 
     @property
     def authorization(self):
@@ -84,12 +86,13 @@ class Config(object):
     :param cache: An dict {'hosts': ['server:11202'], 'timeout': 600}.
     :param dict logging: A dictonary for logging.config.dictConfig.
     """
-    PARAMS = {"entry_point_url": "http://ant-shop-api1.wavecloud.de/api",
+    PARAMS = {"stage_url": "http://ant-core-staging-s-api1.wavecloud.de/api",
+              "live_url": "http://ant-shop-api1.wavecloud.de/api",
               "agent": "Aboutyou-Shop-SDK-Python",
               "image_url": "http://cdn.mary-paul.de/file/{}",
               "product_url": "http://www.aboutyou.de/{}",
               "shop_url": "https://checkout.aboutyou.de/",
-              "javascript_url": "//devcenter.mary-paul.de/apps/js/api.js",
+              "javascript_url":  "http://devcenter.dev/appjs/{}.js",
               "auto_fetch": True,
               "cache": None,
               "logging": None}
@@ -106,10 +109,6 @@ class Config(object):
 
         if "logging" in kwargs:
             logging.config.dictConfig(kwargs["logging"])
-
-    @property
-    def javascript_tag(self):
-        return '<script type="text/javascript" src="' + self.javascript_url + '"></script>'
 
 
 class JSONConfig(Config):

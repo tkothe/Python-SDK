@@ -115,3 +115,39 @@ Using the Basket
     :language: python
     :linenos:
 
+
+Search
+------
+
+One of the most likely things you will do with the Aboutyou-API is to search.
+So here are some more extensive examples to make your self familiar with the
+Python version of the Aboutyou-API-SDK. Have Fun :)
+
+
+Search for Colors in Categories
++++++++++++++++++++++++++++++++
+
+.. code-block:: python
+    :linenos:
+
+    import codecs
+
+    from aboutyou.shop import ShopApi
+    from aboutyou.config import YAMLCredentials
+    from aboutyou.constants import FACET
+
+    shop = ShopApi(YAMLCredentials("my-config.yml"))
+
+    filters = {"categories":[19631, 19654],
+               "facets":{FACET.COLOR: [1,9]}}
+
+    result = shop.search('s3ss10n', filter=filters)
+
+    with codecs.open("dump.txt", "w", encoding="utf8") as o:
+        for p in result.products:
+            o.write(u"{} {} {}\n".format(p.id, p.name, p.active))
+            for v in p.variants:
+                # o.write(u"{}".format(v.obj))
+                o.write(u"    {} {}\n".format(v.id, v.quantity))
+                o.write(u"        {}\n".format([ (f.facet_id, f.name) for f in v.attributes["color"]]))
+

@@ -81,12 +81,20 @@ def test_search(shop, session, mock):
 
     assert p1.id == 123
 
+    for product in result.products:
+        pass
+
 
 def test_simple_colors(shop):
     result = shop.simple_colors()
 
     assert len(result) > 0
     assert isinstance(result[0], Node)
+
+
+def test_javascript(shop):
+    shop.javascript_url()
+    shop.javascript_tag()
 
 
 class TestBasket:

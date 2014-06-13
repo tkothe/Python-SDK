@@ -18,7 +18,7 @@ from .config import Config
 Api_VERSION = "1.1"
 """The version of the Api api which is supported."""
 
-VERSION = "0.4"
+VERSION = "0.9"
 """Version of the python shop SDK."""
 
 AUTHORS = [
@@ -103,7 +103,12 @@ class Api(object):
         self.credentials = credentials
         self.config = config
 
-        logname = "api.{}".format(self.credentials.app_id)
+        if self.credentials.endpoint in ['stage', 'live']:
+            self.__endpoint = getattr(self.config, '{}_url'.format(self.credentials.endpoint))
+        else:
+            self.__endpoint = self.credentials.endpoint
+
+        logname = "aboutyou.api.{}".format(self.credentials.app_id)
         self.log = logging.getLogger(logname)
         self.log.debug("instantiated")
 
@@ -115,12 +120,12 @@ class Api(object):
         }
 
         if sys.version[0] == '2':
-            req = urllib2.Request(self.config.entry_point_url, params, headers)
+            req = urllib2.Request(self.__endpoint, params, headers)
             response = urllib2.urlopen(req)
 
             return response.read()
         else:
-            req = urllib.request.Request(self.config.entry_point_url, bytes(params, 'utf-8'), headers)
+            req = urllib.request.Request(self.__endpoint, bytes(params, 'utf-8'), headers)
             response = urllib.request.urlopen(req)
 
             return str(response.read(), 'utf-8')
@@ -149,6 +154,18 @@ class Api(object):
         except Exception:
             self.log.exception('')
             raise
+
+    def javascript_url(self):
+        """
+        Returns the url to the Aboutyou Javascript helper functions.
+        """
+        return self.config.javascript_url.format(self.credentials.app_id)
+
+    def javascript_tag(self):
+        """
+        Generates a HTML script tag with the url to the Aboutyou Javascript helper functions.
+        """
+        return '<script type="text/javascript" src="' + self.javascript_url() + '"></script>'
 
     def autocomplete(self, searchword, limit=None, types=None):
         """

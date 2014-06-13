@@ -48,8 +48,14 @@ class Auth(object):
         :param access_token: The access token retreived from the login.
         :raises AuthException: If the reuqests results in an error.
         """
+        headers = {
+            "Content-Type": "text/plain;charset=UTF-8",
+            "User-Agent": self.config.agent,
+            "Authorization": "Bearer {}".format(access_token)
+        }
+
         response = requests.get("https://oauth.collins.kg/oauth/api/me",
-                                headers={u"Authorization": "Bearer {}".format(access_token)},
+                                headers=headers,
                                 verify=False)
 
         if response.status_code == 200:
@@ -71,8 +77,13 @@ class Auth(object):
         :returns: <access_token>, <token_type>
         :raises AuthException: If an request error occours.
         """
+        headers = {
+            "Content-Type": "text/plain;charset=UTF-8",
+            "User-Agent": self.config.agent,
+        }
+
         session = requests.Session()
-        response = session.get(login_url(self.credentials.app_id, redirect))
+        response = session.get(login_url(self.credentials.app_id, redirect), headers=headers)
 
         if response.status_code != 200:
             raise AuthException(response.content)
@@ -81,7 +92,7 @@ class Auth(object):
         data = {'LoginForm[email]': email, 'LoginForm[password]': password}
         params = {'avstdef': 2, 'client_id': 110, 'redirect_uri': redirect,
                     'scope': 'firstname+id+lastname+email', 'response_type': 'token'}
-        response = session.post(url, data=data, params=params)
+        response = session.post(url, data=data, params=params, headers=headers)
 
         if response.status_code == 200:
             data = response.url.split('#')[1]

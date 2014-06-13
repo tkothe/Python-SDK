@@ -26,20 +26,16 @@ def test_json_credentials():
 def test_config():
     conf = Config()
 
-    assert conf.javascript_tag
-
 
 def simelarity(conf):
     con = Config()
 
-    for key in ["image_url", "product_url", "shop_url", "javascript_url"]:
+    for key in ["live_url", "stage_url", "image_url", "product_url", "shop_url", "javascript_url"]:
         assert getattr(con, key) == getattr(conf, key)
 
 
 def test_yaml_config():
     conf = YAMLConfig('examples/config.yaml')
-
-    assert conf.javascript_tag
 
     simelarity(conf)
 
@@ -47,12 +43,10 @@ def test_yaml_config():
 def test_json_config():
     conf = JSONConfig('examples/config.json')
 
-    assert conf.javascript_tag
     simelarity(conf)
 
 
 def test_json_env_config():
     conf = JSONEnvironmentFallbackConfig('examples/config.json')
 
-    assert conf.javascript_tag
     simelarity(conf)
