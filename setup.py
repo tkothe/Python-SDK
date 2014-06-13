@@ -3,14 +3,14 @@ from setuptools import setup
 
 import os
 
-import aboutyou
+import aboutyou.api
 
 
 BASE = os.path.dirname(__file__)
 
 
 def readme():
-  return open(os.path.join(BASE, 'README.rst')).read()
+  return open(os.path.join(BASE, 'README.md')).read()
 
 # # parse_requirements() returns generator of pip.req.InstallRequirement objects
 # install_reqs = parse_requirements(os.path.join(BASE, 'requirements.txt'))
@@ -23,7 +23,7 @@ def readme():
 setup(
   name='aboutyou',
   packages=['aboutyou'],
-  version=aboutyou.VERSION,
+  version=aboutyou.api.VERSION,
   install_requires=['pylibmc>=1.3.0', 'PyYAML'],
   description='A connection to the aboutyou.de shop.',
   long_description=readme(),

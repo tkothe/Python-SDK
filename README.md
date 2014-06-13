@@ -27,15 +27,13 @@ Quick Start
 1. Register for an account at the [AboutYou Devcenter](https://developer.aboutyou.de/) and create a new app.
    You will be given credentials to utilize the About You API.
 2. Modefiy one of the example credential files.
-3. Use the following lines
+3. Use the following lines::
 
-~~~
-from aboutyou.config import YAMLCredentials
-from aboutyou.shop import ShopApi
+    from aboutyou.config import YAMLCredentials
+    from aboutyou.shop import ShopApi
 
-shop = ShopApi(YAMLCredentials('mycredentials.yml'))
-cagtegory_forest = shop.categories()
-~~~
+    shop = ShopApi(YAMLCredentials('mycredentials.yml'))
+    cagtegory_forest = shop.categories()
 
 
 Documentation
