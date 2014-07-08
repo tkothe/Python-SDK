@@ -10,11 +10,11 @@ A Python implementation for the AboutYou shop API.
 Installation
 ------------
 
-Install the package via PIP::
+Install the package via PIP:
 
     $ pip install aboutyou
 
-Or checkout the most recent version::
+Or checkout the most recent version:
 
     $ git clone https://bitbucket.org/slicedice/aboutyou-shop-sdk-python.git
     $ cd aboutyou-shop-sdk-python
